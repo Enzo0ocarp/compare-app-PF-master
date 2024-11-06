@@ -13,7 +13,7 @@ function Login() {
         <div className="login-page">
             <Header />
             <section className="section login-section">
-                <h3>Iniciar Sesión</h3>
+                <h3>Iniciar Sesión</h3><br>
                 <div className="form-group">
                     <label>Email</label>
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />

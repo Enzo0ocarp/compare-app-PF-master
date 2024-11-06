@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../components/Header';
+import PopularProducts from '../components/PopularProducts';
 import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import AlertList from '../components/AlertList';
@@ -29,17 +30,7 @@ function Home() {
             <Header />
 
             {/* Productos Populares */}
-            <section className="section popular-products">
-                <div className="section-header">
-                    <h3>Productos Populares</h3>
-                    <button className="view-all-btn">Ver Todo</button>
-                </div>
-                <div className="products-grid">
-                    {popularProducts.map((product, index) => (
-                        <ProductCard key={index} name={product.name} image={product.image} trend={product.trend} />
-                    ))}
-                </div>
-            </section>
+                <PopularProducts  popularProducts={popularProducts}/>
 
             {/* Categorías */}
             <section className="section categories-section">
@@ -61,8 +52,10 @@ function Home() {
                 </div>
                 <AlertList alerts={alerts} />
             </section>
-                        {/* Barra de Navegación */}
-                        <BottomNav />
+
+                {/* Barra de Navegación */}
+                <BottomNav />
+        
         </div>
     );
 }

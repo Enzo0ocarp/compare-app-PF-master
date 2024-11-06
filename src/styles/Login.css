@@ -18,12 +18,19 @@
   }
   
   .login-form .form-group {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 15px;
+  }
+
+  .login-form .form-group input{
+    width: 360px;
   }
   
   .remember-me {
     display: flex;
-    align-items: center;
+    flex-direction: row;
+    align-items: self-start;
     font-size: 0.9rem;
     color: #333;
   }

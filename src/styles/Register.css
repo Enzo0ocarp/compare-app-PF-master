@@ -17,7 +17,13 @@
   }
   
   .register-form .form-group {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 15px;
+  }
+
+  .register-form .form-group input{
+    width: 360px;
   }
   
   .submit-button {

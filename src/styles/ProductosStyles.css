@@ -27,6 +27,7 @@
 }
 
 .product-card {
+    min-width: 300px;
     border: none;
     transition: transform 0.3s ease-in-out;
     background-color: #ffffff;
@@ -60,6 +61,12 @@
     display: flex;
     justify-content: space-between;
     padding-top: 10px;
+}
+
+.product-footer button {
+    color: white;
+    width: 50%;
+
 }
 
 .view-details-btn {
