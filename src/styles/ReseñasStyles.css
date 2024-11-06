@@ -1,0 +1,88 @@
+/* src/styles/ReseñasStyles.css */
+
+.reseñas-page {
+    padding: 20px;
+    background-color: #f4f8f4;
+    color: #333;
+}
+
+/* Título de Sección */
+.section-title {
+    font-size: 1.8em;
+    color: #4CAF50;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Lista de Reseñas */
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.review-card {
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Cabecera de la Reseña */
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.avatar {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.review-user {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+/* Estrellas de Reseña */
+.rating-stars {
+    margin-bottom: 10px;
+    color: #FFB400; /* Color para las estrellas */
+}
+
+/* Texto de la Reseña */
+.review-text {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Botón para Agregar Reseña */
+.actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.add-review-btn {
+    background-color: #4CAF50;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.add-review-btn:hover {
+    background-color: #388E3C;
+}

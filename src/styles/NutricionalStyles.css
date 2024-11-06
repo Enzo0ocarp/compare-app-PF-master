@@ -1,0 +1,100 @@
+/* src/styles/NutricionalStyles.css */
+
+.nutricional-page {
+    padding: 20px;
+    background-color: #f4f8f4;
+    color: #333;
+}
+
+/* Sección de Categorías */
+.section-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 1.8em;
+    color: #4CAF50;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.category-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Sección de Alertas */
+.alerts-section {
+    margin-top: 40px;
+}
+
+.alerts-card {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.alerts-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.view-more-btn {
+    margin-top: 15px;
+    display: block;
+    width: 100%;
+    font-weight: 600;
+    color: #4CAF50;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.view-more-btn:hover {
+    color: #388E3C;
+    transform: scale(1.05);
+}
+
+/* Animación de botón */
+.animated-button {
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+}
+
+.animated-button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(76, 175, 80, 0.15);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.animated-button:hover::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Badges */
+.ml-2 {
+    margin-left: 8px;
+}
