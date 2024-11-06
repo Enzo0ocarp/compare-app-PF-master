@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from 'primereact/button';
 import '../styles/BottomNav.css';
 
 function BottomNav() {

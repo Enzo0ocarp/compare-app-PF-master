@@ -12,9 +12,9 @@ import '../styles/ProductosStyles.css';
 
 function Productos() {
     const products = [
-        { name: 'Frutas Frescas', image: 'https://via.placeholder.com/150', trend: 'Novedad', price: '$5.00', category: 'Frutas', description: 'Frutas frescas y orgánicas directamente de la granja.' },
-        { name: 'Verduras Orgánicas', image: 'https://via.placeholder.com/150', trend: 'Popular', price: '$3.50', category: 'Verduras', description: 'Verduras de calidad y libres de pesticidas.' },
-        { name: 'Cereales Naturales', image: 'https://via.placeholder.com/150', trend: 'Novedad', price: '$7.00', category: 'Cereales', description: 'Cereales saludables y ricos en fibra.' }
+        { name: 'Frutas Frescas', image: 'https://img.freepik.com/foto-gratis/uvas-fresas-pina-kiwi-albaricoque-platano-pina-entera_23-2147968680.jpg', trend: 'Novedad', price: '$5.00', category: 'Frutas', description: 'Frutas frescas y orgánicas directamente de la granja.' },
+        { name: 'Verduras Orgánicas', image: 'https://cdn1.eldia.com/042016/1484040733227.jpg', trend: 'Popular', price: '$3.50', category: 'Verduras', description: 'Verduras de calidad y libres de pesticidas.' },
+        { name: 'Cereales Naturales', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZzJBpaaIUI6aUfTr_udOc0wN--6U7kIcBSQ&s', trend: 'Novedad', price: '$7.00', category: 'Cereales', description: 'Cereales saludables y ricos en fibra.' }
     ];
 
     const categories = [
@@ -65,7 +65,14 @@ function Productos() {
                             className="product-card"
                             title={product.name}
                             subTitle={<Tag value={product.trend} severity="info" />}
-                            header={<img alt={product.name} src={product.image} className="product-image" />}
+                            header={
+                                <img
+                                    alt={product.name}
+                                    src={product.image}
+                                    className="product-image"
+                                    style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+                                />
+                            }
                             footer={
                                 <div className="product-footer">
                                     <Button
@@ -100,7 +107,12 @@ function Productos() {
             >
                 {selectedProduct && (
                     <div>
-                        <img alt={selectedProduct.name} src={selectedProduct.image} className="dialog-image" />
+                        <img
+                            alt={selectedProduct.name}
+                            src={selectedProduct.image}
+                            className="dialog-image"
+                            style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '8px' }}
+                        />
                         <p><strong>Precio:</strong> {selectedProduct.price}</p>
                         <p><strong>Categoría:</strong> {selectedProduct.category}</p>
                         <p>{selectedProduct.description}</p>

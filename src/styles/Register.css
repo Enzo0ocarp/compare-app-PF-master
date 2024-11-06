@@ -5,7 +5,7 @@
     border: 1px solid #eaeaea;
     border-radius: 10px;
     background-color: #fafafa;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
   }
   
   .register-title {
@@ -20,10 +20,35 @@
     margin-bottom: 15px;
   }
   
+  .animated-form {
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .animated-error {
+    animation: shake 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+  }
+  
   .submit-button {
     width: 100%;
     padding: 10px;
     background-color: #4caf50;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #45a049;
   }
   
   .login-link {
@@ -40,5 +65,16 @@
   
   .login-link a:hover {
     text-decoration: underline;
+  }
+  
+  /* Estilo para BottomNav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f0f0f0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 10px 0;
   }
   
