@@ -8,8 +8,8 @@ import '../styles/HomeStyles.css';
 
 function Home() {
     const popularProducts = [
-        { name: 'Quesos Artesanales', image: 'https://thefoodtech.com/wp-content/uploads/2020/12/aumenta-demanda-de-queso-artesanal.jpg', trend: 'Tendencia' },
-        { name: 'Panificados Artesanales', image: 'https://estaticos-cdn.prensaiberica.es/clip/81ce7545-a02a-4372-a86e-3452a793e694_16-9-discover-aspect-ratio_default_0.jpg', trend: 'Tendencia' }
+        { name: 'Quesos Artesanales', image: 'https://media.conmuchagula.es/2020/09/cmg.asturias.quesos.beyos4v-1920x1080.jpg', trend: 'Tendencia' },
+        { name: 'Panificados Artesanales', image: 'https://cloudfront-us-east-1.images.arcpublishing.com/infobae/POLBNOVZGVDVHF6Y35LIQSCEYQ.jpg', trend: 'Tendencia' }
     ];
 
     const categories = [
@@ -25,8 +25,10 @@ function Home() {
     ];
 
     return (
+        <div>
+<Header />
         <div className="home-container">
-            <Header />
+            
 
             {/* Productos Populares */}
                 <PopularProducts  popularProducts={popularProducts}/>
@@ -53,8 +55,10 @@ function Home() {
             </section>
 
                 {/* Barra de Navegación */}
-                <BottomNav />
+
         
+        </div>
+        <BottomNav />
         </div>
     );
 }

@@ -25,6 +25,7 @@ const ProfileCard = ({ user, onEditProfile, onLogout }) => {
             <p className="profile-email">
                 <i className="pi pi-envelope" style={{ marginRight: '.5em' }}></i>{email}
             </p>
+            <br />
         </Card>
     );
 };

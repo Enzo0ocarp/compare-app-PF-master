@@ -33,11 +33,7 @@ const Header = ({ projectLogo }) => {
                 <img src={projectLogo || logo} alt="Project Logo" className="header-logo" /> {/* Usa logo predeterminado si no se pasa projectLogo */}
                 <h2>Compare</h2>
             </div>
-            <nav className="header-navigation">
-                <Button label="Inicio" icon="pi pi-home" className="p-button-text" onClick={() => navigate('/')} />
-                <Button label="Explorar" icon="pi pi-compass" className="p-button-text" onClick={() => navigate('/explore')} />
-                <Button label="Favoritos" icon="pi pi-star" className="p-button-text" onClick={() => navigate('/favorites')} />
-            </nav>
+            
             <div className="header-actions">
                 <Button icon="pi pi-search" className="p-button-rounded p-button-text" tooltip="Buscar" />
                 <Button icon="pi pi-qrcode" label="Qr Code" className="p-button-rounded p-button-outlined" />
@@ -45,10 +41,10 @@ const Header = ({ projectLogo }) => {
                 {user ? (
                     <div className="header-user">
                         <span>Bienvenido, {user.displayName || "Usuario"}!</span>
-                        <Button label="Cerrar Sesión" icon="pi pi-sign-out" className="p-button-rounded p-button-danger p-button-text" onClick={handleLogout} />
+                        <Button label="Logout" icon="pi pi-sign-out" className="p-button-rounded p-button-danger p-button-text" onClick={handleLogout} />
                     </div>
                 ) : (
-                    <Button label="Iniciar Sesión" icon="pi pi-sign-in" className="p-button-rounded p-button-outlined" onClick={() => navigate('/login')} />
+                    <Button label="Log In" icon="pi pi-sign-in" className="p-button-rounded p-button-outlined" onClick={() => navigate('/login')} />
                 )}
             </div>
         </header>
