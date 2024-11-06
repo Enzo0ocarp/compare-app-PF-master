@@ -44,6 +44,7 @@ const EditProfile = ({ user, onClose }) => {
                         required
                     />
                 </div>
+               <br />
                 <div className="form-group">
                     <label>Foto de Perfil (URL)</label>
                     <InputText
@@ -52,8 +53,10 @@ const EditProfile = ({ user, onClose }) => {
                         placeholder="URL de la foto de perfil"
                     />
                 </div>
+                <br />
                 <Button label={loading ? "Cargando..." : "Actualizar"} type="submit" icon="pi pi-check" loading={loading} />
             </form>
+            <br />
             <Button label="Cerrar" icon="pi pi-times" onClick={onClose} className="p-button-secondary" />
         </div>
     );

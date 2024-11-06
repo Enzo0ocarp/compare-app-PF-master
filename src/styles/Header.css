@@ -1,0 +1,43 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background-color: var(--surface-50);
+    border-bottom: 2px solid var(--primary-300);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.5rem;
+}
+
+.header-navigation {
+    display: flex;
+    gap: 1rem;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+}

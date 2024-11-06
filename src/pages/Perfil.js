@@ -5,11 +5,14 @@ import Header from '../components/Header';
 import ProfileCard from '../components/ProfileCard';
 import BottomNav from '../components/BottomNav';
 import EditProfile from '../components/EditProfile';
+import Notification from '../components/Notification';
+import '../styles/Perfil.css';
 
 function Perfil() {
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showEditForm, setShowEditForm] = useState(false); // Estado para controlar el formulario de edición
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [notification, setNotification] = useState(null); // Estado para notificaciones
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -32,42 +35,33 @@ function Perfil() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);  // Ahora ya está definido
-      alert("¡Has cerrado sesión exitosamente!");
+      await signOut(auth);
+      setNotification({ type: 'success', message: 'Sesión cerrada exitosamente' });
     } catch (error) {
-      alert("Error al cerrar sesión: " + error.message);
+      setNotification({ type: 'error', message: `Error al cerrar sesión: ${error.message}` });
     }
   };
 
-  const handleEditProfile = () => {
-    setShowEditForm(true); // Mostrar el formulario de edición
-  };
+  const handleEditProfile = () => setShowEditForm(true);
+  const handleCloseEditForm = () => setShowEditForm(false);
 
-  const handleCloseEditForm = () => {
-    setShowEditForm(false); // Cerrar el formulario de edición
-  };
-
-  if (loading) {
-    return <div>Cargando...</div>;
-  }
-
-  if (!userInfo) {
-    return (
-      <div>
-        <p>No estás autenticado. <a href="/login">Inicia sesión aquí</a></p>
-      </div>
-    );
-  }
+  if (loading) return <div>Cargando...</div>;
 
   return (
+   <div>
+    <Header></Header>
     <div className="perfil-page">
-      <Header />
-      <section className="section profile-section">
+
+      <section className="section profile-section fade-in">
         <h3>Perfil de Usuario</h3>
         <ProfileCard user={userInfo} onEditProfile={handleEditProfile} onLogout={handleLogout} />
-        {showEditForm && <EditProfile user={userInfo} onClose={handleCloseEditForm} />}
+        {showEditForm && (
+          <EditProfile user={userInfo} onClose={handleCloseEditForm} />
+        )}
       </section>
       <BottomNav />
+      {notification && <Notification {...notification} onClose={() => setNotification(null)} />}
+    </div>
     </div>
   );
 }
