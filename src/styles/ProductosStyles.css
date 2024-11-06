@@ -3,6 +3,20 @@
     background-color: #f4f4f4;
 }
 
+.product-image {
+    width: 150px; /* Ajusta el ancho de la imagen */
+    height: 150px; /* Ajusta la altura de la imagen */
+    object-fit: cover; /* Para asegurar que la imagen ocupe el espacio completo sin deformarse */
+    border-radius: 8px; /* Opcional: redondear bordes */
+}
+
+.dialog-image {
+    width: 100%; /* La imagen ocupa el ancho completo del diálogo */
+    height: auto; /* Mantiene la proporción de la imagen */
+    max-height: 300px; /* Limita la altura máxima */
+    object-fit: cover;
+    border-radius: 8px;
+}
 .section-header {
     display: flex;
     align-items: center;

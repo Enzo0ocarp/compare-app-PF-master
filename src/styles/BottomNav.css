@@ -1,10 +1,10 @@
-/* src/styles/BottomNav.css */
+/* BottomNav Styles */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
     align-items: center;
     background-color: #ffffff;
-    padding: 1em 0;
+    padding: 0.75em 0;
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -20,13 +20,14 @@
     color: #7a7a7a;
     font-size: 0.85rem;
     position: relative;
-    transition: color 0.3s ease;
     cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .bottom-nav-item.active,
 .bottom-nav-item:hover {
     color: #42a5f5;
+    transform: scale(1.1);
 }
 
 .bottom-nav-icon {
@@ -35,7 +36,7 @@
 }
 
 .bottom-nav-item.active .bottom-nav-icon {
-    animation: bounce 0.3s ease-in-out;
+    animation: bounce 0.4s ease-in-out;
     color: #42a5f5;
 }
 
@@ -54,7 +55,7 @@
     border-radius: 2px 2px 0 0;
 }
 
-/* Animación de bounce */
+/* Bounce animation */
 @keyframes bounce {
     0%, 100% {
         transform: translateY(0);
@@ -64,7 +65,7 @@
     }
 }
 
-/* Efecto de ripple */
+/* Ripple effect */
 .bottom-nav-item::after {
     content: '';
     position: absolute;
@@ -82,4 +83,9 @@
 .bottom-nav-item:active::after {
     opacity: 1;
     transform: scale(1.2);
+}
+
+/* Padding for bottom nav to prevent overlaying content */
+body {
+    padding-bottom: 60px; /* Space for the BottomNav height */
 }
