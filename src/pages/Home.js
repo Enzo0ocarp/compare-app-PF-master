@@ -1,7 +1,6 @@
 import React from 'react';
 import Header from '../components/Header';
 import PopularProducts from '../components/PopularProducts';
-import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import AlertList from '../components/AlertList';
 import BottomNav from '../components/BottomNav';
