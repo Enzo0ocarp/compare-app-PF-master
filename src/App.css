@@ -37,3 +37,27 @@
     transform: rotate(360deg);
   }
 }
+
+@media (min-width: 769px){
+  body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0 auto;
+    padding-bottom: 60px;
+  }
+ }
+
+ @media (max-width: 768px) {
+    
+  body{
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+  }
+}
+
+

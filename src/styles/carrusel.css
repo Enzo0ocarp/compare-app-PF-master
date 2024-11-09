@@ -36,3 +36,10 @@
     color: #333;
     margin-bottom: 5px;
 }
+
+@media (max-width: 768px) {
+    .carrusel{
+        height: 500px;
+        width: 300px;
+    }
+}
