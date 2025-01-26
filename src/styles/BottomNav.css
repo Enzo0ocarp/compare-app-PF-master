@@ -86,6 +86,3 @@
 }
 
 /* Padding for bottom nav to prevent overlaying content */
-body {
-    padding-bottom: 60px; /* Space for the BottomNav height */
-}

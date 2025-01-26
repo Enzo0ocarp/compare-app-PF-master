@@ -29,7 +29,8 @@ function Nutricional() {
     return (
         <div className="nutricional-page">
             <Header />
-
+            <div className='nutricional-container'>
+            
             {/* Categorías de Productos Nutricionales */}
             <section className="section categories-section">
                 <div className="section-header">
@@ -69,8 +70,10 @@ function Nutricional() {
                     />
                 </Card>
             </section>
+            </div>
 
             <BottomNav />
+            
         </div>
     );
 }

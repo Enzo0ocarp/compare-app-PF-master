@@ -1,9 +1,14 @@
 /* src/styles/NutricionalStyles.css */
 
 .nutricional-page {
-    padding: 20px;
+    margin: 0 auto;
     background-color: #f4f8f4;
     color: #333;
+}
+
+.nutricional-container{
+    margin: 0 auto;
+    padding: 20px;
 }
 
 /* Sección de Categorías */

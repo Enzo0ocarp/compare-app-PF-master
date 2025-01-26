@@ -1,9 +1,13 @@
 /* src/styles/ReseñasStyles.css */
 
 .reseñas-page {
-    padding: 20px;
+    margin: 0 auto;
     background-color: #f4f8f4;
     color: #333;
+}
+
+.reseñas-container{
+    padding: 20px;
 }
 
 /* Título de Sección */

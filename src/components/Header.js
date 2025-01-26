@@ -36,15 +36,15 @@ const Header = ({ projectLogo }) => {
             
             <div className="header-actions">
                 <Button icon="pi pi-search" className="p-button-rounded p-button-text" tooltip="Buscar" />
-                <Button icon="pi pi-qrcode" label="Qr Code" className="p-button-rounded p-button-outlined" />
+                <Button icon="pi pi-qrcode" className="p-button-rounded p-button-outlined" />
                 <Button icon={darkMode ? "pi pi-sun" : "pi pi-moon"} className="p-button-rounded p-button-text" onClick={toggleTheme} tooltip="Cambiar tema" />
                 {user ? (
                     <div className="header-user">
                         <span>Bienvenido, {user.displayName || "Usuario"}!</span>
-                        <Button label="Logout" icon="pi pi-sign-out" className="p-button-rounded p-button-danger p-button-text" onClick={handleLogout} />
+                        <Button icon="pi pi-sign-out" className="p-button-rounded p-button-danger p-button-text" onClick={handleLogout} />
                     </div>
                 ) : (
-                    <Button label="Log In" icon="pi pi-sign-in" className="p-button-rounded p-button-outlined" onClick={() => navigate('/login')} />
+                    <Button icon="pi pi-sign-in" className="p-button-rounded p-button-outlined" onClick={() => navigate('/login')} />
                 )}
             </div>
         </header>

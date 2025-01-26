@@ -20,7 +20,7 @@ function Reseñas() {
     return (
         <div className="reseñas-page">
             <Header />
-            
+            <div className='reseñas-container'>
             {/* Sección de Reseñas */}
             <section className="section reviews-section">
                 <h2 className="section-title">Reseñas de Clientes</h2>
@@ -43,7 +43,7 @@ function Reseñas() {
                     <Button label="Escribir una Reseña" icon="pi pi-pencil" className="p-button-rounded p-button-success add-review-btn" />
                 </div>
             </section>
-
+            </div>
             <BottomNav />
         </div>
     );

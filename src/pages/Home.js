@@ -25,7 +25,7 @@ function Home() {
     ];
 
     return (
-        <div>
+        <div className='home-page'>
 <Header />
         <div className="home-container">
             

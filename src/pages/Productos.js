@@ -45,6 +45,8 @@ function Productos() {
     return (
         <div className="productos-page">
             <Header />
+            <div className='products-container'>
+            
 
             <section className="products-section">
                 <div className="section-header">
@@ -120,7 +122,9 @@ function Productos() {
                 )}
             </Dialog>
 
+            </div>
             <BottomNav />
+
         </div>
     );
 }
