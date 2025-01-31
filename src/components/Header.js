@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
-import { auth, signOut } from '../firebaseConfig';
+import { auth } from '../backend/functions/firebaseConfig'; // Configuración de Firebase
 import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth'; // 🔥 Importación necesaria
 import logo from '../img/logo.jpg'; // Importa el logo predeterminado
 import '../styles/Header.css';
 
@@ -23,14 +24,18 @@ const Header = ({ projectLogo }) => {
     };
 
     const handleLogout = async () => {
-        await signOut(auth);
-        navigate('/login');
+        try {
+            await signOut(auth); // ✅ Ahora está definido
+            navigate('/login');
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+        }
     };
 
     return (
         <header className="header-container">
             <div className="header-left">
-                <img src={projectLogo || logo} alt="Project Logo" className="header-logo" /> {/* Usa logo predeterminado si no se pasa projectLogo */}
+                <img src={projectLogo || logo} alt="Project Logo" className="header-logo" />
                 <h2>Compare</h2>
             </div>
             

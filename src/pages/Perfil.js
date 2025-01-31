@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { auth, signOut } from '../firebaseConfig';
-import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../backend/functions/firebaseConfig'; 
+import { onAuthStateChanged, signOut } from 'firebase/auth'; // 🔥 Importación necesaria
 import Header from '../components/Header';
 import ProfileCard from '../components/ProfileCard';
 import BottomNav from '../components/BottomNav';
@@ -12,7 +12,7 @@ function Perfil() {
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [notification, setNotification] = useState(null); // Estado para notificaciones
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -35,7 +35,7 @@ function Perfil() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await signOut(auth); // ✅ Ahora está definido
       setNotification({ type: 'success', message: 'Sesión cerrada exitosamente' });
     } catch (error) {
       setNotification({ type: 'error', message: `Error al cerrar sesión: ${error.message}` });
@@ -49,20 +49,17 @@ function Perfil() {
 
   return (
    <div>
-    <Header></Header>
+    <Header />
     <div className="perfil-page">
-
       <section className="section profile-section fade-in">
         <h3>Perfil de Usuario</h3>
         <ProfileCard user={userInfo} onEditProfile={handleEditProfile} onLogout={handleLogout} />
-        {showEditForm && (
-          <EditProfile user={userInfo} onClose={handleCloseEditForm} />
-        )}
+        {showEditForm && <EditProfile user={userInfo} onClose={handleCloseEditForm} />}
       </section>
       <BottomNav />
       {notification && <Notification {...notification} onClose={() => setNotification(null)} />}
     </div>
-    </div>
+   </div>
   );
 }
 
