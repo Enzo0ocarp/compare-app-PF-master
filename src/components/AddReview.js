@@ -2,6 +2,7 @@
 import React from 'react';
 
 const AddReview = ({
+  products,
   selectedProductId,
   onProductIdChange,
   newReviewText,
@@ -13,14 +14,19 @@ const AddReview = ({
 }) => {
     return (
         <div className="add-review-form">
-            <label htmlFor="productId">ID del Producto:</label>
-            <input
-                type="text"
+            <label htmlFor="productId">Seleccionar Producto:</label>
+            <select
                 id="productId"
                 value={selectedProductId}
                 onChange={(e) => onProductIdChange(e.target.value)}
-                placeholder="Escribe el ID del producto"
-            />
+            >
+                <option value="">Seleccione un producto</option>
+                {products.map((product) => (
+                    <option key={product.id} value={product.id}>
+                        {product.title}
+                    </option>
+                ))}
+            </select>
 
             <label htmlFor="reviewText">Tu Reseña:</label>
             <textarea
@@ -28,13 +34,14 @@ const AddReview = ({
                 value={newReviewText}
                 onChange={(e) => onReviewTextChange(e.target.value)}
                 placeholder="Escribe tu reseña"
+                rows="5"
             />
 
             <label htmlFor="rating">Calificación:</label>
             <select
                 id="rating"
                 value={rating}
-                onChange={(e) => onRatingChange(parseInt(e.target.value))}
+                onChange={(e) => onRatingChange(Number(e.target.value))}
             >
                 <option value={0}>Seleccione una calificación</option>
                 {[1, 2, 3, 4, 5].map((rate) => (
@@ -45,10 +52,18 @@ const AddReview = ({
             </select>
 
             <div className="form-actions">
-                <button className="submit-btn" onClick={onSubmit}>
+                <button 
+                    type="button" 
+                    className="submit-btn"
+                    onClick={onSubmit}
+                >
                     Enviar Reseña
                 </button>
-                <button className="cancel-btn" onClick={onCancel}>
+                <button 
+                    type="button" 
+                    className="cancel-btn"
+                    onClick={onCancel}
+                >
                     Cancelar
                 </button>
             </div>
