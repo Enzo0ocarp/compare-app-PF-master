@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from '../backend/functions/firebaseConfig'; // Configuración de Firebase // Configuración de Firebase
+import { auth } from '../functions/src/firebaseConfig'; // 🔥 Importación necesaria
 
 const PrivateRoute = ({ element: Element, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(null);

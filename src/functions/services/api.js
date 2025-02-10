@@ -1,6 +1,6 @@
 // src/services/api.js
 import axios from 'axios';
-import { auth } from '../functions/firebaseConfig';
+import { auth } from '../src/firebaseConfig'; // 🔥 Importación necesaria
 
 // Configuración para Fake Store API
 const fakestoreApi = axios.create({

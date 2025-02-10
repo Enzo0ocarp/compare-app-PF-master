@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { updateProfile } from 'firebase/auth';
-import { auth } from '../backend/functions/firebaseConfig'; // Configuración de Firebase
+import { auth } from '../functions/src/firebaseConfig'; // 🔥 Importación necesaria
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';

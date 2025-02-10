@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
-import { auth } from '../../functions/backend/functions/firebaseConfig'; // Configuración de Firebase
+import { auth } from '../functions/src/firebaseConfig'; // 🔥 Importación necesaria
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth'; // 🔥 Importación necesaria
 import logo from '../img/logo.jpg'; // Importa el logo predeterminado

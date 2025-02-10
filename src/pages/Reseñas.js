@@ -5,7 +5,7 @@ import BottomNav from '../components/BottomNav';
 import ReviewList from '../components/ReviewList';
 import AddReview from '../components/AddReview';
 import { getAuth } from 'firebase/auth';
-import { getProductsByCategory, addReview, getReviews } from '../../functions/backend/services/api';
+import { getProductsByCategory, addReview, getReviews } from '../functions/services/api';
 import '../styles/ReseñasStyles.css';
 
 function Reseñas() {

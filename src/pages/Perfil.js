@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from '../backend/functions/firebaseConfig'; 
+import { auth } from '../functions/src/firebaseConfig'; // 🔥 Importación necesaria
 import { onAuthStateChanged, signOut } from 'firebase/auth'; // 🔥 Importación necesaria
 import Header from '../components/Header';
 import ProfileCard from '../components/ProfileCard';
