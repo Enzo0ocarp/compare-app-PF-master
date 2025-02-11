@@ -9,134 +9,114 @@ import { getProductsByCategory, addReview, getReviews } from '../functions/servi
 import '../styles/ReseñasStyles.css';
 
 function Reseñas() {
-    const [reviews, setReviews] = useState([]);
-    const [products, setProducts] = useState([]);
-    const [showForm, setShowForm] = useState(false);
-    const [selectedProductId, setSelectedProductId] = useState('');
-    const [newReviewText, setNewReviewText] = useState('');
-    const [rating, setRating] = useState(0);
-    
-    const currentUser = getAuth().currentUser;
+  const [reviews, setReviews] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState('');
+  const [newReviewText, setNewReviewText] = useState('');
+  const [rating, setRating] = useState(0);
 
-    useEffect(() => {
-        // Cargar productos y reviews al iniciar
-        const loadInitialData = async () => {
-            try {
-                // 1. Cargar productos electrónicos
-                const electronicProducts = await getProductsByCategory('electronics');
-                setProducts(electronicProducts);
-                
-                // 2. Cargar reviews locales
-                const storedReviews = localStorage.getItem('reviews');
-                const localReviews = storedReviews ? JSON.parse(storedReviews) : [];
-                
-                // 3. Cargar reviews de API
-                const apiReviews = await getReviews();
-                
-                // Combinar todas las reviews
-                setReviews([...localReviews, ...apiReviews]);
-                
-            } catch (error) {
-                console.error('Error cargando datos iniciales:', error);
-            }
-        };
-        
-        loadInitialData();
-    }, []);
+  const currentUser = getAuth().currentUser;
 
-    const handleAddReview = async () => {
-        if (!currentUser) {
-            alert('Debe iniciar sesión para dejar una reseña');
-            return;
-        }
-        
-        if (!selectedProductId || !newReviewText || !rating) {
-            alert('Por favor complete todos los campos.');
-            return;
-        }
+  useEffect(() => {
+    // Cargar productos y reseñas al iniciar
+    const loadInitialData = async () => {
+      try {
+        const electronicProducts = await getProductsByCategory('electronics');
+        setProducts(electronicProducts);
 
-        const newReview = {
-            productId: selectedProductId,
-            reviewText: newReviewText,
-            rating,
-            userId: currentUser.uid,
-            username: currentUser.displayName || 'Anónimo',
-            createdAt: new Date().toISOString(),
-        };
+        // Obtener reseñas desde la API
+        const apiReviews = await getReviews();
+        setReviews(apiReviews);
+      } catch (error) {
+        console.error('Error cargando datos iniciales:', error);
+      }
+    };
+    loadInitialData();
+  }, []);
 
-        try {
-            // 1. Guardar en API
-            await addReview({
-                productId: selectedProductId,
-                comment: newReviewText,
-                rating,
-                userId: currentUser.uid
-            });
-            
-            // 2. Actualizar estado local
-            const updatedReviews = [newReview, ...reviews];
-            setReviews(updatedReviews);
-            
-            // 3. Guardar en localStorage como respaldo
-            localStorage.setItem('reviews', JSON.stringify(updatedReviews));
-            
-            setShowForm(false);
-            resetForm();
-            
-        } catch (error) {
-            console.error('Error al guardar reseña:', error);
-            alert('Error al guardar la reseña. Se guardará localmente.');
-            
-            // Fallback: Guardar solo localmente
-            const localUpdated = [newReview, ...reviews];
-            setReviews(localUpdated);
-            localStorage.setItem('reviews', JSON.stringify(localUpdated));
-        }
+  const handleAddReview = async () => {
+    if (!selectedProductId || !newReviewText || !rating) {
+      alert('Por favor complete todos los campos.');
+      return;
+    }
+
+    // Si el usuario no está autenticado, se envía userId como null para que se registre como "Anónimo"
+    const reviewPayload = {
+      productId: selectedProductId,
+      comment: newReviewText,
+      rating,
+      userId: currentUser ? currentUser.uid : null
     };
 
-    const resetForm = () => {
-        setSelectedProductId('');
-        setNewReviewText('');
-        setRating(0);
-    };
+    try {
+      // Guardar en API
+      const savedReview = await addReview(reviewPayload);
 
-    return (
-        <div className="reseñas-page">
-            <Header />
-            <div className='reseñas-container'>
-                <h2 className="section-title">Reseñas de Clientes</h2>
-                <ReviewList 
-                    reviews={reviews} 
-                    products={products} 
-                />
+      // Actualizar estado con la nueva reseña
+      setReviews(prevReviews => [savedReview, ...prevReviews]);
 
-                <button 
-                    className="add-review-btn" 
-                    onClick={() => setShowForm(true)}
-                >
-                    Escribir una Reseña
-                </button>
+      // Opcional: guardar en localStorage como respaldo
+      localStorage.setItem('reviews', JSON.stringify([savedReview, ...reviews]));
 
-                {showForm && (
-                    <AddReview
-                        products={products}
-                        selectedProductId={selectedProductId}
-                        onProductIdChange={setSelectedProductId}
-                        newReviewText={newReviewText}
-                        onReviewTextChange={setNewReviewText}
-                        rating={rating}
-                        onRatingChange={setRating}
-                        onSubmit={handleAddReview}
-                        onCancel={() => {
-                            setShowForm(false);
-                            resetForm();
-                        }}
-                    />
-                )}
-            </div>
-            <BottomNav />
-        </div>
-    );
+      setShowForm(false);
+      resetForm();
+    } catch (error) {
+      console.error('Error al guardar reseña:', error);
+      alert('Error al guardar la reseña. Se guardará localmente.');
+
+      // Fallback: guardar en localStorage
+      const newReview = {
+        productId: selectedProductId,
+        comment: newReviewText,
+        rating,
+        userId: currentUser ? currentUser.uid : null,
+        username: currentUser ? currentUser.displayName || 'Anónimo' : 'Anónimo',
+        createdAt: new Date().toISOString(),
+      };
+      const updatedReviews = [newReview, ...reviews];
+      setReviews(updatedReviews);
+      localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+    }
+  };
+
+  const resetForm = () => {
+    setSelectedProductId('');
+    setNewReviewText('');
+    setRating(0);
+  };
+
+  return (
+    <div className="reseñas-page">
+      <Header />
+      <div className="reseñas-container">
+        <h2 className="section-title">Reseñas de Clientes</h2>
+        <ReviewList reviews={reviews} products={products} />
+
+        <button className="add-review-btn" onClick={() => setShowForm(true)}>
+          Escribir una Reseña
+        </button>
+
+        {showForm && (
+          <AddReview
+            products={products}
+            selectedProductId={selectedProductId}
+            onProductIdChange={setSelectedProductId}
+            newReviewText={newReviewText}
+            onReviewTextChange={setNewReviewText}
+            rating={rating}
+            onRatingChange={setRating}
+            onSubmit={handleAddReview}
+            onCancel={() => {
+              setShowForm(false);
+              resetForm();
+            }}
+          />
+        )}
+      </div>
+      <BottomNav />
+    </div>
+  );
 }
 
 export default Reseñas;

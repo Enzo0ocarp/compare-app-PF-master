@@ -1,6 +1,6 @@
 // src/services/api.js
 import axios from 'axios';
-import { auth } from '../src/firebaseConfig'; // 🔥 Importación necesaria
+import { auth } from '../src/firebaseConfig';
 
 // Configuración para Fake Store API
 const fakestoreApi = axios.create({
@@ -14,7 +14,7 @@ const firebaseApi = axios.create({
   timeout: 15000
 });
 
-// Interceptor para Firebase
+// Interceptor para Firebase: agrega token si el usuario está autenticado
 firebaseApi.interceptors.request.use(async (config) => {
   const user = auth.currentUser;
   if (user) {
@@ -36,9 +36,11 @@ export const getProductsByCategory = async (category) => {
 };
 
 // Funciones para reseñas (Firebase Functions)
-export const getReviews = async () => {
+export const getReviews = async (productId = null) => {
   try {
-    const response = await firebaseApi.get('/reviews');
+    // Se envía productId como query parameter si es necesario
+    const url = productId ? `/reviews?productId=${productId}` : '/reviews';
+    const response = await firebaseApi.get(url);
     return response.data;
   } catch (error) {
     console.error('Error obteniendo reseñas:', error);
@@ -48,12 +50,8 @@ export const getReviews = async () => {
 
 export const addReview = async (reviewData) => {
   try {
-    const response = await firebaseApi.post('/reviews', {
-      productId: reviewData.productId,
-      userId: reviewData.userId,
-      rating: reviewData.rating,
-      comment: reviewData.reviewText
-    });
+    // Se espera que reviewData incluya: productId, rating, comment y opcionalmente userId
+    const response = await firebaseApi.post('/reviews', reviewData);
     return response.data;
   } catch (error) {
     console.error('Error agregando reseña:', error);
