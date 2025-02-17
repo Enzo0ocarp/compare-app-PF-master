@@ -2,13 +2,13 @@
 import axios from 'axios';
 import { auth } from '../src/firebaseConfig';
 
-// Configuración para Fake Store API
-const fakestoreApi = axios.create({
-  baseURL: 'https://fakestoreapi.com',
+// Configuración para Open Food Facts API (para productos de supermercado)
+const openFoodFactsApi = axios.create({
+  baseURL: 'https://world.openfoodfacts.org',
   timeout: 10000
 });
 
-// Configuración para Firebase Functions
+// Configuración para Firebase Functions (para reseñas)
 const firebaseApi = axios.create({
   baseURL: 'https://us-central1-compareapp-43d31.cloudfunctions.net/api',
   timeout: 15000
@@ -24,13 +24,19 @@ firebaseApi.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Función para obtener productos por categoría (Fake Store API)
-export const getProductsByCategory = async (category) => {
+// Función para obtener todos los productos de supermercado usando Open Food Facts
+export const getAllSupermarketProducts = async () => {
   try {
-    const response = await fakestoreApi.get(`/products/category/${category}`);
-    return response.data;
+    // Usamos el endpoint /search.json para obtener una lista de productos (limitamos a 100 para ejemplo)
+    const response = await openFoodFactsApi.get('/search.json', {
+      params: {
+        page_size: 100,
+        fields: 'id,product_name,brands,image_front_small_url,categories'
+      }
+    });
+    return response.data.products;
   } catch (error) {
-    console.error('Error obteniendo productos:', error);
+    console.error('Error obteniendo productos de supermercado:', error);
     throw error;
   }
 };
@@ -38,7 +44,6 @@ export const getProductsByCategory = async (category) => {
 // Funciones para reseñas (Firebase Functions)
 export const getReviews = async (productId = null) => {
   try {
-    // Se envía productId como query parameter si es necesario
     const url = productId ? `/reviews?productId=${productId}` : '/reviews';
     const response = await firebaseApi.get(url);
     return response.data;
@@ -50,8 +55,12 @@ export const getReviews = async (productId = null) => {
 
 export const addReview = async (reviewData) => {
   try {
-    // Se espera que reviewData incluya: productId, rating, comment y opcionalmente userId
-    const response = await firebaseApi.post('/reviews', reviewData);
+    const response = await firebaseApi.post('/reviews', {
+      productId: reviewData.productId,
+      userId: reviewData.userId,
+      rating: reviewData.rating,
+      comment: reviewData.reviewText
+    });
     return response.data;
   } catch (error) {
     console.error('Error agregando reseña:', error);

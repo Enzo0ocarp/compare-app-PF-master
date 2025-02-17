@@ -1,15 +1,30 @@
+// src/components/ProductCard.js
 import React from 'react';
 import { Card } from 'primereact/card';
-import { Badge } from 'primereact/badge';
+import { Button } from 'primereact/button';
+import '../styles/ProductCard.css';
 
-const ProductCard = ({ name, image, trend }) => {
-    return (
-        <Card className="product-card">
-            <img src={image} alt={name} className="product-image" />
-            <h4>{name}</h4>
-            <Badge value={trend} severity="success" />
-        </Card>
-    );
+const ProductCard = ({ product }) => {
+  // Si product es undefined, asignamos un objeto vacío para evitar errores.
+  const { product_name, brands, image_front_small_url, categories } = product || {};
+
+  return (
+    <Card
+      title={product_name || "Producto sin nombre"}
+      subTitle={brands || "Sin marca"}
+      header={
+        <img
+          alt={product_name || "Producto sin nombre"}
+          src={image_front_small_url || '/default-product.jpg'}
+          style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+        />
+      }
+      className="product-card"
+    >
+      <p>{categories || "Sin categorías"}</p>
+      <Button label="Ver detalles" className="p-button-text" onClick={() => console.log('Ver detalles')} />
+    </Card>
+  );
 };
 
 export default ProductCard;
