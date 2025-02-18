@@ -27,7 +27,7 @@ firebaseApi.interceptors.request.use(async (config) => {
 // Función para obtener todos los productos de supermercado usando Open Food Facts
 export const getAllSupermarketProducts = async () => {
   try {
-    // Usamos el endpoint /search.json para obtener una lista de productos (limitamos a 100 para ejemplo)
+    // Usamos el endpoint /search.json para obtener una lista de productos (limitamos a 100 para este ejemplo)
     const response = await openFoodFactsApi.get('/search.json', {
       params: {
         page_size: 100,
