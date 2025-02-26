@@ -6,7 +6,7 @@ import BottomNav from '../components/BottomNav';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { getAllSupermarketProducts } from '../functions/services/api';
+import { getAllStoreProducts } from '../functions/services/api';
 import '../styles/ProductosStyles.css';
 
 function Productos() {
@@ -20,14 +20,14 @@ function Productos() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getAllSupermarketProducts();
+        const data = await getAllStoreProducts();
         setProducts(data);
         setFilteredProducts(data);
         // Extraer categorías únicas de los productos
         const catsSet = new Set();
         data.forEach(product => {
-          if (product.categories) {
-            product.categories.split(',').forEach(cat => catsSet.add(cat.trim()));
+          if (product.category) {
+            catsSet.add(product.category);
           }
         });
         setCategories([{ label: 'Todos', value: null }, ...Array.from(catsSet).map(cat => ({ label: cat, value: cat }))]);
@@ -42,13 +42,12 @@ function Productos() {
     let filtered = products;
     if (selectedCategory) {
       filtered = filtered.filter(product =>
-        product.categories &&
-        product.categories.split(',').map(c => c.trim()).includes(selectedCategory)
+        product.category && product.category === selectedCategory
       );
     }
     if (searchTerm) {
       filtered = filtered.filter(product =>
-        product.product_name && product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
+        product.title && product.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     setFilteredProducts(filtered);

@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/ProductCard.css';
 
 const ProductCard = ({ product }) => {
-  // Si product es undefined, usamos un objeto vacío para evitar errores.
-  const { product_name, brands, image_front_small_url, categories } = product || {};
+  // Se desestructuran las propiedades de Fake Store API
+  const { title, category, image, price, description } = product || {};
   const [showDialog, setShowDialog] = useState(false);
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
   };
 
   const handleAddReview = () => {
-    // Navega a la página de reseñas con el ID del producto como query param.
+    // Navega a la página de reseñas con el ID del producto como query param
     navigate(`/reseñas?productId=${product.id}`);
   };
 
@@ -35,35 +35,35 @@ const ProductCard = ({ product }) => {
   return (
     <>
       <Card
-        title={product_name || "Producto sin nombre"}
-        subTitle={brands || "Sin marca"}
+        title={title || "Producto sin nombre"}
+        subTitle={category || "Sin categoría"}
         header={
           <img
-            alt={product_name || "Producto sin nombre"}
-            src={image_front_small_url || '/default-product.jpg'}
+            alt={title || "Producto sin nombre"}
+            src={image || '/default-product.jpg'}
             className="product-image"
           />
         }
         className="product-card"
       >
-        <p className="product-categories">{categories || "Sin categorías"}</p>
+        <p className="product-price">${price}</p>
         <div className="product-card-footer">
           <Button label="Ver Detalles" icon="pi pi-info-circle" onClick={openDetails} className="product-btn-details" />
           <Button label="Agregar Reseña" icon="pi pi-pencil" onClick={handleAddReview} className="product-btn-review" />
         </div>
       </Card>
 
-      <Dialog header={product_name || "Detalles del Producto"} visible={showDialog} style={{ width: '400px' }} footer={dialogFooter} onHide={closeDetails} className="product-dialog">
+      <Dialog header={title || "Detalles del Producto"} visible={showDialog} style={{ width: '400px' }} footer={dialogFooter} onHide={closeDetails} className="product-dialog">
         <div className="dialog-content">
           <img
-            alt={product_name || "Producto sin nombre"}
-            src={image_front_small_url || '/default-product.jpg'}
+            alt={title || "Producto sin nombre"}
+            src={image || '/default-product.jpg'}
             className="dialog-image"
           />
-          <h4>{product_name || "Producto sin nombre"}</h4>
-          <p><strong>Marca:</strong> {brands || "Sin marca"}</p>
-          <p><strong>Categorías:</strong> {categories || "Sin categorías"}</p>
-          {/* Aquí puedes agregar más campos si la API lo proporciona */}
+          <h4>{title || "Producto sin nombre"}</h4>
+          <p><strong>Categoría:</strong> {category || "Sin categoría"}</p>
+          <p><strong>Precio:</strong> ${price}</p>
+          <p><strong>Descripción:</strong> {description || "Sin descripción"}</p>
         </div>
       </Dialog>
     </>

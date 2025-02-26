@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import AlertList from '../components/AlertList';
 import BottomNav from '../components/BottomNav';
-import { getAllSupermarketProducts } from '../functions/services/api';
+import { getAllStoreProducts } from '../functions/services/api';
 import { Link } from 'react-router-dom';
 import '../styles/HomeStyles.css';
 
@@ -29,7 +29,7 @@ function Home() {
   useEffect(() => {
     const fetchRandomProducts = async () => {
       try {
-        const products = await getAllSupermarketProducts();
+        const products = await getAllStoreProducts();
         // Desordenar y seleccionar 5 productos aleatorios
         const shuffled = products.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 5);
@@ -48,7 +48,6 @@ function Home() {
     <div className='home-page'>
       <Header />
       <div className="home-container">
-        
         {/* Sección de Productos Destacados */}
         <section className="section random-products-section">
           <div className="section-header">

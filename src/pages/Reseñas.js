@@ -5,7 +5,7 @@ import BottomNav from '../components/BottomNav';
 import ReviewList from '../components/ReviewList';
 import AddReview from '../components/AddReview';
 import { getAuth } from 'firebase/auth';
-import { getAllSupermarketProducts, addReview, getReviews } from '../functions/services/api';
+import { getAllStoreProducts, addReview, getReviews } from '../functions/services/api';
 import '../styles/ReseñasStyles.css';
 
 function Reseñas() {
@@ -22,7 +22,7 @@ function Reseñas() {
     // Cargar productos y reseñas al iniciar
     const loadInitialData = async () => {
       try {
-        const allProducts = await getAllSupermarketProducts();
+        const allProducts = await getAllStoreProducts();
         setProducts(allProducts);
 
         const apiReviews = await getReviews();

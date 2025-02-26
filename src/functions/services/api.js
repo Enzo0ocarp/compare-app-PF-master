@@ -2,9 +2,9 @@
 import axios from 'axios';
 import { auth } from '../src/firebaseConfig';
 
-// Configuración para Open Food Facts API (para productos de supermercado)
-const openFoodFactsApi = axios.create({
-  baseURL: 'https://world.openfoodfacts.org',
+// Configuración para Fake Store API
+const fakeStoreApi = axios.create({
+  baseURL: 'https://fakestoreapi.com',
   timeout: 10000
 });
 
@@ -24,19 +24,13 @@ firebaseApi.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Función para obtener todos los productos de supermercado usando Open Food Facts
-export const getAllSupermarketProducts = async () => {
+// Función para obtener todos los productos de Fake Store API
+export const getAllStoreProducts = async () => {
   try {
-    // Usamos el endpoint /search.json para obtener una lista de productos (limitamos a 100 para este ejemplo)
-    const response = await openFoodFactsApi.get('/search.json', {
-      params: {
-        page_size: 100,
-        fields: 'id,product_name,brands,image_front_small_url,categories'
-      }
-    });
-    return response.data.products;
+    const response = await fakeStoreApi.get('/products');
+    return response.data; // La API devuelve un array de productos
   } catch (error) {
-    console.error('Error obteniendo productos de supermercado:', error);
+    console.error('Error obteniendo productos de Fake Store API:', error);
     throw error;
   }
 };
