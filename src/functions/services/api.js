@@ -53,7 +53,7 @@ export const addReview = async (reviewData) => {
       productId: reviewData.productId,
       userId: reviewData.userId,
       rating: reviewData.rating,
-      comment: reviewData.reviewText
+      comment: reviewData.comment  // Usamos "comment" en vez de reviewText
     });
     return response.data;
   } catch (error) {

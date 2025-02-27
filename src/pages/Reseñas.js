@@ -41,7 +41,7 @@ function Reseñas() {
 
     const reviewPayload = {
       productId: selectedProductId,
-      comment: newReviewText,
+      comment: newReviewText, // Asegurarse de enviar "comment"
       rating,
       userId: currentUser ? currentUser.uid : null
     };

@@ -14,33 +14,31 @@ app.use(express.json());
 // Ruta GET para obtener todas (o por producto) las reseñas
 app.get("/reviews", async (req, res) => {
   try {
-    // Si se envía productId como query parameter, filtra por él
     const { productId } = req.query;
     let query = db.collection("reviews");
     if (productId) {
       query = query.where("productId", "==", productId);
     }
-
     const snapshot = await query.get();
-    const reviews = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt ? doc.data().createdAt.toDate().toISOString() : null
-    }));
-
+    const reviews = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
+      };
+    });
     res.status(200).json(reviews);
   } catch (error) {
     console.error("Error obteniendo reseñas:", error);
-    res.status(500).send("Error obteniendo reseñas");
+    res.status(500).json({ error: "Error obteniendo reseñas", details: error.message });
   }
 });
 
 // Ruta POST para crear una reseña
 app.post("/reviews", async (req, res) => {
   try {
-    const { productId, userId, rating, comment } = req.body;
-    
-    // Validar campos mínimos
+    const { productId, userId, rating, comment } = req.body; // Nota: usamos "comment" directamente
     if (!productId || !rating || !comment) {
       return res.status(400).json({ error: "Faltan datos requeridos" });
     }
@@ -48,15 +46,13 @@ app.post("/reviews", async (req, res) => {
     let username = "Anónimo";
     if (userId) {
       try {
-        // Espera la obtención de los datos del usuario y asigna displayName
         const userRecord = await admin.auth().getUser(userId);
         username = userRecord.displayName || "Anónimo";
       } catch (error) {
         console.error("Error obteniendo información del usuario:", error);
-        // Si falla, se asigna "Anónimo"
       }
     }
-    
+
     const newReview = {
       productId,
       userId: userId || null,
@@ -67,13 +63,15 @@ app.post("/reviews", async (req, res) => {
     };
 
     const docRef = await db.collection("reviews").add(newReview);
-
-    // Respuesta rápida, se formatea createdAt como ISO si es posible
-    res.status(201).json({
+    // Obtenemos el documento recién creado para incluir la fecha correcta
+    const docSnap = await docRef.get();
+    const savedReview = {
       id: docRef.id,
-      ...newReview,
-      createdAt: new Date().toISOString()
-    });
+      ...docSnap.data(),
+      createdAt: docSnap.data().createdAt.toDate().toISOString()
+    };
+
+    res.status(201).json(savedReview);
     
   } catch (error) {
     console.error("Error creando reseña:", error);
