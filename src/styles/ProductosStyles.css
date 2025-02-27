@@ -150,3 +150,22 @@
         transform: scale(1);
     }
 }
+
+@media (max-width: 768px) {
+
+    .category-dropdown{
+        width: 150px;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 5px;
+    }
+
+    .products-container{
+        margin: 0 auto;
+        padding: 2px;
+    }
+}
+

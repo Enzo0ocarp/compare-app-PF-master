@@ -23,7 +23,7 @@
     margin-bottom: 15px;
   }
 
-  .register-form .form-group input{
+  .register-form .form-group .form-input{
     width: 360px;
   }
   
@@ -91,7 +91,17 @@
     width: 90%;
   }
 
-  .register-form .form-group input{
+  .register-form .form-group .form-input{
     width: 90%;
+  }
+
+  .p-password{
+    display:block;
+    width: 90%;
+    overflow: hidden;
+  }
+
+  .p-password-input{
+    width: 100%;
   }
 }
