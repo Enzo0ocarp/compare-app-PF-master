@@ -1,5 +1,6 @@
 // src/pages/Reseñas.js
 import React, { useState, useEffect } from 'react';
+import { Dialog } from 'primereact/dialog';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
 import ReviewList from '../components/ReviewList';
@@ -19,12 +20,10 @@ function Reseñas() {
   const currentUser = getAuth().currentUser;
 
   useEffect(() => {
-    // Cargar productos y reseñas al iniciar
     const loadInitialData = async () => {
       try {
         const allProducts = await getAllStoreProducts();
         setProducts(allProducts);
-
         const apiReviews = await getReviews();
         setReviews(apiReviews);
       } catch (error) {
@@ -49,13 +48,16 @@ function Reseñas() {
 
     try {
       const savedReview = await addReview(reviewPayload);
-      setReviews(prevReviews => [savedReview, ...prevReviews]);
-      localStorage.setItem('reviews', JSON.stringify([savedReview, ...reviews]));
+      setReviews(prev => [savedReview, ...prev]);
       setShowForm(false);
       resetForm();
     } catch (error) {
       console.error('Error al guardar reseña:', error);
-      alert('Error al guardar la reseña. Se guardará localmente.');
+      const errorDetails =
+        error.response && error.response.data && error.response.data.details
+          ? error.response.data.details
+          : '';
+      alert(`Error al guardar la reseña. ${errorDetails}\nSe guardará localmente.`);
       const newReview = {
         productId: selectedProductId,
         comment: newReviewText,
@@ -64,9 +66,7 @@ function Reseñas() {
         username: currentUser ? currentUser.displayName || 'Anónimo' : 'Anónimo',
         createdAt: new Date().toISOString(),
       };
-      const updatedReviews = [newReview, ...reviews];
-      setReviews(updatedReviews);
-      localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+      setReviews(prev => [newReview, ...prev]);
     }
   };
 
@@ -75,6 +75,24 @@ function Reseñas() {
     setNewReviewText('');
     setRating(0);
   };
+
+  const dialogFooter = (
+    <div className="form-actions">
+      <button type="button" className="submit-btn" onClick={handleAddReview}>
+        Enviar Reseña
+      </button>
+      <button
+        type="button"
+        className="cancel-btn"
+        onClick={() => {
+          setShowForm(false);
+          resetForm();
+        }}
+      >
+        Cancelar
+      </button>
+    </div>
+  );
 
   return (
     <div className="reseñas-page">
@@ -85,23 +103,28 @@ function Reseñas() {
         <button className="add-review-btn" onClick={() => setShowForm(true)}>
           Escribir una Reseña
         </button>
-        {showForm && (
-          <AddReview
-            products={products}
-            selectedProductId={selectedProductId}
-            onProductIdChange={setSelectedProductId}
-            newReviewText={newReviewText}
-            onReviewTextChange={setNewReviewText}
-            rating={rating}
-            onRatingChange={setRating}
-            onSubmit={handleAddReview}
-            onCancel={() => {
-              setShowForm(false);
-              resetForm();
-            }}
-          />
-        )}
       </div>
+      <Dialog
+        header="Agregar Reseña"
+        visible={showForm}
+        style={{ width: '500px' }}
+        footer={dialogFooter}
+        onHide={() => {
+          setShowForm(false);
+          resetForm();
+        }}
+        className="review-dialog"
+      >
+        <AddReview
+          products={products}
+          selectedProductId={selectedProductId}
+          onProductIdChange={setSelectedProductId}
+          newReviewText={newReviewText}
+          onReviewTextChange={setNewReviewText}
+          rating={rating}
+          onRatingChange={setRating}
+        />
+      </Dialog>
       <BottomNav />
     </div>
   );
