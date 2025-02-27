@@ -1,8 +1,7 @@
 /* Estilos generales */
 .home-container {
     margin: 0 auto;
-    padding: 20px;
-    overflow: hidden;
+    padding: 20px 20px 100px;
 }
 
 .section {

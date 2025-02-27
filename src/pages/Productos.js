@@ -95,12 +95,14 @@ function Productos() {
         <div className="products-grid">
           {filteredProducts.map(product => (
             <div key={product.id} className="product-wrapper">
-              <ProductCard product={product} />
               <Button
                 icon={favoriteProducts.includes(product.id) ? "pi pi-heart" : "pi pi-heart-o"}
                 onClick={() => toggleFavorite(product.id)}
                 className="favorite-btn p-button-rounded"
+                style={{color: 'black'}}
               />
+              <ProductCard product={product} />
+              
             </div>
           ))}
         </div>
