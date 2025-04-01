@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
       >
         <p className="product-price">${price}</p>
         <div className="product-card-footer">
-          <Button label="Ver Detalles" icon="pi pi-info-circle" onClick={openDetails} className="product-btn-details" />
+          <Button label="Ver Detalles" title="Ver Detalles" icon="pi pi-info-circle" onClick={openDetails} className="product-btn-details" />
           <Button label="Agregar Reseña" icon="pi pi-pencil" onClick={handleAddReview} className="product-btn-review" />
         </div>
       </Card>
