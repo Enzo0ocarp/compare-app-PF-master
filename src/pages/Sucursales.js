@@ -10,7 +10,7 @@ import { Paginator } from 'primereact/paginator';
 import { Chip } from 'primereact/chip';
 import { Card } from 'primereact/card';
 import { Badge } from 'primereact/badge';
-import { getBranches, searchProducts } from '../services/api';
+import { getBranches, searchProducts } from '../functions/services/api';
 import '../styles/SucursalesStyles.css';
 
 function Sucursales() {
