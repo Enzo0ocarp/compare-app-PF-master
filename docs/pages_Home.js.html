@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Home.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Home.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Página principal de la aplicación Compare Precios Argentina
  * @description Componente Home que muestra el dashboard principal con productos destacados,
  * sucursales cercanas, categorías, estadísticas en tiempo real y testimonios de usuarios.
@@ -128,7 +156,7 @@ import '../styles/HomeStyles.css';
  * @returns {JSX.Element} Componente de la página principal
  * 
  * @example
- * <Home />
+ * &lt;Home />
  */
 function Home() {
   const navigate = useNavigate();
@@ -421,7 +449,7 @@ function Home() {
    * @callback
    * @since 1.0.0
    * 
-   * @returns {Promise<void>} Promesa que se resuelve cuando todos los datos están cargados
+   * @returns {Promise&lt;void>} Promesa que se resuelve cuando todos los datos están cargados
    * 
    * @throws {Error} Error al cargar productos, sucursales o estadísticas
    */
@@ -579,8 +607,8 @@ function Home() {
    */
   const getGreeting = useCallback(() => {
     const hour = currentTime.getHours();
-    if (hour < 12) return '¡Buenos días!';
-    if (hour < 18) return '¡Buenas tardes!';
+    if (hour &lt; 12) return '¡Buenos días!';
+    if (hour &lt; 18) return '¡Buenas tardes!';
     return '¡Buenas noches!';
   }, [currentTime]);
 
@@ -601,7 +629,7 @@ function Home() {
 
   /**
    * @description Estadísticas mejoradas para mostrar en la interfaz
-   * @type {Array<Object>}
+   * @type {Array&lt;Object>}
    */
   const enhancedStats = useMemo(() => [
     {
@@ -639,400 +667,400 @@ function Home() {
   ], [stats]);
 
   return (
-    <div className="home-page">
-      <Header />
+    &lt;div className="home-page">
+      &lt;Header />
       
-      <div className="home-container">
+      &lt;div className="home-container">
 
         {/* Hero Carousel Section */}
-        <section className="hero-carousel-section">
-          <div className="hero-carousel-container">
+        &lt;section className="hero-carousel-section">
+          &lt;div className="hero-carousel-container">
             {heroSlides.map((slide, index) => (
-              <div
+              &lt;div
                 key={index}
                 className={`hero-slide ${index === currentHero ? 'active' : ''}`}
                 style={{ background: slide.bgGradient }}
               >
-                <div className="hero-content">
-                  <div className="hero-text">
-                    <div className="greeting-badge">
-                      <i className="pi pi-clock"></i>
-                      <span>{getGreeting()}</span>
-                    </div>
+                &lt;div className="hero-content">
+                  &lt;div className="hero-text">
+                    &lt;div className="greeting-badge">
+                      &lt;i className="pi pi-clock">&lt;/i>
+                      &lt;span>{getGreeting()}&lt;/span>
+                    &lt;/div>
                     
-                    <h1 className="hero-title">
-                      <span className="title-main">{slide.title}</span>
-                      <span className="title-sub">{slide.subtitle}</span>
-                    </h1>
+                    &lt;h1 className="hero-title">
+                      &lt;span className="title-main">{slide.title}&lt;/span>
+                      &lt;span className="title-sub">{slide.subtitle}&lt;/span>
+                    &lt;/h1>
                     
-                    <p className="hero-description">{slide.description}</p>
+                    &lt;p className="hero-description">{slide.description}&lt;/p>
                     
-                    <div className="hero-stats">
-                      <div className="stat-item">
-                        <span className="stat-number">{formatNumber(stats.totalProducts)}</span>
-                        <span className="stat-label">Productos</span>
-                      </div>
-                      <div className="stat-item">
-                        <span className="stat-number">{stats.totalBranches}</span>
-                        <span className="stat-label">Sucursales</span>
-                      </div>
-                      <div className="stat-item">
-                        <span className="stat-number">{formatNumber(stats.totalUsers)}</span>
-                        <span className="stat-label">Usuarios</span>
-                      </div>
-                    </div>
+                    &lt;div className="hero-stats">
+                      &lt;div className="stat-item">
+                        &lt;span className="stat-number">{formatNumber(stats.totalProducts)}&lt;/span>
+                        &lt;span className="stat-label">Productos&lt;/span>
+                      &lt;/div>
+                      &lt;div className="stat-item">
+                        &lt;span className="stat-number">{stats.totalBranches}&lt;/span>
+                        &lt;span className="stat-label">Sucursales&lt;/span>
+                      &lt;/div>
+                      &lt;div className="stat-item">
+                        &lt;span className="stat-number">{formatNumber(stats.totalUsers)}&lt;/span>
+                        &lt;span className="stat-label">Usuarios&lt;/span>
+                      &lt;/div>
+                    &lt;/div>
                     
-                    <div className="hero-actions">
-                      <Link to={slide.primaryAction.link} className="hero-btn primary">
-                        <i className={slide.primaryAction.icon}></i>
+                    &lt;div className="hero-actions">
+                      &lt;Link to={slide.primaryAction.link} className="hero-btn primary">
+                        &lt;i className={slide.primaryAction.icon}>&lt;/i>
                         {slide.primaryAction.text}
-                      </Link>
-                      <Link to={slide.secondaryAction.link} className="hero-btn secondary">
-                        <i className={slide.secondaryAction.icon}></i>
+                      &lt;/Link>
+                      &lt;Link to={slide.secondaryAction.link} className="hero-btn secondary">
+                        &lt;i className={slide.secondaryAction.icon}>&lt;/i>
                         {slide.secondaryAction.text}
-                      </Link>
-                    </div>
-                  </div>
+                      &lt;/Link>
+                    &lt;/div>
+                  &lt;/div>
                   
-                  <div className="hero-visual">
-                    <div className="floating-widget">
-                      <div className="widget-header">
-                        <i className="pi pi-chart-line"></i>
-                        <span>En tiempo real</span>
-                      </div>
-                      <div className="widget-content">
-                        <div className="realtime-stat">
-                          <span className="stat-value">{realtimeData.activeUsers.toLocaleString()}</span>
-                          <span className="stat-desc">usuarios activos</span>
-                        </div>
-                        <div className="realtime-stat">
-                          <span className="stat-value">{realtimeData.todayComparisons.toLocaleString()}</span>
-                          <span className="stat-desc">comparaciones hoy</span>
-                        </div>
-                        <div className="update-indicator">
-                          <div className="pulse-dot"></div>
-                          <span>Precios actualizados {realtimeData.priceUpdates}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                  &lt;div className="hero-visual">
+                    &lt;div className="floating-widget">
+                      &lt;div className="widget-header">
+                        &lt;i className="pi pi-chart-line">&lt;/i>
+                        &lt;span>En tiempo real&lt;/span>
+                      &lt;/div>
+                      &lt;div className="widget-content">
+                        &lt;div className="realtime-stat">
+                          &lt;span className="stat-value">{realtimeData.activeUsers.toLocaleString()}&lt;/span>
+                          &lt;span className="stat-desc">usuarios activos&lt;/span>
+                        &lt;/div>
+                        &lt;div className="realtime-stat">
+                          &lt;span className="stat-value">{realtimeData.todayComparisons.toLocaleString()}&lt;/span>
+                          &lt;span className="stat-desc">comparaciones hoy&lt;/span>
+                        &lt;/div>
+                        &lt;div className="update-indicator">
+                          &lt;div className="pulse-dot">&lt;/div>
+                          &lt;span>Precios actualizados {realtimeData.priceUpdates}&lt;/span>
+                        &lt;/div>
+                      &lt;/div>
+                    &lt;/div>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
             ))}
-          </div>
+          &lt;/div>
           
           {/* Carousel indicators */}
-          <div className="carousel-indicators">
+          &lt;div className="carousel-indicators">
             {heroSlides.map((_, index) => (
-              <button
+              &lt;button
                 key={index}
                 className={`indicator ${index === currentHero ? 'active' : ''}`}
                 onClick={() => setCurrentHero(index)}
               />
             ))}
-          </div>
-        </section>
+          &lt;/div>
+        &lt;/section>
 
         {/* Quick Actions Bar */}
-        <section className="quick-actions-section">
-          <div className="quick-actions-container">
-            <h3>Búsquedas populares</h3>
-            <div className="quick-actions-grid">
-              <button className="quick-action" onClick={() => handleQuickSearch('leche')}>
-                <i className="pi pi-search"></i>
-                <span>Leche</span>
-              </button>
-              <button className="quick-action" onClick={() => handleQuickSearch('pan')}>
-                <i className="pi pi-search"></i>
-                <span>Pan</span>
-              </button>
-              <button className="quick-action" onClick={() => handleQuickSearch('aceite')}>
-                <i className="pi pi-search"></i>
-                <span>Aceite</span>
-              </button>
-              <button className="quick-action" onClick={() => handleQuickSearch('arroz')}>
-                <i className="pi pi-search"></i>
-                <span>Arroz</span>
-              </button>
-              <button className="quick-action" onClick={() => handleQuickSearch('fideos')}>
-                <i className="pi pi-search"></i>
-                <span>Fideos</span>
-              </button>
-              <Link to="/productos" className="quick-action view-all">
-                <i className="pi pi-arrow-right"></i>
-                <span>Ver todos</span>
-              </Link>
-            </div>
-          </div>
-        </section>
+        &lt;section className="quick-actions-section">
+          &lt;div className="quick-actions-container">
+            &lt;h3>Búsquedas populares&lt;/h3>
+            &lt;div className="quick-actions-grid">
+              &lt;button className="quick-action" onClick={() => handleQuickSearch('leche')}>
+                &lt;i className="pi pi-search">&lt;/i>
+                &lt;span>Leche&lt;/span>
+              &lt;/button>
+              &lt;button className="quick-action" onClick={() => handleQuickSearch('pan')}>
+                &lt;i className="pi pi-search">&lt;/i>
+                &lt;span>Pan&lt;/span>
+              &lt;/button>
+              &lt;button className="quick-action" onClick={() => handleQuickSearch('aceite')}>
+                &lt;i className="pi pi-search">&lt;/i>
+                &lt;span>Aceite&lt;/span>
+              &lt;/button>
+              &lt;button className="quick-action" onClick={() => handleQuickSearch('arroz')}>
+                &lt;i className="pi pi-search">&lt;/i>
+                &lt;span>Arroz&lt;/span>
+              &lt;/button>
+              &lt;button className="quick-action" onClick={() => handleQuickSearch('fideos')}>
+                &lt;i className="pi pi-search">&lt;/i>
+                &lt;span>Fideos&lt;/span>
+              &lt;/button>
+              &lt;Link to="/productos" className="quick-action view-all">
+                &lt;i className="pi pi-arrow-right">&lt;/i>
+                &lt;span>Ver todos&lt;/span>
+              &lt;/Link>
+            &lt;/div>
+          &lt;/div>
+        &lt;/section>
 
         {/* Live Stats Banner */}
-        <section className="live-stats-banner">
-          <div className="live-stats-container">
-            <div className="live-indicator">
-              <div className="pulse-dot live"></div>
-              <span>EN VIVO</span>
-            </div>
-            <div className="live-stats-content">
-              <div className="live-stat">
-                <i className="pi pi-users"></i>
-                <span>{realtimeData.activeUsers.toLocaleString()} usuarios conectados</span>
-              </div>
-              <div className="live-stat">
-                <i className="pi pi-chart-line"></i>
-                <span>{realtimeData.todayComparisons.toLocaleString()} comparaciones hoy</span>
-              </div>
-              <div className="live-stat">
-                <i className="pi pi-tag"></i>
-                <span>{realtimeData.liveOffers} ofertas activas</span>
-              </div>
-              <div className="live-stat">
-                <i className="pi pi-percentage"></i>
-                <span>{realtimeData.avgSavings.toFixed(1)}% ahorro promedio</span>
-              </div>
-            </div>
-          </div>
-        </section>
+        &lt;section className="live-stats-banner">
+          &lt;div className="live-stats-container">
+            &lt;div className="live-indicator">
+              &lt;div className="pulse-dot live">&lt;/div>
+              &lt;span>EN VIVO&lt;/span>
+            &lt;/div>
+            &lt;div className="live-stats-content">
+              &lt;div className="live-stat">
+                &lt;i className="pi pi-users">&lt;/i>
+                &lt;span>{realtimeData.activeUsers.toLocaleString()} usuarios conectados&lt;/span>
+              &lt;/div>
+              &lt;div className="live-stat">
+                &lt;i className="pi pi-chart-line">&lt;/i>
+                &lt;span>{realtimeData.todayComparisons.toLocaleString()} comparaciones hoy&lt;/span>
+              &lt;/div>
+              &lt;div className="live-stat">
+                &lt;i className="pi pi-tag">&lt;/i>
+                &lt;span>{realtimeData.liveOffers} ofertas activas&lt;/span>
+              &lt;/div>
+              &lt;div className="live-stat">
+                &lt;i className="pi pi-percentage">&lt;/i>
+                &lt;span>{realtimeData.avgSavings.toFixed(1)}% ahorro promedio&lt;/span>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/section>
 
         {/* Categories Section */}
-        <section className="categories-section">
-          <div className="section-header">
-            <h2>Explora por Categorías</h2>
-            <p>Encuentra exactamente lo que necesitas de manera rápida y eficiente</p>
-          </div>
+        &lt;section className="categories-section">
+          &lt;div className="section-header">
+            &lt;h2>Explora por Categorías&lt;/h2>
+            &lt;p>Encuentra exactamente lo que necesitas de manera rápida y eficiente&lt;/p>
+          &lt;/div>
           
-          <div className="categories-grid">
+          &lt;div className="categories-grid">
             {categories.map((category, index) => (
-              <div
+              &lt;div
                 key={category.id}
                 className={`category-card ${visibleCards[`category-${index}`] ? 'visible' : ''}`}
                 data-animate-id={`category-${index}`}
                 style={{ '--category-color': category.color }}
               >
-                <Link to={category.link} className="category-link">
-                  <div className="category-background" style={{ background: category.bgGradient }}>
-                    <div className="category-icon">
-                      <i className={category.icon}></i>
-                    </div>
-                    <Badge value={category.badge} className={`category-badge ${category.badge.toLowerCase()}`} />
-                  </div>
-                  <div className="category-content">
-                    <h3>{category.name}</h3>
-                    <p>{category.description}</p>
-                    <div className="category-meta">
-                      <span className="category-count">{category.count}</span>
-                      <i className="pi pi-arrow-right"></i>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+                &lt;Link to={category.link} className="category-link">
+                  &lt;div className="category-background" style={{ background: category.bgGradient }}>
+                    &lt;div className="category-icon">
+                      &lt;i className={category.icon}>&lt;/i>
+                    &lt;/div>
+                    &lt;Badge value={category.badge} className={`category-badge ${category.badge.toLowerCase()}`} />
+                  &lt;/div>
+                  &lt;div className="category-content">
+                    &lt;h3>{category.name}&lt;/h3>
+                    &lt;p>{category.description}&lt;/p>
+                    &lt;div className="category-meta">
+                      &lt;span className="category-count">{category.count}&lt;/span>
+                      &lt;i className="pi pi-arrow-right">&lt;/i>
+                    &lt;/div>
+                  &lt;/div>
+                &lt;/Link>
+              &lt;/div>
             ))}
-          </div>
-        </section>
+          &lt;/div>
+        &lt;/section>
 
         {/* Enhanced Stats Section */}
-        <section className="enhanced-stats-section">
-          <div className="section-header">
-            <h2>Números que Impresionan</h2>
-            <p>Miles de argentinos confían en Compare para optimizar sus compras</p>
-          </div>
+        &lt;section className="enhanced-stats-section">
+          &lt;div className="section-header">
+            &lt;h2>Números que Impresionan&lt;/h2>
+            &lt;p>Miles de argentinos confían en Compare para optimizar sus compras&lt;/p>
+          &lt;/div>
           
-          <div className="enhanced-stats-grid">
+          &lt;div className="enhanced-stats-grid">
             {enhancedStats.map((stat, index) => (
-              <div
+              &lt;div
                 key={index}
                 className={`enhanced-stat-card ${visibleCards[`stat-${index}`] ? 'visible' : ''}`}
                 data-animate-id={`stat-${index}`}
                 style={{ '--stat-color': stat.color }}
               >
                 {componentLoading.stats ? (
-                  <div className="stat-skeleton">
-                    <Skeleton shape="circle" size="4rem" />
-                    <Skeleton width="100%" height="1.5rem" />
-                    <Skeleton width="60%" height="1rem" />
-                  </div>
+                  &lt;div className="stat-skeleton">
+                    &lt;Skeleton shape="circle" size="4rem" />
+                    &lt;Skeleton width="100%" height="1.5rem" />
+                    &lt;Skeleton width="60%" height="1rem" />
+                  &lt;/div>
                 ) : (
-                  <>
-                    <div className="stat-icon" style={{ background: stat.color }}>
-                      <i className={stat.icon}></i>
-                    </div>
-                    <div className="stat-content">
-                      <h3>{typeof stat.value === 'number' ? formatNumber(stat.value) : stat.value}</h3>
-                      <p>{stat.label}</p>
-                      <span className="stat-trend">{stat.trend}</span>
-                      <small>{stat.description}</small>
-                    </div>
-                  </>
+                  &lt;>
+                    &lt;div className="stat-icon" style={{ background: stat.color }}>
+                      &lt;i className={stat.icon}>&lt;/i>
+                    &lt;/div>
+                    &lt;div className="stat-content">
+                      &lt;h3>{typeof stat.value === 'number' ? formatNumber(stat.value) : stat.value}&lt;/h3>
+                      &lt;p>{stat.label}&lt;/p>
+                      &lt;span className="stat-trend">{stat.trend}&lt;/span>
+                      &lt;small>{stat.description}&lt;/small>
+                    &lt;/div>
+                  &lt;/>
                 )}
-              </div>
+              &lt;/div>
             ))}
-          </div>
-        </section>
+          &lt;/div>
+        &lt;/section>
 
         {/* Featured Products Section */}
-        <section className="featured-products-section">
-          <div className="section-header">
-            <h2>Productos Más Buscados</h2>
-            <p>Los favoritos de nuestros usuarios con los mejores precios</p>
-            <Link to="/productos" className="view-all-btn">
-              Ver Todos <i className="pi pi-arrow-right"></i>
-            </Link>
-          </div>
+        &lt;section className="featured-products-section">
+          &lt;div className="section-header">
+            &lt;h2>Productos Más Buscados&lt;/h2>
+            &lt;p>Los favoritos de nuestros usuarios con los mejores precios&lt;/p>
+            &lt;Link to="/productos" className="view-all-btn">
+              Ver Todos &lt;i className="pi pi-arrow-right">&lt;/i>
+            &lt;/Link>
+          &lt;/div>
           
           {componentLoading.products ? (
-            <div className="products-skeleton">
+            &lt;div className="products-skeleton">
               {[...Array(4)].map((_, index) => (
-                <div key={index} className="product-skeleton">
-                  <Skeleton width="100%" height="200px" />
-                  <div style={{ padding: '1rem' }}>
-                    <Skeleton width="100%" height="1.5rem" />
-                    <Skeleton width="60%" height="1rem" />
-                    <Skeleton width="40%" height="1.5rem" />
-                  </div>
-                </div>
+                &lt;div key={index} className="product-skeleton">
+                  &lt;Skeleton width="100%" height="200px" />
+                  &lt;div style={{ padding: '1rem' }}>
+                    &lt;Skeleton width="100%" height="1.5rem" />
+                    &lt;Skeleton width="60%" height="1rem" />
+                    &lt;Skeleton width="40%" height="1.5rem" />
+                  &lt;/div>
+                &lt;/div>
               ))}
-            </div>
+            &lt;/div>
           ) : (
-            <div className="featured-products-grid">
+            &lt;div className="featured-products-grid">
               {featuredProducts.slice(0, 8).map((product, index) => (
-                <div
+                &lt;div
                   key={product.id || index}
                   className={`product-wrapper ${visibleCards[`product-${index}`] ? 'visible' : ''}`}
                   data-animate-id={`product-${index}`}
                 >
-                  <ProductCard product={product} />
-                </div>
+                  &lt;ProductCard product={product} />
+                &lt;/div>
               ))}
-            </div>
+            &lt;/div>
           )}
-        </section>
+        &lt;/section>
 
         {/* Trending Products Carousel */}
-        <section className="trending-section">
-          <div className="section-header">
-            <h2>Productos en Tendencia</h2>
-            <p>Los más populares esta semana</p>
-          </div>
+        &lt;section className="trending-section">
+          &lt;div className="section-header">
+            &lt;h2>Productos en Tendencia&lt;/h2>
+            &lt;p>Los más populares esta semana&lt;/p>
+          &lt;/div>
           
-          <div className="trending-carousel">
+          &lt;div className="trending-carousel">
             {trendingProducts.map((product, index) => (
-              <div key={product.id} className="trending-product">
-                <ProductCard product={product} />
-              </div>
+              &lt;div key={product.id} className="trending-product">
+                &lt;ProductCard product={product} />
+              &lt;/div>
             ))}
-          </div>
-        </section>
+          &lt;/div>
+        &lt;/section>
 
         {/* Nearby Branches Section */}
-        <section className="branches-section">
-          <div className="section-header">
-            <h2>Sucursales Cercanas</h2>
-            <p>Las mejores cadenas cerca de {userLocation}</p>
-            <Link to="/sucursales" className="view-all-btn">
-              Ver Todas <i className="pi pi-arrow-right"></i>
-            </Link>
-          </div>
+        &lt;section className="branches-section">
+          &lt;div className="section-header">
+            &lt;h2>Sucursales Cercanas&lt;/h2>
+            &lt;p>Las mejores cadenas cerca de {userLocation}&lt;/p>
+            &lt;Link to="/sucursales" className="view-all-btn">
+              Ver Todas &lt;i className="pi pi-arrow-right">&lt;/i>
+            &lt;/Link>
+          &lt;/div>
           
           {componentLoading.branches ? (
-            <div className="branches-skeleton">
+            &lt;div className="branches-skeleton">
               {[...Array(3)].map((_, index) => (
-                <div key={index} className="branch-skeleton">
-                  <Skeleton width="100%" height="250px" />
-                </div>
+                &lt;div key={index} className="branch-skeleton">
+                  &lt;Skeleton width="100%" height="250px" />
+                &lt;/div>
               ))}
-            </div>
+            &lt;/div>
           ) : (
-            <div className="branches-grid">
+            &lt;div className="branches-grid">
               {nearbyBranches.slice(0, 6).map((branch, index) => (
-                <div
+                &lt;div
                   key={branch.id || index}
                   className={`branch-wrapper ${visibleCards[`branch-${index}`] ? 'visible' : ''}`}
                   data-animate-id={`branch-${index}`}
                 >
-                  <BranchCard branch={branch} />
-                </div>
+                  &lt;BranchCard branch={branch} />
+                &lt;/div>
               ))}
-            </div>
+            &lt;/div>
           )}
-        </section>
+        &lt;/section>
 
         {/* Testimonials Section */}
-        <section className="testimonials-section">
-          <div className="section-header">
-            <h2>Lo que dicen nuestros usuarios</h2>
-            <p>Miles de personas ya ahorran con Compare en toda Argentina</p>
-          </div>
+        &lt;section className="testimonials-section">
+          &lt;div className="section-header">
+            &lt;h2>Lo que dicen nuestros usuarios&lt;/h2>
+            &lt;p>Miles de personas ya ahorran con Compare en toda Argentina&lt;/p>
+          &lt;/div>
           
-          <div className="testimonials-grid">
+          &lt;div className="testimonials-grid">
             {testimonials.map((testimonial, index) => (
-              <div
+              &lt;div
                 key={testimonial.id}
                 className={`testimonial-card ${visibleCards[`testimonial-${index}`] ? 'visible' : ''}`}
                 data-animate-id={`testimonial-${index}`}
               >
-                <div className="testimonial-content">
-                  <div className="stars">
+                &lt;div className="testimonial-content">
+                  &lt;div className="stars">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <i key={i} className="pi pi-star-fill"></i>
+                      &lt;i key={i} className="pi pi-star-fill">&lt;/i>
                     ))}
-                  </div>
-                  <p>"{testimonial.text}"</p>
-                  <div className="testimonial-savings">
-                    <i className="pi pi-dollar"></i>
-                    <span>Ahorró ${testimonial.savings.toLocaleString()} en {testimonial.timeUsing}</span>
-                  </div>
-                </div>
-                <div className="testimonial-author">
-                  <img src={testimonial.avatar} alt={testimonial.name} />
-                  <div>
-                    <span className="author-name">{testimonial.name}</span>
-                    <small className="author-location">{testimonial.location}</small>
-                  </div>
-                </div>
-              </div>
+                  &lt;/div>
+                  &lt;p>"{testimonial.text}"&lt;/p>
+                  &lt;div className="testimonial-savings">
+                    &lt;i className="pi pi-dollar">&lt;/i>
+                    &lt;span>Ahorró ${testimonial.savings.toLocaleString()} en {testimonial.timeUsing}&lt;/span>
+                  &lt;/div>
+                &lt;/div>
+                &lt;div className="testimonial-author">
+                  &lt;img src={testimonial.avatar} alt={testimonial.name} />
+                  &lt;div>
+                    &lt;span className="author-name">{testimonial.name}&lt;/span>
+                    &lt;small className="author-location">{testimonial.location}&lt;/small>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
             ))}
-          </div>
-        </section>
+          &lt;/div>
+        &lt;/section>
 
         {/* Newsletter Section */}
-        <section className="newsletter-section">
-          <div className="newsletter-content">
-            <h2>¿Querés recibir las mejores ofertas?</h2>
-            <p>Suscribite a nuestro newsletter y recibí notificaciones de descuentos exclusivos</p>
-            <div className="newsletter-form">
-              <input 
+        &lt;section className="newsletter-section">
+          &lt;div className="newsletter-content">
+            &lt;h2>¿Querés recibir las mejores ofertas?&lt;/h2>
+            &lt;p>Suscribite a nuestro newsletter y recibí notificaciones de descuentos exclusivos&lt;/p>
+            &lt;div className="newsletter-form">
+              &lt;input 
                 type="email" 
                 placeholder="Tu email aquí..." 
                 className="newsletter-input"
               />
-              <button className="newsletter-button">
-                <i className="pi pi-send"></i>
+              &lt;button className="newsletter-button">
+                &lt;i className="pi pi-send">&lt;/i>
                 Suscribirse
-              </button>
-            </div>
-            <div className="newsletter-benefits">
-              <div className="benefit-item">
-                <i className="pi pi-check"></i>
-                <span>Ofertas exclusivas semanales</span>
-              </div>
-              <div className="benefit-item">
-                <i className="pi pi-check"></i>
-                <span>Alertas de precios personalizadas</span>
-              </div>
-              <div className="benefit-item">
-                <i className="pi pi-check"></i>
-                <span>Primero en conocer nuevos productos</span>
-              </div>
-            </div>
-            <small>Más de {formatNumber(stats.totalUsers)} usuarios ya reciben nuestras ofertas</small>
-          </div>
-        </section>
+              &lt;/button>
+            &lt;/div>
+            &lt;div className="newsletter-benefits">
+              &lt;div className="benefit-item">
+                &lt;i className="pi pi-check">&lt;/i>
+                &lt;span>Ofertas exclusivas semanales&lt;/span>
+              &lt;/div>
+              &lt;div className="benefit-item">
+                &lt;i className="pi pi-check">&lt;/i>
+                &lt;span>Alertas de precios personalizadas&lt;/span>
+              &lt;/div>
+              &lt;div className="benefit-item">
+                &lt;i className="pi pi-check">&lt;/i>
+                &lt;span>Primero en conocer nuevos productos&lt;/span>
+              &lt;/div>
+            &lt;/div>
+            &lt;small>Más de {formatNumber(stats.totalUsers)} usuarios ya reciben nuestras ofertas&lt;/small>
+          &lt;/div>
+        &lt;/section>
 
         {/* System Alerts Section */}
-        <section className="system-alerts-section">
-          <div className="section-header">
-            <h2>Estado del Sistema</h2>
-            <p>
+        &lt;section className="system-alerts-section">
+          &lt;div className="section-header">
+            &lt;h2>Estado del Sistema&lt;/h2>
+            &lt;p>
               Última actualización: {currentTime.toLocaleString('es-AR', {
                 weekday: 'long',
                 year: 'numeric',
@@ -1041,68 +1069,90 @@ function Home() {
                 hour: '2-digit',
                 minute: '2-digit'
               })}
-            </p>
-          </div>
+            &lt;/p>
+          &lt;/div>
           
-          <div className="alerts-grid">
+          &lt;div className="alerts-grid">
             {systemAlerts.map((alert, index) => (
-              <div
+              &lt;div
                 key={alert.id}
                 className={`alert-card ${alert.type} ${visibleCards[`alert-${index}`] ? 'visible' : ''}`}
                 data-animate-id={`alert-${index}`}
               >
-                <i className={alert.icon}></i>
-                <div>
-                  <span>{alert.text}</span>
-                  {alert.priority === 'high' && (
-                    <div className="alert-priority">
-                      <i className="pi pi-exclamation-circle"></i>
-                      <small>Prioritario</small>
-                    </div>
+                &lt;i className={alert.icon}>&lt;/i>
+                &lt;div>
+                  &lt;span>{alert.text}&lt;/span>
+                  {alert.priority === 'high' &amp;&amp; (
+                    &lt;div className="alert-priority">
+                      &lt;i className="pi pi-exclamation-circle">&lt;/i>
+                      &lt;small>Prioritario&lt;/small>
+                    &lt;/div>
                   )}
-                </div>
-              </div>
+                &lt;/div>
+              &lt;/div>
             ))}
-          </div>
-        </section>
+          &lt;/div>
+        &lt;/section>
 
         {/* Final CTA Section */}
-        <section className="final-cta-section">
-          <div className="final-cta-content">
-            <h2>¿Listo para empezar a ahorrar?</h2>
-            <p>Unite a miles de argentinos que ya optimizan sus compras con Compare</p>
-            <div className="final-cta-actions">
-              <Link to="/productos" className="cta-button primary">
-                <i className="pi pi-search"></i>
+        &lt;section className="final-cta-section">
+          &lt;div className="final-cta-content">
+            &lt;h2>¿Listo para empezar a ahorrar?&lt;/h2>
+            &lt;p>Unite a miles de argentinos que ya optimizan sus compras con Compare&lt;/p>
+            &lt;div className="final-cta-actions">
+              &lt;Link to="/productos" className="cta-button primary">
+                &lt;i className="pi pi-search">&lt;/i>
                 Explorar Productos
-              </Link>
-              <Link to="/register" className="cta-button secondary">
-                <i className="pi pi-user-plus"></i>
+              &lt;/Link>
+              &lt;Link to="/register" className="cta-button secondary">
+                &lt;i className="pi pi-user-plus">&lt;/i>
                 Crear Cuenta Gratis
-              </Link>
-            </div>
-            <div className="final-cta-stats">
-              <div className="final-stat">
-                <strong>${formatNumber(stats.moneySaved)}</strong>
-                <span>Ahorrados este mes</span>
-              </div>
-              <div className="final-stat">
-                <strong>24/7</strong>
-                <span>Monitoreo de precios</span>
-              </div>
-              <div className="final-stat">
-                <strong>+20%</strong>
-                <span>Ahorro promedio</span>
-              </div>
-            </div>
-          </div>
-        </section>
+              &lt;/Link>
+            &lt;/div>
+            &lt;div className="final-cta-stats">
+              &lt;div className="final-stat">
+                &lt;strong>${formatNumber(stats.moneySaved)}&lt;/strong>
+                &lt;span>Ahorrados este mes&lt;/span>
+              &lt;/div>
+              &lt;div className="final-stat">
+                &lt;strong>24/7&lt;/strong>
+                &lt;span>Monitoreo de precios&lt;/span>
+              &lt;/div>
+              &lt;div className="final-stat">
+                &lt;strong>+20%&lt;/strong>
+                &lt;span>Ahorro promedio&lt;/span>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/section>
 
-      </div>
+      &lt;/div>
       
-      <BottomNav />
-    </div>
+      &lt;BottomNav />
+    &lt;/div>
   );
 }
 
-export default Home;
+export default Home;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

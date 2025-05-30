@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Productos.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Productos.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Página de listado y búsqueda de productos de Compare Precios Argentina
  * @description Componente Productos que permite a los usuarios buscar, filtrar y explorar
  * productos disponibles con funcionalidades avanzadas de paginación y gestión de favoritos.
@@ -76,7 +104,7 @@ import '../styles/ProductosStyles.css';
  * @returns {JSX.Element} Componente de la página de productos
  * 
  * @example
- * <Productos />
+ * &lt;Productos />
  */
 function Productos() {
   /** @type {[Product[], Function]} Lista de productos cargados */
@@ -153,7 +181,7 @@ function Productos() {
    * @function
    * @since 1.0.0
    * 
-   * @returns {Promise<void>} Promesa que se resuelve cuando los productos están cargados
+   * @returns {Promise&lt;void>} Promesa que se resuelve cuando los productos están cargados
    * 
    * @throws {Error} Error al cargar productos desde la API
    */
@@ -189,7 +217,7 @@ function Productos() {
    * @function
    * @since 1.0.0
    * 
-   * @returns {Promise<void>} Promesa que se resuelve cuando las opciones están cargadas
+   * @returns {Promise&lt;void>} Promesa que se resuelve cuando las opciones están cargadas
    * 
    * @throws {Error} Error al cargar opciones de filtros
    */
@@ -221,7 +249,7 @@ function Productos() {
    * @function
    * @since 1.0.0
    * 
-   * @returns {Promise<void>} Promesa que se resuelve cuando la búsqueda está completa
+   * @returns {Promise&lt;void>} Promesa que se resuelve cuando la búsqueda está completa
    * 
    * @throws {Error} Error durante la búsqueda
    * 
@@ -353,40 +381,40 @@ function Productos() {
   const displayProducts = isSearchMode ? searchResults : products;
 
   return (
-    <div className="productos-page">
-      <Header />
-      <div className="products-container">
+    &lt;div className="productos-page">
+      &lt;Header />
+      &lt;div className="products-container">
         
         {/* Barra de búsqueda y filtros */}
-        <div className="filters-section">
-          <div className="search-container">
-            <div className="p-inputgroup">
-              <InputText
+        &lt;div className="filters-section">
+          &lt;div className="search-container">
+            &lt;div className="p-inputgroup">
+              &lt;InputText
                 placeholder="Buscar productos, marcas..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyPress={(e) => e.key === 'Enter' &amp;&amp; handleSearch()}
                 className="search-input"
               />
-              <Button 
+              &lt;Button 
                 icon="pi pi-search" 
                 onClick={handleSearch}
                 className="p-button-primary"
                 tooltip="Buscar productos"
               />
-              {isSearchMode && (
-                <Button 
+              {isSearchMode &amp;&amp; (
+                &lt;Button 
                   icon="pi pi-times" 
                   onClick={clearSearch}
                   className="p-button-secondary"
                   tooltip="Limpiar búsqueda"
                 />
               )}
-            </div>
-          </div>
+            &lt;/div>
+          &lt;/div>
 
-          <div className="filters-row">
-            <Dropdown
+          &lt;div className="filters-row">
+            &lt;Dropdown
               value={selectedBrand}
               options={brands}
               onChange={handleBrandChange}
@@ -396,7 +424,7 @@ function Productos() {
               filter
               filterPlaceholder="Buscar marca..."
             />
-            <Dropdown
+            &lt;Dropdown
               value={selectedProvince}
               options={provinces}
               onChange={handleProvinceChange}
@@ -406,13 +434,13 @@ function Productos() {
               filter
               filterPlaceholder="Buscar provincia..."
             />
-          </div>
-        </div>
+          &lt;/div>
+        &lt;/div>
 
         {/* Chips de filtros activos */}
-        <div className="active-filters">
-          {isSearchMode && (
-            <Chip 
+        &lt;div className="active-filters">
+          {isSearchMode &amp;&amp; (
+            &lt;Chip 
               label={`Búsqueda: "${searchTerm}"`} 
               removable 
               onRemove={clearSearch}
@@ -420,8 +448,8 @@ function Productos() {
               icon="pi pi-search"
             />
           )}
-          {selectedBrand && (
-            <Chip 
+          {selectedBrand &amp;&amp; (
+            &lt;Chip 
               label={`Marca: ${selectedBrand}`} 
               removable 
               onRemove={() => handleBrandChange({ value: null })}
@@ -429,8 +457,8 @@ function Productos() {
               icon="pi pi-tag"
             />
           )}
-          {selectedProvince && (
-            <Chip 
+          {selectedProvince &amp;&amp; (
+            &lt;Chip 
               label={`Provincia: ${selectedProvince}`} 
               removable 
               onRemove={() => handleProvinceChange({ value: null })}
@@ -438,41 +466,41 @@ function Productos() {
               icon="pi pi-map"
             />
           )}
-        </div>
+        &lt;/div>
 
         {/* Información de resultados */}
-        <div className="results-info">
+        &lt;div className="results-info">
           {isSearchMode ? (
-            <div className="search-info">
-              <i className="pi pi-search"></i>
-              <span>Se encontraron <strong>{searchResults.length}</strong> resultados para "<strong>{searchTerm}</strong>"</span>
-            </div>
+            &lt;div className="search-info">
+              &lt;i className="pi pi-search">&lt;/i>
+              &lt;span>Se encontraron &lt;strong>{searchResults.length}&lt;/strong> resultados para "&lt;strong>{searchTerm}&lt;/strong>"&lt;/span>
+            &lt;/div>
           ) : (
-            <div className="total-info">
-              <i className="pi pi-list"></i>
-              <span>Mostrando <strong>{displayProducts.length}</strong> de <strong>{totalRecords.toLocaleString()}</strong> productos</span>
-            </div>
+            &lt;div className="total-info">
+              &lt;i className="pi pi-list">&lt;/i>
+              &lt;span>Mostrando &lt;strong>{displayProducts.length}&lt;/strong> de &lt;strong>{totalRecords.toLocaleString()}&lt;/strong> productos&lt;/span>
+            &lt;/div>
           )}
-        </div>
+        &lt;/div>
 
         {/* Grid de productos */}
         {loading ? (
-          <div className="loading-container">
-            <div className="loading-content">
-              <i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}></i>
-              <h3>Cargando productos...</h3>
-              <p>Buscando las mejores ofertas para ti</p>
-            </div>
-          </div>
+          &lt;div className="loading-container">
+            &lt;div className="loading-content">
+              &lt;i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}>&lt;/i>
+              &lt;h3>Cargando productos...&lt;/h3>
+              &lt;p>Buscando las mejores ofertas para ti&lt;/p>
+            &lt;/div>
+          &lt;/div>
         ) : displayProducts.length > 0 ? (
-          <div className="products-grid">
+          &lt;div className="products-grid">
             {displayProducts.map((product, index) => {
               const formattedProduct = formatProduct(product);
               const isFavorite = favoriteProducts.includes(product.id);
               
               return (
-                <div key={product.id || index} className="product-wrapper">
-                  <Button
+                &lt;div key={product.id || index} className="product-wrapper">
+                  &lt;Button
                     icon={isFavorite ? "pi pi-heart-fill" : "pi pi-heart"}
                     onClick={() => toggleFavorite(product.id)}
                     className={`favorite-btn p-button-rounded ${
@@ -481,32 +509,32 @@ function Productos() {
                     tooltip={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
                     tooltipOptions={{ position: 'top' }}
                   />
-                  <ProductCard product={formattedProduct} />
-                </div>
+                  &lt;ProductCard product={formattedProduct} />
+                &lt;/div>
               );
             })}
-          </div>
+          &lt;/div>
         ) : (
-          <div className="no-results">
-            <div className="no-results-content">
-              <i className="pi pi-search no-results-icon"></i>
-              <h3>No se encontraron productos</h3>
-              <p>
+          &lt;div className="no-results">
+            &lt;div className="no-results-content">
+              &lt;i className="pi pi-search no-results-icon">&lt;/i>
+              &lt;h3>No se encontraron productos&lt;/h3>
+              &lt;p>
                 {isSearchMode 
                   ? `No hay productos que coincidan con "${searchTerm}"`
                   : 'No hay productos disponibles con los filtros seleccionados'
                 }
-              </p>
-              <div className="no-results-actions">
-                {isSearchMode && (
-                  <Button
+              &lt;/p>
+              &lt;div className="no-results-actions">
+                {isSearchMode &amp;&amp; (
+                  &lt;Button
                     label="Limpiar búsqueda"
                     icon="pi pi-times"
                     onClick={clearSearch}
                     className="p-button-outlined"
                   />
                 )}
-                <Button
+                &lt;Button
                   label="Ver todos los productos"
                   icon="pi pi-list"
                   onClick={() => {
@@ -516,15 +544,15 @@ function Productos() {
                   }}
                   className="p-button-primary"
                 />
-              </div>
-            </div>
-          </div>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
         )}
 
         {/* Paginación */}
-        {!isSearchMode && totalRecords > itemsPerPage && (
-          <div className="pagination-container">
-            <Paginator
+        {!isSearchMode &amp;&amp; totalRecords > itemsPerPage &amp;&amp; (
+          &lt;div className="pagination-container">
+            &lt;Paginator
               first={(currentPage - 1) * itemsPerPage}
               rows={itemsPerPage}
               totalRecords={totalRecords}
@@ -533,36 +561,58 @@ function Productos() {
               currentPageReportTemplate="Página {currentPage} de {totalPages} ({totalRecords} productos)"
               className="custom-paginator"
             />
-          </div>
+          &lt;/div>
         )}
         
         {/* Sección de ayuda */}
-        <div className="help-section">
-          <div className="help-content">
-            <h4>
-              <i className="pi pi-question-circle"></i>
+        &lt;div className="help-section">
+          &lt;div className="help-content">
+            &lt;h4>
+              &lt;i className="pi pi-question-circle">&lt;/i>
               ¿Necesitas ayuda?
-            </h4>
-            <div className="help-tips">
-              <div className="tip">
-                <i className="pi pi-lightbulb"></i>
-                <span>Usa el buscador para encontrar productos específicos</span>
-              </div>
-              <div className="tip">
-                <i className="pi pi-heart"></i>
-                <span>Marca tus productos favoritos para encontrarlos fácilmente</span>
-              </div>
-              <div className="tip">
-                <i className="pi pi-filter"></i>
-                <span>Combina filtros para resultados más precisos</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <BottomNav />
-    </div>
+            &lt;/h4>
+            &lt;div className="help-tips">
+              &lt;div className="tip">
+                &lt;i className="pi pi-lightbulb">&lt;/i>
+                &lt;span>Usa el buscador para encontrar productos específicos&lt;/span>
+              &lt;/div>
+              &lt;div className="tip">
+                &lt;i className="pi pi-heart">&lt;/i>
+                &lt;span>Marca tus productos favoritos para encontrarlos fácilmente&lt;/span>
+              &lt;/div>
+              &lt;div className="tip">
+                &lt;i className="pi pi-filter">&lt;/i>
+                &lt;span>Combina filtros para resultados más precisos&lt;/span>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+      &lt;BottomNav />
+    &lt;/div>
   );
 }
 
-export default Productos;
+export default Productos;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

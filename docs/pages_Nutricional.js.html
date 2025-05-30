@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Nutricional.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Nutricional.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Página de productos nutricionales de Compare Precios Argentina
  * @description Componente Nutricional que permite a los usuarios explorar productos
  * organizados por categorías nutricionales, con filtros especializados y alertas de ofertas.
@@ -86,7 +114,7 @@ import '../styles/NutricionalStyles.css';
  * @returns {JSX.Element} Componente de la página nutricional
  * 
  * @example
- * <Nutricional />
+ * &lt;Nutricional />
  */
 function Nutricional() {
     const navigate = useNavigate();
@@ -322,7 +350,7 @@ function Nutricional() {
     const handleCategoryClick = (categoryId) => {
         setSelectedCategory(categoryId);
         // Navegar a productos con filtro nutricional
-        navigate(`/productos?categoria=nutricional&filtro=${categoryId}`);
+        navigate(`/productos?categoria=nutricional&amp;filtro=${categoryId}`);
     };
 
     /**
@@ -338,7 +366,7 @@ function Nutricional() {
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchTerm.trim()) {
-            navigate(`/productos?search=${encodeURIComponent(searchTerm)}&categoria=nutricional`);
+            navigate(`/productos?search=${encodeURIComponent(searchTerm)}&amp;categoria=nutricional`);
         }
     };
 
@@ -352,114 +380,114 @@ function Nutricional() {
 
     if (loading) {
         return (
-            <div className="nutricional-page loading">
-                <Header />
-                <div className="nutricional-container">
-                    <div className="loading-content">
-                        <div className="loading-hero">
-                            <Skeleton width="60%" height="3rem" className="mb-3" />
-                            <Skeleton width="40%" height="1.5rem" className="mb-4" />
-                        </div>
-                        <div className="categories-skeleton">
+            &lt;div className="nutricional-page loading">
+                &lt;Header />
+                &lt;div className="nutricional-container">
+                    &lt;div className="loading-content">
+                        &lt;div className="loading-hero">
+                            &lt;Skeleton width="60%" height="3rem" className="mb-3" />
+                            &lt;Skeleton width="40%" height="1.5rem" className="mb-4" />
+                        &lt;/div>
+                        &lt;div className="categories-skeleton">
                             {[...Array(6)].map((_, i) => (
-                                <div key={i} className="category-skeleton">
-                                    <Skeleton width="100%" height="200px" borderRadius="12px" />
-                                </div>
+                                &lt;div key={i} className="category-skeleton">
+                                    &lt;Skeleton width="100%" height="200px" borderRadius="12px" />
+                                &lt;/div>
                             ))}
-                        </div>
-                    </div>
-                </div>
-                <BottomNav />
-            </div>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/div>
+                &lt;BottomNav />
+            &lt;/div>
         );
     }
 
     return (
-        <div className="nutricional-page">
-            <Header />
-            <div className="nutricional-container">
+        &lt;div className="nutricional-page">
+            &lt;Header />
+            &lt;div className="nutricional-container">
                 
                 {/* Hero Section */}
-                <section className="hero-section">
-                    <div className="hero-content">
-                        <div className="hero-text">
-                            <h1 className="hero-title">
-                                <span className="title-main">Nutrición Inteligente</span>
-                                <span className="title-sub">Para una vida saludable</span>
-                            </h1>
-                            <p className="hero-description">
+                &lt;section className="hero-section">
+                    &lt;div className="hero-content">
+                        &lt;div className="hero-text">
+                            &lt;h1 className="hero-title">
+                                &lt;span className="title-main">Nutrición Inteligente&lt;/span>
+                                &lt;span className="title-sub">Para una vida saludable&lt;/span>
+                            &lt;/h1>
+                            &lt;p className="hero-description">
                                 Descubre productos nutricionales de calidad, comparando precios y beneficios 
                                 para tomar las mejores decisiones para tu salud.
-                            </p>
+                            &lt;/p>
                             
                             {/* Estadísticas en tiempo real */}
-                            <div className="nutrition-stats">
-                                <div className="stat-item">
-                                    <span className="stat-number">{nutritionStats.totalProducts.toLocaleString()}</span>
-                                    <span className="stat-label">Productos</span>
-                                </div>
-                                <div className="stat-item">
-                                    <span className="stat-number">{nutritionStats.usersHelped.toLocaleString()}</span>
-                                    <span className="stat-label">Usuarios</span>
-                                </div>
-                                <div className="stat-item">
-                                    <span className="stat-number">{nutritionStats.avgDiscount}%</span>
-                                    <span className="stat-label">Descuento Prom.</span>
-                                </div>
-                            </div>
-                        </div>
+                            &lt;div className="nutrition-stats">
+                                &lt;div className="stat-item">
+                                    &lt;span className="stat-number">{nutritionStats.totalProducts.toLocaleString()}&lt;/span>
+                                    &lt;span className="stat-label">Productos&lt;/span>
+                                &lt;/div>
+                                &lt;div className="stat-item">
+                                    &lt;span className="stat-number">{nutritionStats.usersHelped.toLocaleString()}&lt;/span>
+                                    &lt;span className="stat-label">Usuarios&lt;/span>
+                                &lt;/div>
+                                &lt;div className="stat-item">
+                                    &lt;span className="stat-number">{nutritionStats.avgDiscount}%&lt;/span>
+                                    &lt;span className="stat-label">Descuento Prom.&lt;/span>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
                         
-                        <div className="hero-visual">
-                            <div className="floating-nutrition-widget">
-                                <div className="widget-header">
-                                    <i className="pi pi-heart-fill"></i>
-                                    <span>Salud en números</span>
-                                </div>
-                                <div className="widget-content">
-                                    <div className="nutrition-metric">
-                                        <span className="metric-label">Productos Orgánicos</span>
-                                        <ProgressBar value={nutritionStats.organicPercentage} className="custom-progress" />
-                                        <span className="metric-value">{nutritionStats.organicPercentage}%</span>
-                                    </div>
-                                    <div className="nutrition-metric">
-                                        <span className="metric-label">Ahorro Promedio</span>
-                                        <div className="metric-highlight">
-                                            <i className="pi pi-dollar"></i>
-                                            <span>{nutritionStats.caloriesSaved}K por mes</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                        &lt;div className="hero-visual">
+                            &lt;div className="floating-nutrition-widget">
+                                &lt;div className="widget-header">
+                                    &lt;i className="pi pi-heart-fill">&lt;/i>
+                                    &lt;span>Salud en números&lt;/span>
+                                &lt;/div>
+                                &lt;div className="widget-content">
+                                    &lt;div className="nutrition-metric">
+                                        &lt;span className="metric-label">Productos Orgánicos&lt;/span>
+                                        &lt;ProgressBar value={nutritionStats.organicPercentage} className="custom-progress" />
+                                        &lt;span className="metric-value">{nutritionStats.organicPercentage}%&lt;/span>
+                                    &lt;/div>
+                                    &lt;div className="nutrition-metric">
+                                        &lt;span className="metric-label">Ahorro Promedio&lt;/span>
+                                        &lt;div className="metric-highlight">
+                                            &lt;i className="pi pi-dollar">&lt;/i>
+                                            &lt;span>{nutritionStats.caloriesSaved}K por mes&lt;/span>
+                                        &lt;/div>
+                                    &lt;/div>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/section>
 
                 {/* Barra de búsqueda nutricional */}
-                <section className="nutrition-search-section">
-                    <Card className="search-card">
-                        <h3>
-                            <i className="pi pi-search"></i>
+                &lt;section className="nutrition-search-section">
+                    &lt;Card className="search-card">
+                        &lt;h3>
+                            &lt;i className="pi pi-search">&lt;/i>
                             Buscar Productos Nutricionales
-                        </h3>
-                        <form onSubmit={handleSearch} className="nutrition-search-form">
-                            <div className="search-input-container">
-                                <InputText
+                        &lt;/h3>
+                        &lt;form onSubmit={handleSearch} className="nutrition-search-form">
+                            &lt;div className="search-input-container">
+                                &lt;InputText
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     placeholder="Buscar por nombre, marca o beneficio nutricional..."
                                     className="nutrition-search-input"
                                 />
-                                <Button
+                                &lt;Button
                                     type="submit"
                                     icon="pi pi-search"
                                     className="search-submit-btn"
                                     disabled={!searchTerm.trim()}
                                 />
-                            </div>
-                            <div className="quick-search-tags">
-                                <span className="tags-label">Búsquedas populares:</span>
+                            &lt;/div>
+                            &lt;div className="quick-search-tags">
+                                &lt;span className="tags-label">Búsquedas populares:&lt;/span>
                                 {['Quinoa', 'Proteína vegetal', 'Vitamina D', 'Sin gluten', 'Orgánico'].map((tag, index) => (
-                                    <Button
+                                    &lt;Button
                                         key={index}
                                         label={tag}
                                         className="quick-tag"
@@ -468,147 +496,147 @@ function Nutricional() {
                                         onClick={() => setSearchTerm(tag)}
                                     />
                                 ))}
-                            </div>
-                        </form>
-                    </Card>
-                </section>
+                            &lt;/div>
+                        &lt;/form>
+                    &lt;/Card>
+                &lt;/section>
 
                 {/* Categorías Nutricionales */}
-                <section className="categories-section">
-                    <div className="section-header">
-                        <h2 className="section-title">
-                            <i className="pi pi-tags"></i>
+                &lt;section className="categories-section">
+                    &lt;div className="section-header">
+                        &lt;h2 className="section-title">
+                            &lt;i className="pi pi-tags">&lt;/i>
                             Categorías Nutricionales 
-                            <Badge value="6 Categorías" severity="success" className="ml-2" />
-                        </h2>
-                        <p className="section-subtitle">
+                            &lt;Badge value="6 Categorías" severity="success" className="ml-2" />
+                        &lt;/h2>
+                        &lt;p className="section-subtitle">
                             Explora productos organizados por beneficios nutricionales específicos
-                        </p>
-                        <Divider />
-                    </div>
+                        &lt;/p>
+                        &lt;Divider />
+                    &lt;/div>
                     
-                    <div className="categories-grid">
+                    &lt;div className="categories-grid">
                         {categories.map((category, index) => (
-                            <div
+                            &lt;div
                                 key={category.id}
                                 className={`enhanced-category-card ${visibleCards[`category-${index}`] ? 'visible' : ''}`}
                                 data-animate-id={`category-${index}`}
                                 onClick={() => handleCategoryClick(category.id)}
                                 style={{ '--category-color': category.color }}
                             >
-                                <Tooltip target={`#category-${category.id}`} content={`Explora ${category.name}`} position="top" />
+                                &lt;Tooltip target={`#category-${category.id}`} content={`Explora ${category.name}`} position="top" />
                                 
-                                <div className="category-background" style={{ background: category.bgGradient }}>
-                                    <div className="category-icon">
-                                        <i className={category.icon}></i>
-                                    </div>
-                                    <Badge 
+                                &lt;div className="category-background" style={{ background: category.bgGradient }}>
+                                    &lt;div className="category-icon">
+                                        &lt;i className={category.icon}>&lt;/i>
+                                    &lt;/div>
+                                    &lt;Badge 
                                         value={category.updated} 
                                         className={`category-badge ${category.updated.toLowerCase()}`} 
                                     />
-                                </div>
+                                &lt;/div>
                                 
-                                <div className="category-content">
-                                    <h3>{category.name}</h3>
-                                    <p>{category.description}</p>
-                                    <div className="category-count">
-                                        <i className="pi pi-box"></i>
-                                        <span>{category.count}</span>
-                                    </div>
+                                &lt;div className="category-content">
+                                    &lt;h3>{category.name}&lt;/h3>
+                                    &lt;p>{category.description}&lt;/p>
+                                    &lt;div className="category-count">
+                                        &lt;i className="pi pi-box">&lt;/i>
+                                        &lt;span>{category.count}&lt;/span>
+                                    &lt;/div>
                                     
-                                    <div className="category-benefits">
+                                    &lt;div className="category-benefits">
                                         {category.benefits.map((benefit, i) => (
-                                            <Chip 
+                                            &lt;Chip 
                                                 key={i} 
                                                 label={benefit} 
                                                 className="benefit-chip"
                                             />
                                         ))}
-                                    </div>
+                                    &lt;/div>
                                     
-                                    <div className="category-actions">
-                                        <Button
+                                    &lt;div className="category-actions">
+                                        &lt;Button
                                             label="Explorar"
                                             icon="pi pi-arrow-right"
                                             className="explore-btn"
                                             text
                                         />
-                                    </div>
-                                </div>
-                            </div>
+                                    &lt;/div>
+                                &lt;/div>
+                            &lt;/div>
                         ))}
-                    </div>
-                </section>
+                    &lt;/div>
+                &lt;/section>
 
                 {/* Productos Destacados */}
-                <section className="featured-products-section">
-                    <div className="section-header">
-                        <h2 className="section-title">
-                            <i className="pi pi-star-fill"></i>
+                &lt;section className="featured-products-section">
+                    &lt;div className="section-header">
+                        &lt;h2 className="section-title">
+                            &lt;i className="pi pi-star-fill">&lt;/i>
                             Productos Destacados del Día
-                        </h2>
-                        <p className="section-subtitle">Las mejores ofertas en productos nutricionales</p>
-                    </div>
+                        &lt;/h2>
+                        &lt;p className="section-subtitle">Las mejores ofertas en productos nutricionales&lt;/p>
+                    &lt;/div>
                     
-                    <div className="featured-products-grid">
+                    &lt;div className="featured-products-grid">
                         {featuredProducts.map((product, index) => (
-                            <Card
+                            &lt;Card
                                 key={product.id}
                                 className={`featured-product-card ${visibleCards[`product-${index}`] ? 'visible' : ''}`}
                                 data-animate-id={`product-${index}`}
                             >
-                                <div className="product-image">
-                                    <img src={product.image} alt={product.name} />
-                                    <Badge value={`-${product.discount}%`} severity="danger" className="discount-badge" />
-                                </div>
+                                &lt;div className="product-image">
+                                    &lt;img src={product.image} alt={product.name} />
+                                    &lt;Badge value={`-${product.discount}%`} severity="danger" className="discount-badge" />
+                                &lt;/div>
                                 
-                                <div className="product-info">
-                                    <h4>{product.name}</h4>
-                                    <div className="product-rating">
-                                        <div className="stars">
+                                &lt;div className="product-info">
+                                    &lt;h4>{product.name}&lt;/h4>
+                                    &lt;div className="product-rating">
+                                        &lt;div className="stars">
                                             {[...Array(5)].map((_, i) => (
-                                                <i 
+                                                &lt;i 
                                                     key={i} 
-                                                    className={`pi ${i < Math.floor(product.rating) ? 'pi-star-fill' : 'pi-star'}`}
-                                                ></i>
+                                                    className={`pi ${i &lt; Math.floor(product.rating) ? 'pi-star-fill' : 'pi-star'}`}
+                                                >&lt;/i>
                                             ))}
-                                        </div>
-                                        <span className="rating-number">({product.rating})</span>
-                                    </div>
+                                        &lt;/div>
+                                        &lt;span className="rating-number">({product.rating})&lt;/span>
+                                    &lt;/div>
                                     
-                                    <div className="product-benefits">
+                                    &lt;div className="product-benefits">
                                         {product.benefits.map((benefit, i) => (
-                                            <span key={i} className="benefit-tag">{benefit}</span>
+                                            &lt;span key={i} className="benefit-tag">{benefit}&lt;/span>
                                         ))}
-                                    </div>
+                                    &lt;/div>
                                     
-                                    <div className="product-pricing">
-                                        <span className="current-price">${product.price.toLocaleString()}</span>
-                                        <span className="original-price">${product.originalPrice.toLocaleString()}</span>
-                                    </div>
+                                    &lt;div className="product-pricing">
+                                        &lt;span className="current-price">${product.price.toLocaleString()}&lt;/span>
+                                        &lt;span className="original-price">${product.originalPrice.toLocaleString()}&lt;/span>
+                                    &lt;/div>
                                     
-                                    <Button
+                                    &lt;Button
                                         label="Ver Detalles"
                                         icon="pi pi-eye"
                                         className="product-btn"
                                         onClick={() => navigate(`/productos/${product.id}`)}
                                     />
-                                </div>
-                            </Card>
+                                &lt;/div>
+                            &lt;/Card>
                         ))}
-                    </div>
-                </section>
+                    &lt;/div>
+                &lt;/section>
 
                 {/* Filtros de Categoría */}
-                {selectedCategory && (
-                    <section className="category-filter-section">
-                        <Card className="filter-card">
-                            <div className="filter-header">
-                                <h3>
-                                    <i className="pi pi-filter"></i>
+                {selectedCategory &amp;&amp; (
+                    &lt;section className="category-filter-section">
+                        &lt;Card className="filter-card">
+                            &lt;div className="filter-header">
+                                &lt;h3>
+                                    &lt;i className="pi pi-filter">&lt;/i>
                                     Filtrando por: {categories.find(c => c.id === selectedCategory)?.name}
-                                </h3>
-                                <Button
+                                &lt;/h3>
+                                &lt;Button
                                     label="Ver todos"
                                     icon="pi pi-times"
                                     className="clear-filter-btn"
@@ -616,129 +644,151 @@ function Nutricional() {
                                     outlined
                                     size="small"
                                 />
-                            </div>
-                        </Card>
-                    </section>
+                            &lt;/div>
+                        &lt;/Card>
+                    &lt;/section>
                 )}
 
                 {/* Alertas Nutricionales */}
-                <section className="alerts-section">
-                    <div className="section-header">
-                        <h2 className="section-title">
-                            <i className="pi pi-bell"></i>
+                &lt;section className="alerts-section">
+                    &lt;div className="section-header">
+                        &lt;h2 className="section-title">
+                            &lt;i className="pi pi-bell">&lt;/i>
                             Alertas Nutricionales
-                            <Badge value={filteredAlerts.length} severity="info" className="ml-2" />
-                        </h2>
-                        <p className="section-subtitle">
+                            &lt;Badge value={filteredAlerts.length} severity="info" className="ml-2" />
+                        &lt;/h2>
+                        &lt;p className="section-subtitle">
                             Mantente informado sobre las mejores ofertas y novedades
-                        </p>
-                        <Divider />
-                    </div>
+                        &lt;/p>
+                        &lt;Divider />
+                    &lt;/div>
                     
-                    <div className="alerts-grid">
+                    &lt;div className="alerts-grid">
                         {filteredAlerts.map((alert, index) => (
-                            <Card
+                            &lt;Card
                                 key={alert.id}
                                 className={`alert-card ${alert.type} ${visibleCards[`alert-${index}`] ? 'visible' : ''}`}
                                 data-animate-id={`alert-${index}`}
                             >
-                                <div className="alert-header">
-                                    <div className="alert-icon">
-                                        <i className={`pi ${alert.type === 'success' ? 'pi-check-circle' : 
-                                                           alert.type === 'warning' ? 'pi-exclamation-triangle' : 'pi-info-circle'}`}></i>
-                                    </div>
-                                    <div className="alert-priority">
-                                        <Badge 
+                                &lt;div className="alert-header">
+                                    &lt;div className="alert-icon">
+                                        &lt;i className={`pi ${alert.type === 'success' ? 'pi-check-circle' : 
+                                                           alert.type === 'warning' ? 'pi-exclamation-triangle' : 'pi-info-circle'}`}>&lt;/i>
+                                    &lt;/div>
+                                    &lt;div className="alert-priority">
+                                        &lt;Badge 
                                             value={alert.priority === 'high' ? 'Urgente' : 'Normal'} 
                                             severity={alert.priority === 'high' ? 'danger' : 'info'}
                                         />
-                                    </div>
-                                </div>
+                                    &lt;/div>
+                                &lt;/div>
                                 
-                                <div className="alert-content">
-                                    <h4>{alert.title}</h4>
-                                    <p>{alert.message}</p>
+                                &lt;div className="alert-content">
+                                    &lt;h4>{alert.title}&lt;/h4>
+                                    &lt;p>{alert.message}&lt;/p>
                                     
-                                    <div className="alert-details">
-                                        <div className="discount-info">
-                                            <i className="pi pi-percentage"></i>
-                                            <span>Hasta {alert.discount} OFF</span>
-                                        </div>
-                                        <div className="validity-info">
-                                            <i className="pi pi-calendar"></i>
-                                            <span>Válido hasta {new Date(alert.validUntil).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                    &lt;div className="alert-details">
+                                        &lt;div className="discount-info">
+                                            &lt;i className="pi pi-percentage">&lt;/i>
+                                            &lt;span>Hasta {alert.discount} OFF&lt;/span>
+                                        &lt;/div>
+                                        &lt;div className="validity-info">
+                                            &lt;i className="pi pi-calendar">&lt;/i>
+                                            &lt;span>Válido hasta {new Date(alert.validUntil).toLocaleDateString()}&lt;/span>
+                                        &lt;/div>
+                                    &lt;/div>
+                                &lt;/div>
                                 
-                                <div className="alert-actions">
-                                    <Button
+                                &lt;div className="alert-actions">
+                                    &lt;Button
                                         label="Ver Ofertas"
                                         icon="pi pi-external-link"
                                         className="alert-btn"
                                         onClick={() => handleCategoryClick(alert.category)}
                                         size="small"
                                     />
-                                </div>
-                            </Card>
+                                &lt;/div>
+                            &lt;/Card>
                         ))}
-                    </div>
+                    &lt;/div>
                     
-                    <div className="alerts-footer">
-                        <Button
+                    &lt;div className="alerts-footer">
+                        &lt;Button
                             label="Ver Todas las Alertas"
                             icon="pi pi-arrow-right"
                             className="view-all-alerts-btn"
                             onClick={() => navigate('/alertas')}
                             outlined
                         />
-                    </div>
-                </section>
+                    &lt;/div>
+                &lt;/section>
 
                 {/* Newsletter Nutricional */}
-                <section className="newsletter-section">
-                    <Card className="newsletter-card">
-                        <div className="newsletter-content">
-                            <div className="newsletter-icon">
-                                <i className="pi pi-envelope"></i>
-                            </div>
-                            <div className="newsletter-text">
-                                <h3>¿Querés recibir consejos nutricionales?</h3>
-                                <p>Suscribite y recibí tips, recetas saludables y ofertas exclusivas en productos nutricionales</p>
-                            </div>
-                            <div className="newsletter-form">
-                                <InputText
+                &lt;section className="newsletter-section">
+                    &lt;Card className="newsletter-card">
+                        &lt;div className="newsletter-content">
+                            &lt;div className="newsletter-icon">
+                                &lt;i className="pi pi-envelope">&lt;/i>
+                            &lt;/div>
+                            &lt;div className="newsletter-text">
+                                &lt;h3>¿Querés recibir consejos nutricionales?&lt;/h3>
+                                &lt;p>Suscribite y recibí tips, recetas saludables y ofertas exclusivas en productos nutricionales&lt;/p>
+                            &lt;/div>
+                            &lt;div className="newsletter-form">
+                                &lt;InputText
                                     placeholder="Tu email aquí..."
                                     className="newsletter-input"
                                 />
-                                <Button
+                                &lt;Button
                                     label="Suscribirse"
                                     icon="pi pi-send"
                                     className="newsletter-btn"
                                 />
-                            </div>
-                        </div>
-                        <div className="newsletter-benefits">
-                            <div className="benefit-item">
-                                <i className="pi pi-check"></i>
-                                <span>Recetas saludables semanales</span>
-                            </div>
-                            <div className="benefit-item">
-                                <i className="pi pi-check"></i>
-                                <span>Descuentos exclusivos hasta 40%</span>
-                            </div>
-                            <div className="benefit-item">
-                                <i className="pi pi-check"></i>
-                                <span>Consejos de nutricionistas</span>
-                            </div>
-                        </div>
-                    </Card>
-                </section>
-            </div>
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;div className="newsletter-benefits">
+                            &lt;div className="benefit-item">
+                                &lt;i className="pi pi-check">&lt;/i>
+                                &lt;span>Recetas saludables semanales&lt;/span>
+                            &lt;/div>
+                            &lt;div className="benefit-item">
+                                &lt;i className="pi pi-check">&lt;/i>
+                                &lt;span>Descuentos exclusivos hasta 40%&lt;/span>
+                            &lt;/div>
+                            &lt;div className="benefit-item">
+                                &lt;i className="pi pi-check">&lt;/i>
+                                &lt;span>Consejos de nutricionistas&lt;/span>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/Card>
+                &lt;/section>
+            &lt;/div>
 
-            <BottomNav />
-        </div>
+            &lt;BottomNav />
+        &lt;/div>
     );
 }
 
-export default Nutricional;
+export default Nutricional;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

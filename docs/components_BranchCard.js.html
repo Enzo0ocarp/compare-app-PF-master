@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/BranchCard.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/BranchCard.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Componente tarjeta para mostrar información de sucursales
  * @description Tarjeta informativa que muestra detalles de una sucursal comercial
  * incluyendo ubicación, tipo, acciones de mapas y datos de contacto.
@@ -72,11 +100,11 @@ import '../styles/BranchCard.css';
  *   lng: -58.3816
  * };
  * 
- * <BranchCard branch={sucursal} />
+ * &lt;BranchCard branch={sucursal} />
  * 
  * @example
  * // Con callbacks personalizados
- * <BranchCard 
+ * &lt;BranchCard 
  *   branch={sucursal}
  *   onLocationClick={(branch) => console.log('Ver ubicación:', branch)}
  *   onDirectionsClick={(branch) => console.log('Direcciones a:', branch)}
@@ -93,7 +121,7 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
    * handleViewLocation(); // Abre Google Maps con la ubicación de la sucursal
    */
   const handleViewLocation = () => {
-    if (branch.lat && branch.lng) {
+    if (branch.lat &amp;&amp; branch.lng) {
       const mapsUrl = `https://www.google.com/maps?q=${branch.lat},${branch.lng}`;
       window.open(mapsUrl, '_blank', 'noopener,noreferrer');
     } else {
@@ -115,8 +143,8 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
    * handleGetDirections(); // Abre Google Maps con direcciones a la sucursal
    */
   const handleGetDirections = () => {
-    if (branch.lat && branch.lng) {
-      const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${branch.lat},${branch.lng}`;
+    if (branch.lat &amp;&amp; branch.lng) {
+      const directionsUrl = `https://www.google.com/maps/dir/?api=1&amp;destination=${branch.lat},${branch.lng}`;
       window.open(directionsUrl, '_blank', 'noopener,noreferrer');
     } else {
       console.warn('Coordenadas no disponibles para direcciones:', branch.sucursalNombre);
@@ -198,11 +226,11 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
    * hasValidCoordinates() // true si lat y lng existen y son números válidos
    */
   const hasValidCoordinates = () => {
-    return branch.lat && 
-           branch.lng && 
-           typeof branch.lat === 'number' && 
-           typeof branch.lng === 'number' &&
-           !isNaN(branch.lat) && 
+    return branch.lat &amp;&amp; 
+           branch.lng &amp;&amp; 
+           typeof branch.lat === 'number' &amp;&amp; 
+           typeof branch.lng === 'number' &amp;&amp;
+           !isNaN(branch.lat) &amp;&amp; 
            !isNaN(branch.lng);
   };
 
@@ -211,36 +239,36 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
    * @type {JSX.Element}
    */
   const header = (
-    <div className="branch-header">
-      <div className="branch-logo">
-        <i 
+    &lt;div className="branch-header">
+      &lt;div className="branch-logo">
+        &lt;i 
           className="pi pi-building" 
           style={{ 
             fontSize: '2rem', 
             color: getBadgeColor(branch.sucursalTipo) === 'success' ? '#4CAF50' : '#2196F3'
           }}
           aria-hidden="true"
-        ></i>
-      </div>
-      <div className="branch-badges">
-        {branch.sucursalTipo && (
-          <Badge 
+        >&lt;/i>
+      &lt;/div>
+      &lt;div className="branch-badges">
+        {branch.sucursalTipo &amp;&amp; (
+          &lt;Badge 
             value={branch.sucursalTipo} 
             severity={getBadgeColor(branch.sucursalTipo)}
             className="type-badge"
             tooltip={`Tipo: ${branch.sucursalTipo}`}
           />
         )}
-        {!hasValidCoordinates() && (
-          <Badge 
+        {!hasValidCoordinates() &amp;&amp; (
+          &lt;Badge 
             value="Sin GPS" 
             severity="secondary"
             className="gps-badge"
             tooltip="Coordenadas no disponibles"
           />
         )}
-      </div>
-    </div>
+      &lt;/div>
+    &lt;/div>
   );
 
   /**
@@ -248,8 +276,8 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
    * @type {JSX.Element}
    */
   const footer = showActions ? (
-    <div className="branch-actions">
-      <Button
+    &lt;div className="branch-actions">
+      &lt;Button
         label="Ver en Mapa"
         icon="pi pi-map-marker"
         className="p-button-sm p-button-outlined map-button"
@@ -259,7 +287,7 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
         tooltipOptions={{ position: 'top' }}
         aria-label={`Ver ${branch.sucursalNombre} en Google Maps`}
       />
-      <Button
+      &lt;Button
         label="Cómo llegar"
         icon="pi pi-compass"
         className="p-button-sm p-button-success directions-button"
@@ -269,99 +297,99 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
         tooltipOptions={{ position: 'top' }}
         aria-label={`Obtener direcciones a ${branch.sucursalNombre}`}
       />
-    </div>
+    &lt;/div>
   ) : null;
 
   return (
-    <Card 
+    &lt;Card 
       className={`branch-card ${className}`}
       header={header}
       footer={footer}
     >
-      <div className="branch-content">
+      &lt;div className="branch-content">
         {/* Nombre de la sucursal */}
-        <h4 className="branch-name" title={branch.sucursalNombre}>
+        &lt;h4 className="branch-name" title={branch.sucursalNombre}>
           {branch.sucursalNombre || 'Sucursal sin nombre'}
-        </h4>
+        &lt;/h4>
         
         {/* Detalles de la sucursal */}
-        <div className="branch-details">
+        &lt;div className="branch-details">
           {/* Marca/Bandera comercial */}
-          <div className="detail-item">
-            <i className="pi pi-building detail-icon" aria-hidden="true"></i>
-            <span className="detail-text">
+          &lt;div className="detail-item">
+            &lt;i className="pi pi-building detail-icon" aria-hidden="true">&lt;/i>
+            &lt;span className="detail-text">
               {branch.banderaDescripcion || 'Comercio'}
-            </span>
-          </div>
+            &lt;/span>
+          &lt;/div>
           
           {/* Dirección */}
-          <div className="detail-item">
-            <i className="pi pi-map-marker detail-icon" aria-hidden="true"></i>
-            <span className="detail-text" title={formatAddress(branch.direccion)}>
+          &lt;div className="detail-item">
+            &lt;i className="pi pi-map-marker detail-icon" aria-hidden="true">&lt;/i>
+            &lt;span className="detail-text" title={formatAddress(branch.direccion)}>
               {formatAddress(branch.direccion)}
-            </span>
-          </div>
+            &lt;/span>
+          &lt;/div>
           
           {/* Localidad y Provincia */}
-          {(branch.localidad || branch.provincia) && (
-            <div className="detail-item">
-              <i className="pi pi-globe detail-icon" aria-hidden="true"></i>
-              <span className="detail-text">
+          {(branch.localidad || branch.provincia) &amp;&amp; (
+            &lt;div className="detail-item">
+              &lt;i className="pi pi-globe detail-icon" aria-hidden="true">&lt;/i>
+              &lt;span className="detail-text">
                 {[branch.localidad, branch.provincia].filter(Boolean).join(' - ')}
-              </span>
-            </div>
+              &lt;/span>
+            &lt;/div>
           )}
           
           {/* Razón Social */}
-          {branch.comercioRazonSocial && (
-            <div className="detail-item">
-              <i className="pi pi-briefcase detail-icon" aria-hidden="true"></i>
-              <span className="detail-text small" title={branch.comercioRazonSocial}>
+          {branch.comercioRazonSocial &amp;&amp; (
+            &lt;div className="detail-item">
+              &lt;i className="pi pi-briefcase detail-icon" aria-hidden="true">&lt;/i>
+              &lt;span className="detail-text small" title={branch.comercioRazonSocial}>
                 {branch.comercioRazonSocial}
-              </span>
-            </div>
+              &lt;/span>
+            &lt;/div>
           )}
 
           {/* Información adicional si está disponible */}
-          {branch.telefono && (
-            <div className="detail-item">
-              <i className="pi pi-phone detail-icon" aria-hidden="true"></i>
-              <a 
+          {branch.telefono &amp;&amp; (
+            &lt;div className="detail-item">
+              &lt;i className="pi pi-phone detail-icon" aria-hidden="true">&lt;/i>
+              &lt;a 
                 href={`tel:${branch.telefono}`}
                 className="detail-text link"
                 title={`Llamar a ${branch.telefono}`}
               >
                 {branch.telefono}
-              </a>
-            </div>
+              &lt;/a>
+            &lt;/div>
           )}
 
-          {branch.email && (
-            <div className="detail-item">
-              <i className="pi pi-envelope detail-icon" aria-hidden="true"></i>
-              <a 
+          {branch.email &amp;&amp; (
+            &lt;div className="detail-item">
+              &lt;i className="pi pi-envelope detail-icon" aria-hidden="true">&lt;/i>
+              &lt;a 
                 href={`mailto:${branch.email}`}
                 className="detail-text link"
                 title={`Enviar email a ${branch.email}`}
               >
                 {branch.email}
-              </a>
-            </div>
+              &lt;/a>
+            &lt;/div>
           )}
 
-          {branch.horarios && (
-            <div className="detail-item">
-              <i className="pi pi-clock detail-icon" aria-hidden="true"></i>
-              <span className="detail-text small" title="Horarios de atención">
+          {branch.horarios &amp;&amp; (
+            &lt;div className="detail-item">
+              &lt;i className="pi pi-clock detail-icon" aria-hidden="true">&lt;/i>
+              &lt;span className="detail-text small" title="Horarios de atención">
                 {branch.horarios}
-              </span>
-            </div>
+              &lt;/span>
+            &lt;/div>
           )}
 
-          {branch.website && (
-            <div className="detail-item">
-              <i className="pi pi-external-link detail-icon" aria-hidden="true"></i>
-              <a 
+          {branch.website &amp;&amp; (
+            &lt;div className="detail-item">
+              &lt;i className="pi pi-external-link detail-icon" aria-hidden="true">&lt;/i>
+              &lt;a 
                 href={branch.website}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -369,22 +397,44 @@ function BranchCard({ branch, onLocationClick, onDirectionsClick, showActions = 
                 title={`Visitar sitio web: ${branch.website}`}
               >
                 Sitio web
-              </a>
-            </div>
+              &lt;/a>
+            &lt;/div>
           )}
-        </div>
+        &lt;/div>
 
         {/* Indicador de coordenadas (solo en modo debug) */}
-        {process.env.NODE_ENV === 'development' && hasValidCoordinates() && (
-          <div className="debug-info">
-            <small className="coordinates-info">
+        {process.env.NODE_ENV === 'development' &amp;&amp; hasValidCoordinates() &amp;&amp; (
+          &lt;div className="debug-info">
+            &lt;small className="coordinates-info">
               📍 {branch.lat?.toFixed(4)}, {branch.lng?.toFixed(4)}
-            </small>
-          </div>
+            &lt;/small>
+          &lt;/div>
         )}
-      </div>
-    </Card>
+      &lt;/div>
+    &lt;/Card>
   );
 }
 
-export default BranchCard;
+export default BranchCard;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

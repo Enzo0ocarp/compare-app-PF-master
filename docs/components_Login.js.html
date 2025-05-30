@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Login.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Login.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Componente de página de inicio de sesión
  * @description Página de autenticación con Firebase Auth que permite a los usuarios
  * iniciar sesión usando email y contraseña, con validación de formularios y manejo de errores.
@@ -84,7 +112,7 @@ const Login = () => {
    * @function
    * @since 1.0.0
    * @param {LoginFormData} data - Datos del formulario (email y password)
-   * @returns {Promise<void>} Promesa que se resuelve cuando el login se completa
+   * @returns {Promise&lt;void>} Promesa que se resuelve cuando el login se completa
    * @throws {FirebaseAuthError} Error de autenticación de Firebase
    */
   const onSubmit = async (data) => {
@@ -183,28 +211,28 @@ const Login = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
+    &lt;div className="login-page">
+      &lt;div className="login-container">
         {/* Header de la página */}
-        <div className="login-header">
-          <div className="login-logo">
-            <i className="pi pi-sign-in" style={{ fontSize: '3rem', color: '#667eea' }}></i>
-          </div>
-          <h2 className="login-title">Iniciar Sesión</h2>
-          <p className="login-subtitle">
+        &lt;div className="login-header">
+          &lt;div className="login-logo">
+            &lt;i className="pi pi-sign-in" style={{ fontSize: '3rem', color: '#667eea' }}>&lt;/i>
+          &lt;/div>
+          &lt;h2 className="login-title">Iniciar Sesión&lt;/h2>
+          &lt;p className="login-subtitle">
             Bienvenido de vuelta a Compare. Ingresa tus credenciales para continuar.
-          </p>
-        </div>
+          &lt;/p>
+        &lt;/div>
 
         {/* Formulario de login */}
-        <form onSubmit={handleSubmit(onSubmit)} className="login-form" noValidate>
+        &lt;form onSubmit={handleSubmit(onSubmit)} className="login-form" noValidate>
           {/* Campo de email */}
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              <i className="pi pi-envelope"></i>
+          &lt;div className="form-group">
+            &lt;label htmlFor="email" className="form-label">
+              &lt;i className="pi pi-envelope">&lt;/i>
               Correo electrónico
-            </label>
-            <InputText
+            &lt;/label>
+            &lt;InputText
               id="email"
               placeholder="Ingrese su correo electrónico"
               {...register("email", { 
@@ -219,22 +247,22 @@ const Login = () => {
               autoComplete="email"
               type="email"
             />
-            {errors.email && (
-              <Message 
+            {errors.email &amp;&amp; (
+              &lt;Message 
                 severity="error" 
                 text={errors.email.message} 
                 className="field-error"
               />
             )}
-          </div>
+          &lt;/div>
 
           {/* Campo de contraseña */}
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              <i className="pi pi-lock"></i>
+          &lt;div className="form-group">
+            &lt;label htmlFor="password" className="form-label">
+              &lt;i className="pi pi-lock">&lt;/i>
               Contraseña
-            </label>
-            <Password
+            &lt;/label>
+            &lt;Password
               id="password"
               placeholder="Ingrese su contraseña"
               toggleMask
@@ -251,42 +279,42 @@ const Login = () => {
               disabled={loading}
               autoComplete="current-password"
             />
-            {errors.password && (
-              <Message 
+            {errors.password &amp;&amp; (
+              &lt;Message 
                 severity="error" 
                 text={errors.password.message} 
                 className="field-error"
               />
             )}
-          </div>
+          &lt;/div>
 
           {/* Opciones adicionales */}
-          <div className="form-options">
-            <div className="remember-me-group">
-              <Checkbox
+          &lt;div className="form-options">
+            &lt;div className="remember-me-group">
+              &lt;Checkbox
                 inputId="rememberMe"
                 checked={rememberMe}
                 onChange={handleRememberMeChange}
                 disabled={loading}
               />
-              <label htmlFor="rememberMe" className="remember-me-label">
+              &lt;label htmlFor="rememberMe" className="remember-me-label">
                 Recordar mi email
-              </label>
-            </div>
+              &lt;/label>
+            &lt;/div>
             
-            <button
+            &lt;button
               type="button"
               className="forgot-password-link"
               onClick={handleForgotPassword}
               disabled={loading}
             >
               ¿Olvidaste tu contraseña?
-            </button>
-          </div>
+            &lt;/button>
+          &lt;/div>
 
           {/* Mensaje de error general */}
-          {error && (
-            <Message 
+          {error &amp;&amp; (
+            &lt;Message 
               severity="error" 
               text={error} 
               className="error-message"
@@ -295,7 +323,7 @@ const Login = () => {
           )}
 
           {/* Botón de envío */}
-          <Button
+          &lt;Button
             label={loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             icon={loading ? "pi pi-spin pi-spinner" : "pi pi-sign-in"}
             loading={loading}
@@ -303,40 +331,62 @@ const Login = () => {
             className="submit-button"
             disabled={loading}
           />
-        </form>
+        &lt;/form>
 
         {/* Enlaces de navegación */}
-        <div className="login-footer">
-          <div className="register-prompt">
-            <span>¿No tienes una cuenta? </span>
-            <button
+        &lt;div className="login-footer">
+          &lt;div className="register-prompt">
+            &lt;span>¿No tienes una cuenta? &lt;/span>
+            &lt;button
               type="button"
               className="register-link"
               onClick={handleGoToRegister}
               disabled={loading}
             >
               Regístrate aquí
-            </button>
-          </div>
+            &lt;/button>
+          &lt;/div>
           
-          <div className="help-links">
-            <button
+          &lt;div className="help-links">
+            &lt;button
               type="button"
               className="help-link"
               onClick={() => navigate('/help')}
               disabled={loading}
             >
-              <i className="pi pi-question-circle"></i>
+              &lt;i className="pi pi-question-circle">&lt;/i>
               ¿Necesitas ayuda?
-            </button>
-          </div>
-        </div>
-      </div>
+            &lt;/button>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
 
       {/* Navegación inferior */}
-      <BottomNav />
-    </div>
+      &lt;BottomNav />
+    &lt;/div>
   );
 };
 
-export default Login;
+export default Login;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

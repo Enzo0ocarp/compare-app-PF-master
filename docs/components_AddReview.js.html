@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/AddReview.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/AddReview.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Componente formulario para agregar reseñas de productos
  * @description Formulario interactivo que permite a los usuarios seleccionar un producto,
  * escribir una reseña y asignar una calificación con estrellas usando componentes de PrimeReact.
@@ -59,7 +87,7 @@ import '../styles/AddReviewStyles.css';
  * 
  * @example
  * // Uso básico del componente
- * <AddReview
+ * &lt;AddReview
  *   products={productsList}
  *   selectedProductId={selectedId}
  *   onProductIdChange={setSelectedId}
@@ -77,7 +105,7 @@ import '../styles/AddReviewStyles.css';
  *   { id: 2, title: "Pan Integral Bimbo" }
  * ];
  * 
- * <AddReview
+ * &lt;AddReview
  *   products={products}
  *   selectedProductId=""
  *   onProductIdChange={(id) => console.log('Producto:', id)}
@@ -175,18 +203,18 @@ const AddReview = ({
    * isFieldRequired(5) // false
    */
   const isFieldRequired = (value) => {
-    return !value || (typeof value === 'string' && value.trim() === '');
+    return !value || (typeof value === 'string' &amp;&amp; value.trim() === '');
   };
 
   return (
-    <div className="add-review-form">
+    &lt;div className="add-review-form">
       {/* Selector de producto */}
-      <div className="form-group">
-        <label htmlFor="productId" className="form-label">
-          <i className="pi pi-shopping-bag"></i>
+      &lt;div className="form-group">
+        &lt;label htmlFor="productId" className="form-label">
+          &lt;i className="pi pi-shopping-bag">&lt;/i>
           Producto *
-        </label>
-        <Dropdown
+        &lt;/label>
+        &lt;Dropdown
           id="productId"
           value={selectedProductId}
           options={productOptions}
@@ -201,21 +229,21 @@ const AddReview = ({
           tooltip="Selecciona el producto que deseas reseñar"
           tooltipOptions={{ position: 'top' }}
         />
-        {isFieldRequired(selectedProductId) && (
-          <small className="field-error">
-            <i className="pi pi-exclamation-circle"></i>
+        {isFieldRequired(selectedProductId) &amp;&amp; (
+          &lt;small className="field-error">
+            &lt;i className="pi pi-exclamation-circle">&lt;/i>
             Por favor selecciona un producto
-          </small>
+          &lt;/small>
         )}
-      </div>
+      &lt;/div>
 
       {/* Área de texto para la reseña */}
-      <div className="form-group">
-        <label htmlFor="reviewText" className="form-label">
-          <i className="pi pi-comment"></i>
+      &lt;div className="form-group">
+        &lt;label htmlFor="reviewText" className="form-label">
+          &lt;i className="pi pi-comment">&lt;/i>
           Tu Reseña *
-        </label>
-        <InputTextarea
+        &lt;/label>
+        &lt;InputTextarea
           id="reviewText"
           value={newReviewText}
           onChange={handleTextChange}
@@ -229,26 +257,26 @@ const AddReview = ({
           tooltip="Escribe una reseña honesta y útil para otros usuarios"
           tooltipOptions={{ position: 'top' }}
         />
-        <div className="textarea-footer">
-          <small className="character-count">
+        &lt;div className="textarea-footer">
+          &lt;small className="character-count">
             {newReviewText.length}/500 caracteres
-          </small>
-          {isFieldRequired(newReviewText) && (
-            <small className="field-error">
-              <i className="pi pi-exclamation-circle"></i>
+          &lt;/small>
+          {isFieldRequired(newReviewText) &amp;&amp; (
+            &lt;small className="field-error">
+              &lt;i className="pi pi-exclamation-circle">&lt;/i>
               Por favor escribe tu reseña
-            </small>
+            &lt;/small>
           )}
-        </div>
-      </div>
+        &lt;/div>
+      &lt;/div>
 
       {/* Selector de calificación */}
-      <div className="form-group">
-        <label htmlFor="rating" className="form-label">
-          <i className="pi pi-star"></i>
+      &lt;div className="form-group">
+        &lt;label htmlFor="rating" className="form-label">
+          &lt;i className="pi pi-star">&lt;/i>
           Calificación *
-        </label>
-        <Dropdown
+        &lt;/label>
+        &lt;Dropdown
           id="rating"
           value={rating}
           options={ratingOptions}
@@ -259,55 +287,77 @@ const AddReview = ({
           tooltip="Califica el producto del 1 al 5 estrellas"
           tooltipOptions={{ position: 'top' }}
         />
-        {!rating && (
-          <small className="field-error">
-            <i className="pi pi-exclamation-circle"></i>
+        {!rating &amp;&amp; (
+          &lt;small className="field-error">
+            &lt;i className="pi pi-exclamation-circle">&lt;/i>
             Por favor asigna una calificación
-          </small>
+          &lt;/small>
         )}
         
         {/* Vista previa de estrellas */}
-        {rating > 0 && (
-          <div className="rating-preview">
-            <span className="preview-label">Tu calificación:</span>
-            <div className="stars-preview">
+        {rating > 0 &amp;&amp; (
+          &lt;div className="rating-preview">
+            &lt;span className="preview-label">Tu calificación:&lt;/span>
+            &lt;div className="stars-preview">
               {[...Array(5)].map((_, index) => (
-                <i
+                &lt;i
                   key={index}
-                  className={`pi ${index < rating ? 'pi-star-fill' : 'pi-star'} star-icon`}
-                  style={{ color: index < rating ? '#ffd700' : '#e0e0e0' }}
+                  className={`pi ${index &lt; rating ? 'pi-star-fill' : 'pi-star'} star-icon`}
+                  style={{ color: index &lt; rating ? '#ffd700' : '#e0e0e0' }}
                 />
               ))}
-            </div>
-          </div>
+            &lt;/div>
+          &lt;/div>
         )}
-      </div>
+      &lt;/div>
 
       {/* Información adicional */}
-      <div className="form-info">
-        <div className="info-item">
-          <i className="pi pi-info-circle"></i>
-          <span>Tu reseña será visible para otros usuarios</span>
-        </div>
-        <div className="info-item">
-          <i className="pi pi-shield"></i>
-          <span>Las reseñas son moderadas para mantener la calidad</span>
-        </div>
-        <div className="info-item">
-          <i className="pi pi-heart"></i>
-          <span>Ayuda a otros usuarios con tu opinión honesta</span>
-        </div>
-      </div>
+      &lt;div className="form-info">
+        &lt;div className="info-item">
+          &lt;i className="pi pi-info-circle">&lt;/i>
+          &lt;span>Tu reseña será visible para otros usuarios&lt;/span>
+        &lt;/div>
+        &lt;div className="info-item">
+          &lt;i className="pi pi-shield">&lt;/i>
+          &lt;span>Las reseñas son moderadas para mantener la calidad&lt;/span>
+        &lt;/div>
+        &lt;div className="info-item">
+          &lt;i className="pi pi-heart">&lt;/i>
+          &lt;span>Ayuda a otros usuarios con tu opinión honesta&lt;/span>
+        &lt;/div>
+      &lt;/div>
 
       {/* Indicador de estado de envío */}
-      {disabled && (
-        <div className="submitting-indicator">
-          <i className="pi pi-spin pi-spinner"></i>
-          <span>Enviando tu reseña...</span>
-        </div>
+      {disabled &amp;&amp; (
+        &lt;div className="submitting-indicator">
+          &lt;i className="pi pi-spin pi-spinner">&lt;/i>
+          &lt;span>Enviando tu reseña...&lt;/span>
+        &lt;/div>
       )}
-    </div>
+    &lt;/div>
   );
 };
 
-export default AddReview;
+export default AddReview;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

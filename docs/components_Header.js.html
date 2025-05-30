@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Header.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Header.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Componente de encabezado principal de la aplicación
  * @description Header complejo con navegación, búsqueda, autenticación, notificaciones,
  * tema dinámico y menús responsive para una experiencia de usuario completa.
@@ -174,7 +202,7 @@ const Header = ({
      */
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
+            if (searchRef.current &amp;&amp; !searchRef.current.contains(event.target)) {
                 setIsSearchExpanded(false);
             }
         };
@@ -242,7 +270,7 @@ const Header = ({
      * @async
      * @function
      * @since 1.0.0
-     * @returns {Promise<void>} Promesa que se resuelve cuando se cierra la sesión
+     * @returns {Promise&lt;void>} Promesa que se resuelve cuando se cierra la sesión
      */
     const handleLogout = async () => {
         try {
@@ -404,7 +432,7 @@ const Header = ({
             'detergente', 'shampoo', 'papel higiénico'
         ];
         
-        if (!query || query.length < 2) return [];
+        if (!query || query.length &lt; 2) return [];
         
         return suggestions
             .filter(item => item.toLowerCase().includes(query.toLowerCase()))
@@ -432,11 +460,11 @@ const Header = ({
      * @returns {JSX.Element} Panel completo de notificaciones
      */
     const notificationsTemplate = () => (
-        <div className="notifications-panel">
-            <div className="notifications-header">
-                <h4>Notificaciones</h4>
-                {unreadCount > 0 && (
-                    <Button
+        &lt;div className="notifications-panel">
+            &lt;div className="notifications-header">
+                &lt;h4>Notificaciones&lt;/h4>
+                {unreadCount > 0 &amp;&amp; (
+                    &lt;Button
                         label="Marcar todas como leídas"
                         onClick={markAllAsRead}
                         text
@@ -444,50 +472,50 @@ const Header = ({
                         className="mark-all-read-btn"
                     />
                 )}
-            </div>
-            <div className="notifications-list">
+            &lt;/div>
+            &lt;div className="notifications-list">
                 {notifications.length > 0 ? (
                     notifications.map((notification) => (
-                        <div
+                        &lt;div
                             key={notification.id}
                             className={`notification-item ${notification.unread ? 'unread' : ''}`}
                             onClick={() => handleNotificationAction(notification)}
                         >
-                            <div className={`notification-icon ${notification.type}`}>
-                                <i className={`pi ${notification.type === 'info' ? 'pi-info-circle' : 
+                            &lt;div className={`notification-icon ${notification.type}`}>
+                                &lt;i className={`pi ${notification.type === 'info' ? 'pi-info-circle' : 
                                     notification.type === 'success' ? 'pi-check-circle' :
                                     notification.type === 'warning' ? 'pi-exclamation-triangle' :
-                                    'pi-times-circle'}`}></i>
-                            </div>
-                            <div className="notification-content">
-                                <span className="notification-text">{notification.text}</span>
-                                <small className="notification-time">{notification.time}</small>
-                                {notification.action && (
-                                    <small className="notification-action">{notification.action}</small>
+                                    'pi-times-circle'}`}>&lt;/i>
+                            &lt;/div>
+                            &lt;div className="notification-content">
+                                &lt;span className="notification-text">{notification.text}&lt;/span>
+                                &lt;small className="notification-time">{notification.time}&lt;/small>
+                                {notification.action &amp;&amp; (
+                                    &lt;small className="notification-action">{notification.action}&lt;/small>
                                 )}
-                            </div>
-                            {notification.unread && (
-                                <div className="unread-indicator"></div>
+                            &lt;/div>
+                            {notification.unread &amp;&amp; (
+                                &lt;div className="unread-indicator">&lt;/div>
                             )}
-                        </div>
+                        &lt;/div>
                     ))
                 ) : (
-                    <div className="no-notifications">
-                        <i className="pi pi-bell-slash"></i>
-                        <span>No hay notificaciones</span>
-                    </div>
+                    &lt;div className="no-notifications">
+                        &lt;i className="pi pi-bell-slash">&lt;/i>
+                        &lt;span>No hay notificaciones&lt;/span>
+                    &lt;/div>
                 )}
-            </div>
-            <div className="notifications-footer">
-                <Button
+            &lt;/div>
+            &lt;div className="notifications-footer">
+                &lt;Button
                     label="Ver todas las notificaciones"
                     className="view-all-notifications"
                     onClick={() => navigateToPage('/notificaciones')}
                     text
                     size="small"
                 />
-            </div>
-        </div>
+            &lt;/div>
+        &lt;/div>
     );
 
     /**
@@ -502,28 +530,28 @@ const Header = ({
     };
 
     return (
-        <header className={`header-container ${className}`}>
-            <div className="header-content">
+        &lt;header className={`header-container ${className}`}>
+            &lt;div className="header-content">
                 {/* Logo y marca */}
-                <div className="header-left">
-                    <button 
+                &lt;div className="header-left">
+                    &lt;button 
                         className="mobile-menu-toggle"
                         onClick={toggleMobileMenu}
                         aria-label="Abrir menú de navegación"
                         aria-expanded={isMobileMenuOpen}
                     >
-                        <i className={`pi ${isMobileMenuOpen ? 'pi-times' : 'pi-bars'}`}></i>
-                    </button>
+                        &lt;i className={`pi ${isMobileMenuOpen ? 'pi-times' : 'pi-bars'}`}>&lt;/i>
+                    &lt;/button>
                     
-                    <div 
+                    &lt;div 
                         className="header-brand" 
                         onClick={() => navigateToPage('/')}
                         role="button"
                         tabIndex={0}
                         aria-label="Ir a página principal"
                     >
-                        <div className="header-logo-container">
-                            <img 
+                        &lt;div className="header-logo-container">
+                            &lt;img 
                                 src={projectLogo || logo} 
                                 alt="Compare Logo" 
                                 className="header-logo" 
@@ -531,82 +559,82 @@ const Header = ({
                                     e.target.src = logo;
                                 }}
                             />
-                        </div>
-                        <div className="brand-text">
-                            <h1 className="brand-name">Compare</h1>
-                            <small className="brand-tagline">Ahorrá inteligente</small>
-                        </div>
-                    </div>
-                </div>
+                        &lt;/div>
+                        &lt;div className="brand-text">
+                            &lt;h1 className="brand-name">Compare&lt;/h1>
+                            &lt;small className="brand-tagline">Ahorrá inteligente&lt;/small>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/div>
 
                 {/* Navegación desktop */}
-                <nav className="header-nav desktop-nav">
-                    <Button
+                &lt;nav className="header-nav desktop-nav">
+                    &lt;Button
                         label="Productos"
                         icon="pi pi-shopping-bag"
                         className={`nav-button ${isActiveRoute('/productos') ? 'active' : ''}`}
                         onClick={() => navigateToPage('/productos')}
                         text
                     />
-                    <Button
+                    &lt;Button
                         label="Sucursales"
                         icon="pi pi-map-marker"
                         className={`nav-button ${isActiveRoute('/sucursales') ? 'active' : ''}`}
                         onClick={() => navigateToPage('/sucursales')}
                         text
                     />
-                    <Button
+                    &lt;Button
                         label="Ofertas"
                         icon="pi pi-tag"
                         className={`nav-button ${isActiveRoute('/ofertas') ? 'active' : ''}`}
                         onClick={() => navigateToPage('/ofertas')}
                         text
                     />
-                </nav>
+                &lt;/nav>
 
                 {/* Barra de búsqueda */}
-                <div 
+                &lt;div 
                     className={`header-search ${isSearchExpanded ? 'expanded' : ''}`} 
                     ref={searchRef}
                 >
-                    <form onSubmit={handleSearch} className="search-form">
-                        <InputText
+                    &lt;form onSubmit={handleSearch} className="search-form">
+                        &lt;InputText
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Buscar productos..."
                             className="search-input"
                             onFocus={() => setIsSearchExpanded(true)}
                         />
-                        <Button
+                        &lt;Button
                             type="submit"
                             icon="pi pi-search"
                             className="search-button"
                             disabled={!searchQuery.trim()}
                         />
-                    </form>
+                    &lt;/form>
                     
                     {/* Sugerencias de búsqueda */}
-                    {isSearchExpanded && currentSuggestions.length > 0 && (
-                        <div className="search-suggestions">
+                    {isSearchExpanded &amp;&amp; currentSuggestions.length > 0 &amp;&amp; (
+                        &lt;div className="search-suggestions">
                             {currentSuggestions.map((suggestion, index) => (
-                                <div
+                                &lt;div
                                     key={index}
                                     className="suggestion-item"
                                     onClick={() => handleSuggestionClick(suggestion)}
                                 >
-                                    <i className="pi pi-search"></i>
-                                    <span>{suggestion}</span>
-                                </div>
+                                    &lt;i className="pi pi-search">&lt;/i>
+                                    &lt;span>{suggestion}&lt;/span>
+                                &lt;/div>
                             ))}
-                        </div>
+                        &lt;/div>
                     )}
-                </div>
+                &lt;/div>
 
                 {/* Acciones del header */}
-                <div className="header-actions">
+                &lt;div className="header-actions">
                     {/* Botón de tema */}
-                    {showThemeToggle && (
-                        <Button
+                    {showThemeToggle &amp;&amp; (
+                        &lt;Button
                             icon={darkMode ? "pi pi-sun" : "pi pi-moon"}
                             className="theme-toggle"
                             onClick={toggleTheme}
@@ -618,9 +646,9 @@ const Header = ({
                     )}
 
                     {/* Notificaciones */}
-                    {user && showNotifications && (
-                        <>
-                            <Button
+                    {user &amp;&amp; showNotifications &amp;&amp; (
+                        &lt;>
+                            &lt;Button
                                 icon="pi pi-bell"
                                 className="notification-button"
                                 onClick={handleNotificationClick}
@@ -629,24 +657,24 @@ const Header = ({
                                 rounded
                                 text
                             >
-                                {unreadCount > 0 && (
-                                    <Badge value={unreadCount > 99 ? '99+' : unreadCount} severity="info" />
+                                {unreadCount > 0 &amp;&amp; (
+                                    &lt;Badge value={unreadCount > 99 ? '99+' : unreadCount} severity="info" />
                                 )}
-                            </Button>
+                            &lt;/Button>
                             
-                            <OverlayPanel 
+                            &lt;OverlayPanel 
                                 ref={notificationsRef} 
                                 className="notifications-overlay"
                                 dismissable
                                 showCloseIcon
                             >
                                 {notificationsTemplate()}
-                            </OverlayPanel>
-                        </>
+                            &lt;/OverlayPanel>
+                        &lt;/>
                     )}
 
                     {/* Scanner QR */}
-                    <Button
+                    &lt;Button
                         icon="pi pi-qrcode"
                         className="qr-button desktop-only"
                         onClick={() => navigateToPage('/scanner')}
@@ -658,15 +686,15 @@ const Header = ({
 
                     {/* Usuario autenticado o botones de auth */}
                     {user ? (
-                        <div className="user-menu">
-                            <Menu
+                        &lt;div className="user-menu">
+                            &lt;Menu
                                 model={userMenuItems}
                                 popup
                                 ref={menuRef}
                                 id="user-menu"
                                 popupAlignment="right"
                             />
-                            <Button
+                            &lt;Button
                                 className="user-avatar"
                                 onClick={(event) => menuRef.current.toggle(event)}
                                 tooltip={`Hola, ${user.displayName || user.email}`}
@@ -674,7 +702,7 @@ const Header = ({
                                 rounded
                             >
                                 {user.photoURL ? (
-                                    <img
+                                    &lt;img
                                         src={user.photoURL}
                                         alt={`Avatar de ${user.displayName || user.email}`}
                                         className="avatar-image"
@@ -684,15 +712,15 @@ const Header = ({
                                         }}
                                     />
                                 ) : null}
-                                <i 
+                                &lt;i 
                                     className="pi pi-user"
                                     style={{ display: user.photoURL ? 'none' : 'block' }}
-                                ></i>
-                            </Button>
-                        </div>
+                                >&lt;/i>
+                            &lt;/Button>
+                        &lt;/div>
                     ) : (
-                        <div className="auth-buttons">
-                            <Button
+                        &lt;div className="auth-buttons">
+                            &lt;Button
                                 label="Iniciar Sesión"
                                 icon="pi pi-sign-in"
                                 className="login-button desktop-only"
@@ -700,88 +728,88 @@ const Header = ({
                                 outlined
                                 size="small"
                             />
-                            <Button
+                            &lt;Button
                                 icon="pi pi-sign-in"
                                 className="login-button mobile-only"
                                 onClick={() => navigateToPage('/login')}
                                 rounded
                                 outlined
                             />
-                        </div>
+                        &lt;/div>
                     )}
-                </div>
-            </div>
+                &lt;/div>
+            &lt;/div>
 
             {/* Menú móvil */}
-            <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-                <div className="mobile-menu-overlay" onClick={toggleMobileMenu}></div>
-                <div className="mobile-menu-content">
+            &lt;div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+                &lt;div className="mobile-menu-overlay" onClick={toggleMobileMenu}>&lt;/div>
+                &lt;div className="mobile-menu-content">
                     {/* Header del menú móvil */}
-                    <div className="mobile-menu-header">
-                        <div className="mobile-user-info">
+                    &lt;div className="mobile-menu-header">
+                        &lt;div className="mobile-user-info">
                             {user ? (
-                                <div className="mobile-user-profile">
-                                    <div className="mobile-avatar">
+                                &lt;div className="mobile-user-profile">
+                                    &lt;div className="mobile-avatar">
                                         {user.photoURL ? (
-                                            <img src={user.photoURL} alt={`Avatar de ${user.displayName}`} />
+                                            &lt;img src={user.photoURL} alt={`Avatar de ${user.displayName}`} />
                                         ) : (
-                                            <i className="pi pi-user"></i>
+                                            &lt;i className="pi pi-user">&lt;/i>
                                         )}
-                                    </div>
-                                    <div className="mobile-user-details">
-                                        <span className="user-name">
+                                    &lt;/div>
+                                    &lt;div className="mobile-user-details">
+                                        &lt;span className="user-name">
                                             {user.displayName || user.email}
-                                        </span>
-                                        <small className="user-email">{user.email}</small>
-                                    </div>
-                                </div>
+                                        &lt;/span>
+                                        &lt;small className="user-email">{user.email}&lt;/small>
+                                    &lt;/div>
+                                &lt;/div>
                             ) : (
-                                <div className="mobile-guest">
-                                    <i className="pi pi-user"></i>
-                                    <span>Invitado</span>
-                                </div>
+                                &lt;div className="mobile-guest">
+                                    &lt;i className="pi pi-user">&lt;/i>
+                                    &lt;span>Invitado&lt;/span>
+                                &lt;/div>
                             )}
-                        </div>
-                        <Button
+                        &lt;/div>
+                        &lt;Button
                             icon="pi pi-times"
                             className="close-mobile-menu"
                             onClick={toggleMobileMenu}
                             rounded
                             text
                         />
-                    </div>
+                    &lt;/div>
 
                     {/* Navegación móvil */}
-                    <nav className="mobile-nav">
-                        <Button
+                    &lt;nav className="mobile-nav">
+                        &lt;Button
                             label="Inicio"
                             icon="pi pi-home"
                             className={`mobile-nav-button ${isActiveRoute('/') ? 'active' : ''}`}
                             onClick={() => navigateToPage('/')}
                             text
                         />
-                        <Button
+                        &lt;Button
                             label="Productos"
                             icon="pi pi-shopping-bag"
                             className={`mobile-nav-button ${isActiveRoute('/productos') ? 'active' : ''}`}
                             onClick={() => navigateToPage('/productos')}
                             text
                         />
-                        <Button
+                        &lt;Button
                             label="Sucursales"
                             icon="pi pi-map-marker"
                             className={`mobile-nav-button ${isActiveRoute('/sucursales') ? 'active' : ''}`}
                             onClick={() => navigateToPage('/sucursales')}
                             text
                         />
-                        <Button
+                        &lt;Button
                             label="Ofertas"
                             icon="pi pi-tag"
                             className={`mobile-nav-button ${isActiveRoute('/ofertas') ? 'active' : ''}`}
                             onClick={() => navigateToPage('/ofertas')}
                             text
                         />
-                        <Button
+                        &lt;Button
                             label="Scanner QR"
                             icon="pi pi-qrcode"
                             className="mobile-nav-button"
@@ -790,45 +818,45 @@ const Header = ({
                         />
                         
                         {/* Opciones adicionales para usuarios autenticados */}
-                        {user && (
-                            <>
-                                <div className="mobile-nav-divider"></div>
-                                <Button
+                        {user &amp;&amp; (
+                            &lt;>
+                                &lt;div className="mobile-nav-divider">&lt;/div>
+                                &lt;Button
                                     label="Mi Perfil"
                                     icon="pi pi-user"
                                     className="mobile-nav-button"
                                     onClick={() => navigateToPage('/perfil')}
                                     text
                                 />
-                                <Button
+                                &lt;Button
                                     label="Mis Favoritos"
                                     icon="pi pi-heart"
                                     className="mobile-nav-button"
                                     onClick={() => navigateToPage('/favoritos')}
                                     text
                                 />
-                                <Button
+                                &lt;Button
                                     label="Historial"
                                     icon="pi pi-history"
                                     className="mobile-nav-button"
                                     onClick={() => navigateToPage('/historial')}
                                     text
                                 />
-                                <Button
+                                &lt;Button
                                     label="Configuración"
                                     icon="pi pi-cog"
                                     className="mobile-nav-button"
                                     onClick={() => navigateToPage('/configuracion')}
                                     text
                                 />
-                            </>
+                            &lt;/>
                         )}
-                    </nav>
+                    &lt;/nav>
 
                     {/* Footer del menú móvil */}
-                    <div className="mobile-menu-footer">
+                    &lt;div className="mobile-menu-footer">
                         {user ? (
-                            <Button
+                            &lt;Button
                                 label="Cerrar Sesión"
                                 icon="pi pi-sign-out"
                                 className="mobile-logout-button"
@@ -837,27 +865,49 @@ const Header = ({
                                 text
                             />
                         ) : (
-                            <div className="mobile-auth-buttons">
-                                <Button
+                            &lt;div className="mobile-auth-buttons">
+                                &lt;Button
                                     label="Iniciar Sesión"
                                     icon="pi pi-sign-in"
                                     className="mobile-login-button"
                                     onClick={() => navigateToPage('/login')}
                                     outlined
                                 />
-                                <Button
+                                &lt;Button
                                     label="Registrarse"
                                     icon="pi pi-user-plus"
                                     className="mobile-register-button"
                                     onClick={() => navigateToPage('/register')}
                                 />
-                            </div>
+                            &lt;/div>
                         )}
-                    </div>
-                </div>
-            </div>
-        </header>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+        &lt;/header>
     );
 };
 
-export default Header;
+export default Header;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

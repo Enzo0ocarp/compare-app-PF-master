@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/BottomNav.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/BottomNav.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Componente de navegación inferior para aplicación móvil
  * @description Barra de navegación fija en la parte inferior con tabs, badges de notificaciones,
  * indicador visual de tab activo y efectos de ripple para una experiencia móvil moderna.
@@ -48,19 +76,19 @@ import '../styles/BottomNav.css';
  * 
  * @example
  * // Uso básico (sin props requeridas)
- * <BottomNav />
+ * &lt;BottomNav />
  * 
  * @example
  * // En una aplicación con Router
  * function App() {
  *   return (
- *     <Router>
- *       <Routes>
- *         <Route path="/" element={<Home />} />
- *         <Route path="/productos" element={<Productos />} />
- *       </Routes>
- *       <BottomNav />
- *     </Router>
+ *     &lt;Router>
+ *       &lt;Routes>
+ *         &lt;Route path="/" element={&lt;Home />} />
+ *         &lt;Route path="/productos" element={&lt;Productos />} />
+ *       &lt;/Routes>
+ *       &lt;BottomNav />
+ *     &lt;/Router>
  *   );
  * }
  */
@@ -215,9 +243,9 @@ function BottomNav() {
     };
 
     return (
-        <nav className="bottom-nav" role="navigation" aria-label="Navegación principal">
+        &lt;nav className="bottom-nav" role="navigation" aria-label="Navegación principal">
             {/* Indicador deslizante del tab activo */}
-            <div 
+            &lt;div 
                 className="bottom-nav-indicator" 
                 style={{ 
                     left: `${getIndicatorPosition(currentTabIndex)}%`,
@@ -230,7 +258,7 @@ function BottomNav() {
             
             {/* Tabs de navegación */}
             {tabs.map((tab, index) => (
-                <button
+                &lt;button
                     key={`${tab.path}-${index}`}
                     className={`bottom-nav-item ${isTabActive(tab.path) ? 'active' : ''}`}
                     onClick={(event) => {
@@ -243,8 +271,8 @@ function BottomNav() {
                     type="button"
                 >
                     {/* Contenedor del ícono con badge */}
-                    <div className="nav-icon-container">
-                        <i 
+                    &lt;div className="nav-icon-container">
+                        &lt;i 
                             className={`bottom-nav-icon ${tab.icon}`}
                             style={{ 
                                 color: isTabActive(tab.path) ? tab.color : '#7a7a7a',
@@ -255,18 +283,18 @@ function BottomNav() {
                         />
                         
                         {/* Badge de notificaciones */}
-                        {tab.notifications > 0 && (
-                            <Badge 
+                        {tab.notifications > 0 &amp;&amp; (
+                            &lt;Badge 
                                 value={tab.notifications > 99 ? '99+' : tab.notifications} 
                                 severity="danger" 
                                 className="nav-badge"
                                 aria-label={`${tab.notifications} notificaciones en ${tab.label}`}
                             />
                         )}
-                    </div>
+                    &lt;/div>
                     
                     {/* Etiqueta del tab */}
-                    <span 
+                    &lt;span 
                         className="bottom-nav-label"
                         style={{ 
                             color: isTabActive(tab.path) ? tab.color : '#7a7a7a',
@@ -276,29 +304,51 @@ function BottomNav() {
                         }}
                     >
                         {tab.label}
-                    </span>
+                    &lt;/span>
                     
                     {/* Elemento para efecto ripple */}
-                    <div 
+                    &lt;div 
                         className="ripple-effect"
                         style={{ '--ripple-color': `${tab.color}20` }}
                         aria-hidden="true"
-                    ></div>
-                </button>
+                    >&lt;/div>
+                &lt;/button>
             ))}
 
             {/* Indicador total de notificaciones (oculto, solo para accesibilidad) */}
-            {getTotalNotifications() > 0 && (
-                <div 
+            {getTotalNotifications() > 0 &amp;&amp; (
+                &lt;div 
                     className="sr-only" 
                     aria-live="polite"
                     aria-atomic="true"
                 >
                     Tienes {getTotalNotifications()} notificaciones pendientes
-                </div>
+                &lt;/div>
             )}
-        </nav>
+        &lt;/nav>
     );
 }
 
-export default BottomNav;
+export default BottomNav;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Perfil.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Perfil.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Página de perfil de usuario de Compare Precios Argentina
  * @description Componente Perfil que permite a los usuarios ver y editar su información personal,
  * gestionar configuraciones de cuenta y realizar operaciones relacionadas con el perfil.
@@ -52,7 +80,7 @@ import '../styles/Perfil.css';
  * @returns {JSX.Element} Componente de la página de perfil
  * 
  * @example
- * <Perfil />
+ * &lt;Perfil />
  */
 function Perfil() {
   /** @type {[UserInfo|null, Function]} Información del usuario actual */
@@ -119,7 +147,7 @@ function Perfil() {
    * @function
    * @since 1.0.0
    * 
-   * @returns {Promise<void>} Promesa que se resuelve cuando el usuario cierra sesión
+   * @returns {Promise&lt;void>} Promesa que se resuelve cuando el usuario cierra sesión
    * 
    * @throws {Error} Error al cerrar sesión
    * 
@@ -216,170 +244,192 @@ function Perfil() {
   // Mostrar indicador de carga mientras se obtienen los datos
   if (loading) {
     return (
-      <div className="perfil-page loading">
-        <Header />
-        <div className="loading-container">
-          <div className="loading-spinner">
-            <i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}></i>
-            <p>Cargando perfil...</p>
-          </div>
-        </div>
-        <BottomNav />
-      </div>
+      &lt;div className="perfil-page loading">
+        &lt;Header />
+        &lt;div className="loading-container">
+          &lt;div className="loading-spinner">
+            &lt;i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}>&lt;/i>
+            &lt;p>Cargando perfil...&lt;/p>
+          &lt;/div>
+        &lt;/div>
+        &lt;BottomNav />
+      &lt;/div>
     );
   }
 
   // Mostrar mensaje si no hay usuario autenticado
   if (!userInfo) {
     return (
-      <div className="perfil-page">
-        <Header />
-        <div className="no-user-container">
-          <div className="no-user-content">
-            <i className="pi pi-user" style={{ fontSize: '4rem', color: '#ccc' }}></i>
-            <h2>No hay usuario autenticado</h2>
-            <p>Inicia sesión para ver tu perfil</p>
-            <button 
+      &lt;div className="perfil-page">
+        &lt;Header />
+        &lt;div className="no-user-container">
+          &lt;div className="no-user-content">
+            &lt;i className="pi pi-user" style={{ fontSize: '4rem', color: '#ccc' }}>&lt;/i>
+            &lt;h2>No hay usuario autenticado&lt;/h2>
+            &lt;p>Inicia sesión para ver tu perfil&lt;/p>
+            &lt;button 
               className="login-btn"
               onClick={() => window.location.href = '/login'}
             >
               Iniciar Sesión
-            </button>
-          </div>
-        </div>
-        <BottomNav />
-      </div>
+            &lt;/button>
+          &lt;/div>
+        &lt;/div>
+        &lt;BottomNav />
+      &lt;/div>
     );
   }
 
   return (
-    <div className="perfil-page">
-      <Header />
+    &lt;div className="perfil-page">
+      &lt;Header />
       
-      <div className="perfil-container">
-        <section className="section profile-section fade-in">
-          <div className="profile-header">
-            <h2>
-              <i className="pi pi-user"></i>
+      &lt;div className="perfil-container">
+        &lt;section className="section profile-section fade-in">
+          &lt;div className="profile-header">
+            &lt;h2>
+              &lt;i className="pi pi-user">&lt;/i>
               Perfil de Usuario
-            </h2>
-            <p>Gestiona tu información personal y configuraciones de cuenta</p>
-          </div>
+            &lt;/h2>
+            &lt;p>Gestiona tu información personal y configuraciones de cuenta&lt;/p>
+          &lt;/div>
           
-          <ProfileCard 
+          &lt;ProfileCard 
             user={userInfo} 
             onEditProfile={handleEditProfile} 
             onLogout={handleLogout} 
           />
           
-          {showEditForm && (
-            <EditProfile 
+          {showEditForm &amp;&amp; (
+            &lt;EditProfile 
               user={userInfo} 
               onClose={handleCloseEditForm}
               onUpdate={handleProfileUpdate}
               onError={handleProfileError}
             />
           )}
-        </section>
+        &lt;/section>
         
         {/* Sección adicional de estadísticas del usuario */}
-        <section className="user-stats-section">
-          <div className="stats-header">
-            <h3>
-              <i className="pi pi-chart-bar"></i>
+        &lt;section className="user-stats-section">
+          &lt;div className="stats-header">
+            &lt;h3>
+              &lt;i className="pi pi-chart-bar">&lt;/i>
               Tu Actividad en Compare
-            </h3>
-          </div>
+            &lt;/h3>
+          &lt;/div>
           
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-icon">
-                <i className="pi pi-search"></i>
-              </div>
-              <div className="stat-content">
-                <h4>Búsquedas Realizadas</h4>
-                <span className="stat-number">124</span>
-                <small>Este mes</small>
-              </div>
-            </div>
+          &lt;div className="stats-grid">
+            &lt;div className="stat-card">
+              &lt;div className="stat-icon">
+                &lt;i className="pi pi-search">&lt;/i>
+              &lt;/div>
+              &lt;div className="stat-content">
+                &lt;h4>Búsquedas Realizadas&lt;/h4>
+                &lt;span className="stat-number">124&lt;/span>
+                &lt;small>Este mes&lt;/small>
+              &lt;/div>
+            &lt;/div>
             
-            <div className="stat-card">
-              <div className="stat-icon">
-                <i className="pi pi-heart"></i>
-              </div>
-              <div className="stat-content">
-                <h4>Productos Favoritos</h4>
-                <span className="stat-number">18</span>
-                <small>En tu lista</small>
-              </div>
-            </div>
+            &lt;div className="stat-card">
+              &lt;div className="stat-icon">
+                &lt;i className="pi pi-heart">&lt;/i>
+              &lt;/div>
+              &lt;div className="stat-content">
+                &lt;h4>Productos Favoritos&lt;/h4>
+                &lt;span className="stat-number">18&lt;/span>
+                &lt;small>En tu lista&lt;/small>
+              &lt;/div>
+            &lt;/div>
             
-            <div className="stat-card">
-              <div className="stat-icon">
-                <i className="pi pi-dollar"></i>
-              </div>
-              <div className="stat-content">
-                <h4>Ahorro Estimado</h4>
-                <span className="stat-number">$2,450</span>
-                <small>Este mes</small>
-              </div>
-            </div>
-          </div>
-        </section>
+            &lt;div className="stat-card">
+              &lt;div className="stat-icon">
+                &lt;i className="pi pi-dollar">&lt;/i>
+              &lt;/div>
+              &lt;div className="stat-content">
+                &lt;h4>Ahorro Estimado&lt;/h4>
+                &lt;span className="stat-number">$2,450&lt;/span>
+                &lt;small>Este mes&lt;/small>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/section>
         
         {/* Sección de configuraciones rápidas */}
-        <section className="quick-settings-section">
-          <div className="settings-header">
-            <h3>
-              <i className="pi pi-cog"></i>
+        &lt;section className="quick-settings-section">
+          &lt;div className="settings-header">
+            &lt;h3>
+              &lt;i className="pi pi-cog">&lt;/i>
               Configuración Rápida
-            </h3>
-          </div>
+            &lt;/h3>
+          &lt;/div>
           
-          <div className="settings-grid">
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4>Notificaciones por Email</h4>
-                <p>Recibe alertas de ofertas y actualizaciones</p>
-              </div>
-              <div className="setting-control">
-                <input type="checkbox" defaultChecked className="setting-toggle" />
-              </div>
-            </div>
+          &lt;div className="settings-grid">
+            &lt;div className="setting-item">
+              &lt;div className="setting-info">
+                &lt;h4>Notificaciones por Email&lt;/h4>
+                &lt;p>Recibe alertas de ofertas y actualizaciones&lt;/p>
+              &lt;/div>
+              &lt;div className="setting-control">
+                &lt;input type="checkbox" defaultChecked className="setting-toggle" />
+              &lt;/div>
+            &lt;/div>
             
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4>Ubicación Automática</h4>
-                <p>Detectar tu ubicación para ofertas cercanas</p>
-              </div>
-              <div className="setting-control">
-                <input type="checkbox" className="setting-toggle" />
-              </div>
-            </div>
+            &lt;div className="setting-item">
+              &lt;div className="setting-info">
+                &lt;h4>Ubicación Automática&lt;/h4>
+                &lt;p>Detectar tu ubicación para ofertas cercanas&lt;/p>
+              &lt;/div>
+              &lt;div className="setting-control">
+                &lt;input type="checkbox" className="setting-toggle" />
+              &lt;/div>
+            &lt;/div>
             
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4>Alertas de Precios</h4>
-                <p>Notificaciones cuando bajen los precios</p>
-              </div>
-              <div className="setting-control">
-                <input type="checkbox" defaultChecked className="setting-toggle" />
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
+            &lt;div className="setting-item">
+              &lt;div className="setting-info">
+                &lt;h4>Alertas de Precios&lt;/h4>
+                &lt;p>Notificaciones cuando bajen los precios&lt;/p>
+              &lt;/div>
+              &lt;div className="setting-control">
+                &lt;input type="checkbox" defaultChecked className="setting-toggle" />
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/section>
+      &lt;/div>
       
-      <BottomNav />
+      &lt;BottomNav />
       
-      {notification && (
-        <Notification 
+      {notification &amp;&amp; (
+        &lt;Notification 
           {...notification} 
           onClose={handleCloseNotification} 
         />
       )}
-    </div>
+    &lt;/div>
   );
 }
 
-export default Perfil;
+export default Perfil;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AddReview">AddReview</a></li><li><a href="global.html#BottomNav">BottomNav</a></li><li><a href="global.html#BranchCard">BranchCard</a></li><li><a href="global.html#Header">Header</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Nutricional">Nutricional</a></li><li><a href="global.html#Perfil">Perfil</a></li><li><a href="global.html#Productos">Productos</a></li><li><a href="global.html#Rese%25C3%25B1as">Reseñas</a></li><li><a href="global.html#Sucursales">Sucursales</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 30 2025 08:58:18 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

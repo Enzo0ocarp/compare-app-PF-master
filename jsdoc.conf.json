@@ -1,0 +1,28 @@
+{
+  "source": {
+    "include": ["./src/components/", "./src/pages/"],
+    "includePattern": "\\.(js|jsx)$",
+    "exclude": [
+      "node_modules/", 
+      "./src/functions/node_modules/",
+      "**/*test*",
+      "**/*spec*"
+    ]
+  },
+  "opts": {
+    "destination": "./docs/",
+    "recurse": true,
+    "readme": "./README.md"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  }
+}
