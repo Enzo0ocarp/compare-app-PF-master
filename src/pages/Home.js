@@ -1,184 +1,57 @@
 /**
  * @fileoverview Página principal de la aplicación Compare Precios Argentina
- * @description Componente Home que muestra el dashboard principal con productos destacados,
- * sucursales cercanas, categorías, estadísticas en tiempo real y testimonios de usuarios.
+ * @description Componente Home optimizado con menos recargas y código limpio
  * @author Compare Team
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2025
  */
 
-// src/pages/Home.js - Versión Completamente Mejorada
+// src/pages/Home.js - Versión Optimizada
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Badge } from 'primereact/badge';
-import { ProgressBar } from 'primereact/progressbar';
 import { Skeleton } from 'primereact/skeleton';
-import { Carousel } from 'primereact/carousel';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import BranchCard from '../components/BranchCard';
 import BottomNav from '../components/BottomNav';
-import { getFeaturedProducts, getBranches, getStats, searchProducts } from '../functions/services/api';
+import { getFeaturedProducts, getBranches, getStats } from '../functions/services/api';
 import '../styles/HomeStyles.css';
 
 /**
- * @typedef {Object} Product
- * @property {string|number} id - ID único del producto
- * @property {string} title - Nombre del producto
- * @property {number} price - Precio actual del producto
- * @property {number} originalPrice - Precio original del producto
- * @property {string} description - Descripción del producto
- * @property {string} category - Categoría del producto
- * @property {string} image - URL de la imagen del producto
- * @property {number} discount - Porcentaje de descuento
- * @property {Object} rating - Calificación del producto
- * @property {number} rating.rate - Puntuación promedio
- * @property {number} rating.count - Número de reseñas
- * @property {boolean} inStock - Disponibilidad del producto
- * @property {boolean} trending - Si el producto está en tendencia
- * @property {string} brand - Marca del producto
- * @property {string} presentation - Presentación del producto
- */
-
-/**
- * @typedef {Object} Branch
- * @property {string|number} id - ID único de la sucursal
- * @property {string} name - Nombre de la sucursal
- * @property {string} address - Dirección de la sucursal
- * @property {string} rating - Calificación de la sucursal
- * @property {string} distance - Distancia desde el usuario
- * @property {string} status - Estado de la sucursal (Abierto/Cerrado)
- * @property {number} specialOffers - Número de ofertas especiales
- * @property {string} openUntil - Hora de cierre
- */
-
-/**
- * @typedef {Object} Category
- * @property {string} id - ID único de la categoría
- * @property {string} name - Nombre de la categoría
- * @property {string} icon - Clase CSS del ícono
- * @property {string} color - Color primario de la categoría
- * @property {string} bgGradient - Gradiente de fondo
- * @property {string} description - Descripción de la categoría
- * @property {string} count - Contador de elementos
- * @property {string} badge - Etiqueta de estado
- * @property {string} link - URL de navegación
- */
-
-/**
- * @typedef {Object} Testimonial
- * @property {number} id - ID único del testimonio
- * @property {string} name - Nombre del usuario
- * @property {string} location - Ubicación del usuario
- * @property {string} text - Texto del testimonio
- * @property {number} rating - Calificación otorgada
- * @property {string} avatar - URL del avatar
- * @property {number} savings - Ahorro reportado
- * @property {string} timeUsing - Tiempo usando la aplicación
- */
-
-/**
- * @typedef {Object} HeroSlide
- * @property {string} title - Título principal del slide
- * @property {string} subtitle - Subtítulo del slide
- * @property {string} description - Descripción del slide
- * @property {Object} primaryAction - Acción primaria
- * @property {string} primaryAction.text - Texto del botón primario
- * @property {string} primaryAction.link - URL del botón primario
- * @property {string} primaryAction.icon - Ícono del botón primario
- * @property {Object} secondaryAction - Acción secundaria
- * @property {string} secondaryAction.text - Texto del botón secundario
- * @property {string} secondaryAction.link - URL del botón secundario
- * @property {string} secondaryAction.icon - Ícono del botón secundario
- * @property {string} bgGradient - Gradiente de fondo del slide
- */
-
-/**
- * @typedef {Object} RealtimeData
- * @property {number} activeUsers - Número de usuarios activos
- * @property {number} todayComparisons - Comparaciones realizadas hoy
- * @property {number} liveOffers - Ofertas activas
- * @property {number} avgSavings - Ahorro promedio porcentual
- * @property {string} priceUpdates - Tiempo de última actualización
- */
-
-/**
- * @typedef {Object} Stats
- * @property {number} totalProducts - Total de productos disponibles
- * @property {number} totalBranches - Total de sucursales registradas
- * @property {number} totalUsers - Total de usuarios registrados
- * @property {number} todayComparisons - Comparaciones del día
- * @property {number} moneySaved - Dinero ahorrado total
- * @property {number} activeUsers - Usuarios activos actuales
- */
-
-/**
  * @component Home
- * @description Componente principal de la página de inicio que incluye:
- * - Carousel de hero con múltiples slides
- * - Estadísticas en tiempo real
- * - Categorías de productos
- * - Productos destacados y trending
- * - Sucursales cercanas
- * - Testimonios de usuarios
- * - Newsletter y alertas del sistema
- * 
+ * @description Componente principal de la página de inicio optimizado
  * @returns {JSX.Element} Componente de la página principal
- * 
- * @example
- * <Home />
  */
 function Home() {
   const navigate = useNavigate();
   
-  // Estados principales
-  /** @type {[Product[], Function]} Array de productos destacados */
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  
-  /** @type {[Product[], Function]} Array de productos en tendencia */
+  // Estados principales simplificados
   const [trendingProducts, setTrendingProducts] = useState([]);
-  
-  /** @type {[Branch[], Function]} Array de sucursales cercanas */
   const [nearbyBranches, setNearbyBranches] = useState([]);
-  
-  /** @type {[boolean, Function]} Estado de carga general */
   const [loading, setLoading] = useState(true);
-  
-  /** @type {[Object, Function]} Estados de carga por componente */
   const [componentLoading, setComponentLoading] = useState({
     products: true,
-    branches: true,
-    stats: true
+    branches: true
   });
 
-  // Estados dinámicos
-  /** @type {[Date, Function]} Hora actual del sistema */
+  // Estados dinámicos reducidos
   const [currentTime, setCurrentTime] = useState(new Date());
-  
-  /** @type {[Object, Function]} Cards visibles para animaciones */
   const [visibleCards, setVisibleCards] = useState({});
-  
-  /** @type {[string, Function]} Ubicación del usuario */
   const [userLocation] = useState('Buenos Aires, Argentina');
-  
-  /** @type {[number, Function]} Slide actual del hero carousel */
   const [currentHero, setCurrentHero] = useState(0);
 
-  // Estadísticas mejoradas
-  /** @type {[Stats, Function]} Estadísticas de la aplicación */
-  const [stats, setStats] = useState({
-    totalProducts: 0,
-    totalBranches: 0,
-    totalUsers: 0,
-    todayComparisons: 0,
-    moneySaved: 0,
-    activeUsers: 1247
+  // Estadísticas simplificadas para el hero
+  const [heroStats] = useState({
+    totalProducts: 18500,
+    totalBranches: 850,
+    totalUsers: 35000,
+    todayComparisons: 8750
   });
 
-  // Datos en tiempo real simulados
-  /** @type {[RealtimeData, Function]} Datos actualizados en tiempo real */
+  // Datos en tiempo real más estables (actualización cada 30 segundos en lugar de 8)
   const [realtimeData, setRealtimeData] = useState({
     activeUsers: 1247,
     todayComparisons: 8750,
@@ -188,8 +61,7 @@ function Home() {
   });
 
   /**
-   * @description Categorías dinámicas con diseño mejorado
-   * @type {Category[]}
+   * @description Categorías dinámicas
    */
   const categories = useMemo(() => [
     {
@@ -261,8 +133,7 @@ function Home() {
   ], []);
 
   /**
-   * @description Testimonios dinámicos de usuarios
-   * @type {Testimonial[]}
+   * @description Testimonios de usuarios
    */
   const testimonials = useMemo(() => [
     {
@@ -308,12 +179,11 @@ function Home() {
   ], []);
 
   /**
-   * @description Múltiples slides para el carousel principal
-   * @type {HeroSlide[]}
+   * @description Slides del hero carousel
    */
   const heroSlides = useMemo(() => [
     {
-      title: "Compare Precios Argentina",
+      title: "Compare Precios",
       subtitle: "Ahorra Inteligente",
       description: "Encuentra los mejores precios en miles de productos de supermercados argentinos. Compara, ahorra y toma decisiones inteligentes.",
       primaryAction: { text: "Buscar Productos", link: "/productos", icon: "pi pi-search" },
@@ -321,7 +191,7 @@ function Home() {
       bgGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
     },
     {
-      title: "Muchos Supermercados",
+      title: "Supermercados",
       subtitle: "En Toda Argentina",
       description: "Comparamos precios de DIA, Coto, Carrefour, La Anónima y muchos más. Siempre encontrás el mejor precio cerca tuyo.",
       primaryAction: { text: "Ver Sucursales", link: "/sucursales", icon: "pi pi-building" },
@@ -338,14 +208,8 @@ function Home() {
     }
   ], []);
 
-  // Alertas de información dinámicas
-  /** @type {[Array, Function]} Alertas del sistema */
-  const [systemAlerts, setSystemAlerts] = useState([]);
-
   /**
-   * @description Configura el Intersection Observer para animaciones de scroll
-   * @function
-   * @since 1.0.0
+   * @description Intersection Observer para animaciones
    */
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -369,70 +233,56 @@ function Home() {
   }, []);
 
   /**
-   * @description Timer para actualizar hora actual cada minuto
-   * @function
-   * @since 1.0.0
+   * @description Timer para actualizar hora actual (cada 5 minutos en lugar de 1)
    */
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 60000); // Actualizar cada minuto
+    }, 300000); // 5 minutos
 
     return () => clearInterval(timer);
   }, []);
 
   /**
-   * @description Simula datos en tiempo real actualizando estadísticas cada 8 segundos
-   * @function
-   * @since 1.0.0
+   * @description Datos en tiempo real más estables (cada 30 segundos)
    */
   useEffect(() => {
     const interval = setInterval(() => {
       setRealtimeData(prev => ({
         ...prev,
-        activeUsers: prev.activeUsers + Math.floor(Math.random() * 10) - 5,
-        todayComparisons: prev.todayComparisons + Math.floor(Math.random() * 15),
-        liveOffers: Math.max(100, prev.liveOffers + Math.floor(Math.random() * 6) - 3),
-        avgSavings: Math.max(15, prev.avgSavings + (Math.random() - 0.5) * 2),
-        priceUpdates: 'Hace ' + Math.floor(Math.random() * 5 + 1) + ' min'
+        activeUsers: prev.activeUsers + Math.floor(Math.random() * 6) - 3,
+        todayComparisons: prev.todayComparisons + Math.floor(Math.random() * 8),
+        liveOffers: Math.max(100, prev.liveOffers + Math.floor(Math.random() * 4) - 2),
+        avgSavings: Math.max(15, prev.avgSavings + (Math.random() - 0.5) * 1),
+        priceUpdates: 'Hace ' + Math.floor(Math.random() * 10 + 1) + ' min'
       }));
-    }, 8000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, []);
 
   /**
-   * @description Carousel automático del hero que cambia cada 8 segundos
-   * @function
-   * @since 1.0.0
+   * @description Carousel automático más lento (cada 12 segundos)
    */
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentHero(prev => (prev + 1) % heroSlides.length);
-    }, 8000);
+    }, 12000);
 
     return () => clearInterval(interval);
   }, [heroSlides.length]);
 
   /**
-   * @description Carga todos los datos principales de la página inicio
-   * @async
-   * @function
-   * @callback
-   * @since 1.0.0
-   * 
-   * @returns {Promise<void>} Promesa que se resuelve cuando todos los datos están cargados
-   * 
-   * @throws {Error} Error al cargar productos, sucursales o estadísticas
+   * @description Carga datos una sola vez al montar el componente
    */
   const loadHomeData = useCallback(async () => {
     try {
       setLoading(true);
 
-      // Cargar productos destacados
+      // Cargar productos trending
       setComponentLoading(prev => ({ ...prev, products: true }));
       try {
-        const products = await getFeaturedProducts(8);
+        const products = await getFeaturedProducts(4);
         const processedProducts = products.map(product => ({
           id: product.id,
           title: product.nombre || 'Producto sin nombre',
@@ -447,93 +297,106 @@ function Home() {
             count: Math.floor(Math.random() * 200) + 50
           },
           inStock: Math.random() > 0.1,
-          trending: Math.random() > 0.7,
+          trending: true,
           brand: product.marca,
           presentation: product.presentacion
         }));
-        setFeaturedProducts(processedProducts);
-
-        // Productos trending (subset diferente)
-        const shuffled = [...processedProducts].sort(() => 0.5 - Math.random());
-        setTrendingProducts(shuffled.slice(0, 4));
+        
+        setTrendingProducts(processedProducts);
         
       } catch (error) {
         console.error('Error cargando productos:', error);
-        setFeaturedProducts([]);
+        setTrendingProducts([]);
       } finally {
         setComponentLoading(prev => ({ ...prev, products: false }));
       }
 
-      // Cargar sucursales
+      // Cargar sucursales cercanas
       setComponentLoading(prev => ({ ...prev, branches: true }));
       try {
         const branchesResponse = await getBranches({ limit: 6 });
-        const processedBranches = (branchesResponse.data || []).map(branch => ({
-          ...branch,
-          rating: (4 + Math.random()).toFixed(1),
-          distance: `${(Math.random() * 10 + 0.5).toFixed(1)} km`,
-          status: Math.random() > 0.2 ? 'Abierto' : 'Cerrado',
-          specialOffers: Math.floor(Math.random() * 20) + 5,
-          openUntil: Math.random() > 0.5 ? '22:00' : '20:00'
-        }));
+        
+        // Verificar que la respuesta tenga la estructura esperada
+        let branchesData = [];
+        if (branchesResponse && branchesResponse.data && Array.isArray(branchesResponse.data)) {
+          branchesData = branchesResponse.data;
+        } else if (branchesResponse && Array.isArray(branchesResponse)) {
+          branchesData = branchesResponse;
+        } else if (branchesResponse) {
+          // Si es un objeto, intentar extraer las sucursales
+          branchesData = branchesResponse.sucursales || branchesResponse.branches || [];
+        }
+
+        const processedBranches = branchesData
+          .filter(branch => branch && (branch.id || branch._id)) // Filtrar datos válidos
+          .map(branch => ({
+            id: branch.id || branch._id,
+            nombre: branch.nombre || branch.name || 'Sucursal sin nombre',
+            direccion: branch.direccion || branch.address || 'Dirección no disponible',
+            telefono: branch.telefono || branch.phone || '',
+            horarios: branch.horarios || branch.hours || 'Horarios no disponibles',
+            cadena: branch.cadena || branch.chain || 'Cadena no especificada',
+            imagen: branch.imagen || branch.image || '/placeholder-store.png',
+            rating: branch.rating ? parseFloat(branch.rating) : (4 + Math.random()).toFixed(1),
+            distance: branch.distance || `${(Math.random() * 10 + 0.5).toFixed(1)} km`,
+            status: branch.status || (Math.random() > 0.2 ? 'Abierto' : 'Cerrado'),
+            specialOffers: branch.specialOffers || Math.floor(Math.random() * 20) + 5,
+            openUntil: branch.openUntil || (Math.random() > 0.5 ? '22:00' : '20:00'),
+            ...branch // Mantener propiedades originales
+          }));
+        
         setNearbyBranches(processedBranches);
+        console.log('Sucursales cargadas:', processedBranches.length);
+        
       } catch (error) {
         console.error('Error cargando sucursales:', error);
-        setNearbyBranches([]);
+        
+        // Datos de fallback si hay error
+        const fallbackBranches = [
+          {
+            id: 'fallback-1',
+            nombre: 'Coto CABALLITO',
+            direccion: 'Av. Rivadavia 4502, CABA',
+            telefono: '(011) 4958-7000',
+            cadena: 'Coto',
+            rating: '4.2',
+            distance: '1.2 km',
+            status: 'Abierto',
+            specialOffers: 15,
+            openUntil: '22:00',
+            imagen: '/placeholder-store.png'
+          },
+          {
+            id: 'fallback-2',
+            nombre: 'Carrefour EXPRESS',
+            direccion: 'Av. Corrientes 3247, CABA',
+            telefono: '(011) 4862-3456',
+            cadena: 'Carrefour',
+            rating: '4.1',
+            distance: '0.8 km',
+            status: 'Abierto',
+            specialOffers: 12,
+            openUntil: '23:00',
+            imagen: '/placeholder-store.png'
+          },
+          {
+            id: 'fallback-3',
+            nombre: 'DIA % Villa Crespo',
+            direccion: 'Av. Corrientes 4832, CABA',
+            telefono: '(011) 4857-9876',
+            cadena: 'DIA',
+            rating: '3.9',
+            distance: '2.1 km',
+            status: 'Abierto',
+            specialOffers: 8,
+            openUntil: '21:00',
+            imagen: '/placeholder-store.png'
+          }
+        ];
+        
+        setNearbyBranches(fallbackBranches);
       } finally {
         setComponentLoading(prev => ({ ...prev, branches: false }));
-      }
-
-      // Cargar estadísticas
-      setComponentLoading(prev => ({ ...prev, stats: true }));
-      try {
-        const statsData = await getStats();
-        const enhancedStats = {
-          totalProducts: statsData.totalProducts || Math.floor(Math.random() * 5000) + 15000,
-          totalBranches: statsData.totalBranches || Math.floor(Math.random() * 200) + 800,
-          totalUsers: Math.floor(Math.random() * 10000) + 25000,
-          todayComparisons: Math.floor(Math.random() * 5000) + 8000,
-          moneySaved: Math.floor(Math.random() * 1000000) + 5000000,
-          activeUsers: realtimeData.activeUsers
-        };
-        setStats(enhancedStats);
-
-        // Actualizar alertas del sistema
-        setSystemAlerts([
-          {
-            id: 1,
-            text: `${enhancedStats.totalProducts.toLocaleString()} productos disponibles para comparar`,
-            type: 'info',
-            icon: 'pi pi-shopping-bag',
-            priority: 'high'
-          },
-          {
-            id: 2,
-            text: `${enhancedStats.totalBranches} sucursales registradas en toda Argentina`,
-            type: 'success',
-            icon: 'pi pi-map-marker',
-            priority: 'medium'
-          },
-          {
-            id: 3,
-            text: `$${enhancedStats.moneySaved.toLocaleString()} ahorrados por nuestros usuarios este mes`,
-            type: 'warning',
-            icon: 'pi pi-dollar',
-            priority: 'high'
-          },
-          {
-            id: 4,
-            text: `${realtimeData.activeUsers} usuarios comparando precios ahora mismo`,
-            type: 'info',
-            icon: 'pi pi-users',
-            priority: 'medium'
-          }
-        ]);
-
-      } catch (error) {
-        console.error('Error cargando estadísticas:', error);
-      } finally {
-        setComponentLoading(prev => ({ ...prev, stats: false }));
       }
 
     } catch (error) {
@@ -541,24 +404,15 @@ function Home() {
     } finally {
       setLoading(false);
     }
-  }, [realtimeData.activeUsers]);
+  }, []);
 
+  // Cargar datos solo una vez
   useEffect(() => {
     loadHomeData();
-  }, [loadHomeData]);
+  }, []);
 
   /**
-   * @description Formatea números grandes en formato legible (K, M)
-   * @function
-   * @callback
-   * @since 1.0.0
-   * 
-   * @param {number} num - Número a formatear
-   * @returns {string} Número formateado con K o M según corresponda
-   * 
-   * @example
-   * formatNumber(1500) // "1.5K"
-   * formatNumber(2500000) // "2.5M"
+   * @description Formatear números
    */
   const formatNumber = useCallback((num) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -567,15 +421,7 @@ function Home() {
   }, []);
 
   /**
-   * @description Obtiene el saludo apropiado según la hora del día
-   * @function
-   * @callback
-   * @since 1.0.0
-   * 
-   * @returns {string} Saludo correspondiente (Buenos días/tardes/noches)
-   * 
-   * @example
-   * getGreeting() // "¡Buenos días!" (si son las 10 am)
+   * @description Obtener saludo apropiado
    */
   const getGreeting = useCallback(() => {
     const hour = currentTime.getHours();
@@ -585,58 +431,11 @@ function Home() {
   }, [currentTime]);
 
   /**
-   * @description Maneja la búsqueda rápida y navega a la página de productos
-   * @function
-   * @callback
-   * @since 1.0.0
-   * 
-   * @param {string} term - Término de búsqueda
-   * 
-   * @example
-   * handleQuickSearch("leche") // Navega a /productos?search=leche
+   * @description Búsqueda rápida
    */
   const handleQuickSearch = useCallback((term) => {
     navigate(`/productos?search=${encodeURIComponent(term)}`);
   }, [navigate]);
-
-  /**
-   * @description Estadísticas mejoradas para mostrar en la interfaz
-   * @type {Array<Object>}
-   */
-  const enhancedStats = useMemo(() => [
-    {
-      icon: 'pi pi-shopping-cart',
-      value: stats.totalProducts,
-      label: 'Productos Disponibles',
-      trend: '+12% este mes',
-      color: '#667eea',
-      description: 'En constante crecimiento'
-    },
-    {
-      icon: 'pi pi-building',
-      value: stats.totalBranches,
-      label: 'Sucursales Registradas',
-      trend: '+5 nuevas esta semana',
-      color: '#4ecdc4',
-      description: 'Cobertura nacional'
-    },
-    {
-      icon: 'pi pi-users',
-      value: stats.totalUsers,
-      label: 'Usuarios Activos',
-      trend: '+15% mensual',
-      color: '#ff6b6b',
-      description: 'Comunidad creciente'
-    },
-    {
-      icon: 'pi pi-chart-line',
-      value: stats.todayComparisons,
-      label: 'Comparaciones Hoy',
-      trend: 'En tiempo real',
-      color: '#45b7d1',
-      description: 'Actualizando constantemente'
-    }
-  ], [stats]);
 
   return (
     <div className="home-page">
@@ -669,15 +468,15 @@ function Home() {
                     
                     <div className="hero-stats">
                       <div className="stat-item">
-                        <span className="stat-number">{formatNumber(stats.totalProducts)}</span>
+                        <span className="stat-number">{formatNumber(heroStats.totalProducts)}</span>
                         <span className="stat-label">Productos</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-number">{stats.totalBranches}</span>
+                        <span className="stat-number">{heroStats.totalBranches}</span>
                         <span className="stat-label">Sucursales</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-number">{formatNumber(stats.totalUsers)}</span>
+                        <span className="stat-number">{formatNumber(heroStats.totalUsers)}</span>
                         <span className="stat-label">Usuarios</span>
                       </div>
                     </div>
@@ -830,57 +629,15 @@ function Home() {
           </div>
         </section>
 
-        {/* Enhanced Stats Section */}
-        <section className="enhanced-stats-section">
+        {/* Trending Products Carousel */}
+        <section className="trending-section">
           <div className="section-header">
-            <h2>Números que Impresionan</h2>
-            <p>Miles de argentinos confían en Compare para optimizar sus compras</p>
-          </div>
-          
-          <div className="enhanced-stats-grid">
-            {enhancedStats.map((stat, index) => (
-              <div
-                key={index}
-                className={`enhanced-stat-card ${visibleCards[`stat-${index}`] ? 'visible' : ''}`}
-                data-animate-id={`stat-${index}`}
-                style={{ '--stat-color': stat.color }}
-              >
-                {componentLoading.stats ? (
-                  <div className="stat-skeleton">
-                    <Skeleton shape="circle" size="4rem" />
-                    <Skeleton width="100%" height="1.5rem" />
-                    <Skeleton width="60%" height="1rem" />
-                  </div>
-                ) : (
-                  <>
-                    <div className="stat-icon" style={{ background: stat.color }}>
-                      <i className={stat.icon}></i>
-                    </div>
-                    <div className="stat-content">
-                      <h3>{typeof stat.value === 'number' ? formatNumber(stat.value) : stat.value}</h3>
-                      <p>{stat.label}</p>
-                      <span className="stat-trend">{stat.trend}</span>
-                      <small>{stat.description}</small>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Featured Products Section */}
-        <section className="featured-products-section">
-          <div className="section-header">
-            <h2>Productos Más Buscados</h2>
-            <p>Los favoritos de nuestros usuarios con los mejores precios</p>
-            <Link to="/productos" className="view-all-btn">
-              Ver Todos <i className="pi pi-arrow-right"></i>
-            </Link>
+            <h2>Productos en Tendencia</h2>
+            <p>Los más populares esta semana</p>
           </div>
           
           {componentLoading.products ? (
-            <div className="products-skeleton">
+            <div className="trending-skeleton">
               {[...Array(4)].map((_, index) => (
                 <div key={index} className="product-skeleton">
                   <Skeleton width="100%" height="200px" />
@@ -893,34 +650,14 @@ function Home() {
               ))}
             </div>
           ) : (
-            <div className="featured-products-grid">
-              {featuredProducts.slice(0, 8).map((product, index) => (
-                <div
-                  key={product.id || index}
-                  className={`product-wrapper ${visibleCards[`product-${index}`] ? 'visible' : ''}`}
-                  data-animate-id={`product-${index}`}
-                >
+            <div className="trending-carousel">
+              {trendingProducts.map((product, index) => (
+                <div key={product.id} className="trending-product">
                   <ProductCard product={product} />
                 </div>
               ))}
             </div>
           )}
-        </section>
-
-        {/* Trending Products Carousel */}
-        <section className="trending-section">
-          <div className="section-header">
-            <h2>Productos en Tendencia</h2>
-            <p>Los más populares esta semana</p>
-          </div>
-          
-          <div className="trending-carousel">
-            {trendingProducts.map((product, index) => (
-              <div key={product.id} className="trending-product">
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </div>
         </section>
 
         {/* Nearby Branches Section */}
@@ -935,23 +672,32 @@ function Home() {
           
           {componentLoading.branches ? (
             <div className="branches-skeleton">
-              {[...Array(3)].map((_, index) => (
+              {[...Array(6)].map((_, index) => (
                 <div key={index} className="branch-skeleton">
                   <Skeleton width="100%" height="250px" />
                 </div>
               ))}
             </div>
-          ) : (
+          ) : nearbyBranches && nearbyBranches.length > 0 ? (
             <div className="branches-grid">
               {nearbyBranches.slice(0, 6).map((branch, index) => (
                 <div
-                  key={branch.id || index}
+                  key={branch.id || `branch-${index}`}
                   className={`branch-wrapper ${visibleCards[`branch-${index}`] ? 'visible' : ''}`}
                   data-animate-id={`branch-${index}`}
                 >
-                  <BranchCard branch={branch} />
+                  {branch && <BranchCard branch={branch} />}
                 </div>
               ))}
+            </div>
+          ) : (
+            <div className="no-branches-message">
+              <i className="pi pi-building" style={{ fontSize: '3rem', color: '#ccc' }}></i>
+              <p>No se encontraron sucursales cercanas. Intenta ampliar tu búsqueda.</p>
+              <Link to="/sucursales" className="btn btn-primary" style={{ marginTop: '1rem' }}>
+                <i className="pi pi-search"></i>
+                Buscar Sucursales
+              </Link>
             </div>
           )}
         </section>
@@ -1024,45 +770,7 @@ function Home() {
                 <span>Primero en conocer nuevos productos</span>
               </div>
             </div>
-            <small>Más de {formatNumber(stats.totalUsers)} usuarios ya reciben nuestras ofertas</small>
-          </div>
-        </section>
-
-        {/* System Alerts Section */}
-        <section className="system-alerts-section">
-          <div className="section-header">
-            <h2>Estado del Sistema</h2>
-            <p>
-              Última actualización: {currentTime.toLocaleString('es-AR', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </p>
-          </div>
-          
-          <div className="alerts-grid">
-            {systemAlerts.map((alert, index) => (
-              <div
-                key={alert.id}
-                className={`alert-card ${alert.type} ${visibleCards[`alert-${index}`] ? 'visible' : ''}`}
-                data-animate-id={`alert-${index}`}
-              >
-                <i className={alert.icon}></i>
-                <div>
-                  <span>{alert.text}</span>
-                  {alert.priority === 'high' && (
-                    <div className="alert-priority">
-                      <i className="pi pi-exclamation-circle"></i>
-                      <small>Prioritario</small>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+            <small>Más de {formatNumber(heroStats.totalUsers)} usuarios ya reciben nuestras ofertas</small>
           </div>
         </section>
 
@@ -1083,7 +791,7 @@ function Home() {
             </div>
             <div className="final-cta-stats">
               <div className="final-stat">
-                <strong>${formatNumber(stats.moneySaved)}</strong>
+                <strong>$5.2M</strong>
                 <span>Ahorrados este mes</span>
               </div>
               <div className="final-stat">

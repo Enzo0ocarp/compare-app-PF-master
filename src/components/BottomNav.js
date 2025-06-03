@@ -159,7 +159,7 @@ function BottomNav() {
         if (rippleElement) {
             // Resetear animación
             rippleElement.style.animation = 'none';
-            rippleElement.offsetHeight; // Trigger reflow
+            void rippleElement.offsetHeight; // Trigger reflow
             rippleElement.style.animation = 'ripple 0.6s ease-out';
         }
     };
