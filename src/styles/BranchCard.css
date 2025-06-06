@@ -1,7 +1,10 @@
-/* src/styles/BranchCard.css - Estilos Completados para BranchCard */
+/* ===== BRANCH CARD STYLES - VERSIÓN CON NAMESPACE ===== */
+/* src/styles/BranchCard.css */
+
+/* TODOS los estilos están bajo .branch-card-wrapper para evitar conflictos */
 
 /* Variables específicas para BranchCard */
-:root {
+.branch-card-wrapper {
     --branch-card-radius: 16px;
     --branch-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     --branch-card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
@@ -9,14 +12,29 @@
     --branch-primary: #4CAF50;
     --branch-primary-dark: #45a049;
     --branch-gradient: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    --branch-text-primary: #2c3e50;
+    --branch-text-secondary: #495057;
+    --branch-text-muted: #6c757d;
+    --branch-bg-light: rgba(0, 0, 0, 0.02);
+    --branch-border-light: rgba(0, 0, 0, 0.05);
+    --branch-border-medium: rgba(0, 0, 0, 0.08);
+}
+
+.branch-card-wrapper[data-theme="dark"] {
+    --branch-text-primary: #ffffff;
+    --branch-text-secondary: #ced4da;
+    --branch-text-muted: #adb5bd;
+    --branch-bg-light: rgba(255, 255, 255, 0.02);
+    --branch-border-light: rgba(255, 255, 255, 0.05);
+    --branch-border-medium: rgba(255, 255, 255, 0.08);
 }
 
 /* Estilos principales del branch card */
-.branch-card {
+.branch-card-wrapper .branch-card {
     border-radius: var(--branch-card-radius) !important;
     box-shadow: var(--branch-card-shadow) !important;
     transition: var(--branch-card-transition) !important;
-    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid var(--branch-border-medium) !important;
     overflow: hidden !important;
     height: 100%;
     display: flex;
@@ -26,14 +44,14 @@
     min-height: 350px;
 }
 
-.branch-card:hover {
+.branch-card-wrapper .branch-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--branch-card-shadow-hover) !important;
     border-color: var(--branch-primary) !important;
 }
 
 /* Header del branch card */
-.branch-header {
+.branch-card-wrapper .branch-header {
     background: var(--branch-gradient);
     padding: 1.5rem;
     display: flex;
@@ -45,7 +63,7 @@
     justify-content: center;
 }
 
-.branch-header::before {
+.branch-card-wrapper .branch-header::before {
     content: '';
     position: absolute;
     top: 0;
@@ -58,7 +76,7 @@
     pointer-events: none;
 }
 
-.branch-logo {
+.branch-card-wrapper .branch-logo {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -67,27 +85,31 @@
     position: relative;
 }
 
-.branch-logo i {
+.branch-card-wrapper .branch-logo i {
     font-size: 3rem;
     color: white;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     transition: var(--branch-card-transition);
 }
 
-.branch-card:hover .branch-logo i {
+.branch-card-wrapper .branch-card:hover .branch-logo i {
     transform: scale(1.1) rotate(5deg);
 }
 
-.branch-badges {
+.branch-card-wrapper .branch-badges {
     position: absolute;
     top: 12px;
     right: 12px;
     z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.type-badge {
+.branch-card-wrapper .type-badge,
+.branch-card-wrapper .gps-badge {
     font-size: 0.75rem !important;
-    padding: 4px 8px !important;
+    padding: 1px 8px !important;
     border-radius: 6px !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
@@ -96,28 +118,34 @@
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
-.type-badge.p-badge-success {
+.branch-card-wrapper .type-badge.p-badge-success {
     background: rgba(39, 174, 96, 0.9) !important;
     color: white !important;
 }
 
-.type-badge.p-badge-info {
+.branch-card-wrapper .type-badge.p-badge-info {
     background: rgba(69, 183, 209, 0.9) !important;
     color: white !important;
 }
 
-.type-badge.p-badge-warning {
+.branch-card-wrapper .type-badge.p-badge-warning {
     background: rgba(254, 202, 87, 0.9) !important;
     color: white !important;
 }
 
-.type-badge.p-badge-secondary {
+.branch-card-wrapper .type-badge.p-badge-help {
+    background: rgba(128, 90, 213, 0.9) !important;
+    color: white !important;
+}
+
+.branch-card-wrapper .type-badge.p-badge-secondary,
+.branch-card-wrapper .gps-badge.p-badge-secondary {
     background: rgba(108, 117, 125, 0.9) !important;
     color: white !important;
 }
 
 /* Contenido del branch card */
-.branch-content {
+.branch-card-wrapper .branch-content {
     padding: 1.25rem;
     flex: 1;
     display: flex;
@@ -125,11 +153,11 @@
     gap: 1rem;
 }
 
-.branch-name {
+.branch-card-wrapper .branch-name {
     margin: 0 0 1rem 0;
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--branch-text-primary);
     line-height: 1.3;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -138,425 +166,42 @@
     -moz-hyphens: auto;
     -ms-hyphens: auto;
     flex: 1;
-    font-weight: 500;
-}
-
-.detail-text.small {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-style: italic;
-}
-
-/* Actions del branch card */
-.branch-actions {
-    display: flex;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
-    background: rgba(0, 0, 0, 0.02);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    margin-top: auto;
-}
-
-.branch-actions .p-button {
-    flex: 1;
-    font-size: 0.875rem !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    transition: var(--branch-card-transition) !important;
-    position: relative;
-    overflow: hidden;
-}
-
-.branch-actions .p-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: var(--branch-card-transition);
-}
-
-.branch-actions .p-button:hover::before {
-    left: 100%;
-}
-
-.branch-actions .p-button:hover {
-    transform: translateY(-2px);
-}
-
-.branch-actions .p-button-outlined {
-    border-width: 2px !important;
-}
-
-.branch-actions .p-button-success {
-    background: var(--branch-gradient) !important;
-    border-color: var(--branch-primary) !important;
-}
-
-.branch-actions .p-button-success:hover {
-    background: var(--branch-primary-dark) !important;
-    border-color: var(--branch-primary-dark) !important;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
-}
-
-/* Estados especiales */
-.branch-card.featured {
-    border: 2px solid var(--branch-primary);
-    box-shadow: 0 6px 25px rgba(76, 175, 80, 0.15);
-}
-
-.branch-card.featured::before {
-    content: '⭐ Destacado';
-    position: absolute;
-    top: -1px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--branch-gradient);
-    color: white;
-    padding: 0.25rem 1rem;
-    border-radius: 0 0 8px 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    z-index: 4;
-}
-
-.branch-card.closed {
-    opacity: 0.8;
-    filter: grayscale(0.3);
-}
-
-.branch-card.closed .branch-header {
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-}
-
-.branch-card.closed::after {
-    content: 'CERRADO';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-12deg);
-    background: rgba(220, 53, 69, 0.9);
-    color: white;
-    padding: 0.5rem 2rem;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-    z-index: 5;
-    border: 2px solid white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* Animaciones específicas */
-@keyframes branch-float {
-    0%, 100% { 
-        transform: translateY(0px); 
-    }
-    50% { 
-        transform: translateY(-5px); 
-    }
-}
-
-.branch-card:hover {
-    animation: branch-float 2s ease-in-out infinite;
-}
-
-/* Indicadores de estado */
-.branch-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 0.5rem;
-}
-
-.branch-status.open {
-    background: rgba(39, 174, 96, 0.1);
-    color: #27ae60;
-    border: 1px solid rgba(39, 174, 96, 0.3);
-}
-
-.branch-status.closed {
-    background: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
-    border: 1px solid rgba(220, 53, 69, 0.3);
-}
-
-.branch-status i {
-    font-size: 0.9rem;
-}
-
-/* Información adicional */
-.branch-extra-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.branch-info-tag {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: rgba(102, 126, 234, 0.1);
-    color: var(--primary-color);
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.branch-info-tag i {
-    font-size: 0.7rem;
-}
-
-/* Responsive design */
-@media screen and (max-width: 768px) {
-    .branch-card {
-        min-height: 320px;
-    }
-    
-    .branch-header {
-        min-height: 120px;
-        padding: 1.25rem;
-    }
-    
-    .branch-logo i {
-        font-size: 2.5rem;
-    }
-    
-    .branch-content {
-        padding: 1rem;
-    }
-    
-    .branch-name {
-        font-size: 1.1rem;
-    }
-    
-    .detail-text {
-        font-size: 0.9rem;
-    }
-    
-    .branch-actions {
-        padding: 0.875rem 1rem;
-    }
-    
-    .branch-actions .p-button {
-        font-size: 0.8rem !important;
-        padding: 0.625rem 0.875rem !important;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .branch-card {
-        min-height: 300px;
-    }
-    
-    .branch-header {
-        min-height: 100px;
-        padding: 1rem;
-    }
-    
-    .branch-logo i {
-        font-size: 2.2rem;
-    }
-    
-    .branch-content {
-        padding: 0.875rem;
-        gap: 0.75rem;
-    }
-    
-    .branch-name {
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-    }
-    
-    .detail-item {
-        gap: 0.5rem;
-        padding: 0.5rem 0;
-    }
-    
-    .detail-icon {
-        font-size: 1rem;
-    }
-    
-    .detail-text {
-        font-size: 0.85rem;
-    }
-    
-    .branch-actions {
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.75rem 0.875rem;
-    }
-    
-    .branch-actions .p-button {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .type-badge {
-        font-size: 0.7rem !important;
-        padding: 3px 6px !important;
-    }
-    
-    .branch-status {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.6rem;
-    }
-    
-    .branch-info-tag {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.4rem;
-    }
-}
-
-/* Mejoras para accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-    .branch-card:hover {
-        animation: none;
-        transform: translateY(-2px);
-    }
-    
-    .branch-actions .p-button::before {
-        display: none;
-    }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .branch-card {
-        border-width: 2px;
-    }
-    
-    .detail-item {
-        border-bottom-width: 2px;
-    }
-    
-    .branch-actions {
-        border-top-width: 2px;
-    }
-}
-
-/* Focus states para navegación por teclado */
-.branch-actions .p-button:focus {
-    outline: 2px solid var(--branch-primary);
-    outline-offset: 2px;
-}
-
-/* Estilos para estado de carga */
-.branch-card.loading {
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-.branch-card.loading::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    animation: loading-shimmer 2s infinite;
-    z-index: 10;
-}
-
-@keyframes loading-shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* Mejoras para texto largo */
-.branch-name,
-.detail-text {
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-/* Para navegadores que no soportan line-clamp */
-@supports not (-webkit-line-clamp: 2) {
-    .branch-name {
-        max-height: 2.6rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
-
-/* Estilos adicionales para mejor UX */
-.branch-card:focus-within {
-    outline: 2px solid var(--branch-primary);
-    outline-offset: 2px;
-}
-
-.branch-card:active {
-    transform: translateY(-2px) scale(0.98);
-}
-
-/* Mejoras para el contraste de colores */
-.detail-text {
-    color: #495057;
-}
-
-.detail-text.small {
-    color: #6c757d;
-}
-
-[data-theme="dark"] .detail-text {
-    color: #ced4da;
-}
-
-[data-theme="dark"] .detail-text.small {
-    color: #adb5bd;
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 2.6rem;
+    max-height: 3rem;
 }
 
-.branch-details {
+.branch-card-wrapper .branch-details {
     display: flex;
     flex-direction: column;
     gap: 0.875rem;
     flex: 1;
 }
 
-.detail-item {
+.branch-card-wrapper .detail-item {
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
     padding: 0.625rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--branch-border-light);
     transition: var(--branch-card-transition);
 }
 
-.detail-item:last-child {
+.branch-card-wrapper .detail-item:last-child {
     border-bottom: none;
 }
 
-.detail-item:hover {
+.branch-card-wrapper .detail-item:hover {
     background: rgba(76, 175, 80, 0.03);
     margin: 0 -0.5rem;
     padding: 0.625rem 0.5rem;
     border-radius: 8px;
 }
 
-.detail-icon {
+.branch-card-wrapper .detail-icon {
     color: var(--branch-primary);
     font-size: 1.1rem;
     margin-top: 0.1rem;
@@ -564,13 +209,13 @@
     transition: var(--branch-card-transition);
 }
 
-.detail-item:hover .detail-icon {
+.branch-card-wrapper .detail-item:hover .detail-icon {
     transform: scale(1.1);
     color: var(--branch-primary-dark);
 }
 
-.detail-text {
-    color: var(--text-secondary);
+.branch-card-wrapper .detail-text {
+    color: var(--branch-text-secondary);
     font-size: 0.95rem;
     line-height: 1.5;
     word-wrap: break-word;
@@ -591,31 +236,45 @@
     font-weight: 400;
     transition: color 0.3s ease;
     word-break: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    text-decoration: none;
 }
-.detail-text:hover {
-    color: var(--text-primary);
+
+.branch-card-wrapper .detail-text:hover {
+    color: var(--branch-text-primary);
 }
-.detail-text.small {
+
+.branch-card-wrapper .detail-text.small {
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--branch-text-muted);
     font-style: italic;
 }
-.detail-text.small:hover {
-    color: var(--text-secondary);
+
+.branch-card-wrapper .detail-text.small:hover {
+    color: var(--branch-text-secondary);
 }
+
+.branch-card-wrapper .detail-text.link {
+    color: var(--branch-primary);
+    text-decoration: none;
+    transition: var(--branch-card-transition);
+}
+
+.branch-card-wrapper .detail-text.link:hover {
+    color: var(--branch-primary-dark);
+    text-decoration: underline;
+}
+
 /* Actions del branch card */
-.branch-actions {
+.branch-card-wrapper .branch-actions {
     display: flex;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    background: rgba(0, 0, 0, 0.02);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--branch-bg-light);
+    border-top: 1px solid var(--branch-border-light);
     margin-top: auto;
 }
-.branch-actions .p-button {
+
+.branch-card-wrapper .branch-actions .p-button {
     flex: 1;
     font-size: 0.875rem !important;
     padding: 0.75rem 1rem !important;
@@ -625,7 +284,8 @@
     position: relative;
     overflow: hidden;
 }
-.branch-actions .p-button::before {
+
+.branch-card-wrapper .branch-actions .p-button::before {
     content: '';
     position: absolute;
     top: 0;
@@ -635,30 +295,46 @@
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
     transition: var(--branch-card-transition);
 }
-.branch-actions .p-button:hover::before {
+
+.branch-card-wrapper .branch-actions .p-button:hover::before {
     left: 100%;
 }
-.branch-actions .p-button:hover {
+
+.branch-card-wrapper .branch-actions .p-button:hover:not(:disabled) {
     transform: translateY(-2px);
 }
-.branch-actions .p-button-outlined {
+
+.branch-card-wrapper .branch-actions .p-button-outlined {
     border-width: 2px !important;
 }
-.branch-actions .p-button-success {
+
+.branch-card-wrapper .branch-actions .p-button-success {
     background: var(--branch-gradient) !important;
     border-color: var(--branch-primary) !important;
 }
-.branch-actions .p-button-success:hover {
+
+.branch-card-wrapper .branch-actions .p-button-success:hover:not(:disabled) {
     background: var(--branch-primary-dark) !important;
     border-color: var(--branch-primary-dark) !important;
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
 }
+
+.branch-card-wrapper .branch-actions .map-button:hover:not(:disabled) {
+    border-color: var(--branch-primary) !important;
+    color: var(--branch-primary) !important;
+}
+
+.branch-card-wrapper .branch-actions .directions-button:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
+}
+
 /* Estados especiales */
-.branch-card.featured {
+.branch-card-wrapper .branch-card.featured {
     border: 2px solid var(--branch-primary);
     box-shadow: 0 6px 25px rgba(76, 175, 80, 0.15);
-}   
-.branch-card.featured::before {
+}
+
+.branch-card-wrapper .branch-card.featured::before {
     content: '⭐ Destacado';
     position: absolute;
     top: -1px;
@@ -672,14 +348,17 @@
     font-weight: 600;
     z-index: 4;
 }
-.branch-card.closed {
+
+.branch-card-wrapper .branch-card.closed {
     opacity: 0.8;
     filter: grayscale(0.3);
 }
-.branch-card.closed .branch-header {
+
+.branch-card-wrapper .branch-card.closed .branch-header {
     background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
 }
-.branch-card.closed::after {
+
+.branch-card-wrapper .branch-card.closed::after {
     content: 'CERRADO';
     position: absolute;
     top: 50%;
@@ -696,6 +375,7 @@
     border: 2px solid white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
+
 /* Animaciones específicas */
 @keyframes branch-float {
     0%, 100% { 
@@ -705,11 +385,13 @@
         transform: translateY(-5px); 
     }
 }
-.branch-card:hover {
+
+.branch-card-wrapper .branch-card:hover {
     animation: branch-float 2s ease-in-out infinite;
 }
+
 /* Indicadores de estado */
-.branch-status {
+.branch-card-wrapper .branch-status {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -721,177 +403,205 @@
     letter-spacing: 0.5px;
     margin-top: 0.5rem;
 }
-.branch-status.open {
+
+.branch-card-wrapper .branch-status.open {
     background: rgba(39, 174, 96, 0.1);
     color: #27ae60;
     border: 1px solid rgba(39, 174, 96, 0.3);
 }
-.branch-status.closed {
+
+.branch-card-wrapper .branch-status.closed {
     background: rgba(220, 53, 69, 0.1);
     color: #dc3545;
     border: 1px solid rgba(220, 53, 69, 0.3);
 }
-.branch-status i {
+
+.branch-card-wrapper .branch-status i {
     font-size: 0.9rem;
 }
+
 /* Información adicional */
-.branch-extra-info {
+.branch-card-wrapper .branch-extra-info {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0.75rem;
     padding-top: 0.75rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid var(--branch-border-light);
 }
-.branch-info-tag {
+
+.branch-card-wrapper .branch-info-tag {
     display: flex;
     align-items: center;
     gap: 0.25rem;
     background: rgba(102, 126, 234, 0.1);
-    color: var(--primary-color);
+    color: var(--branch-primary);
     padding: 0.25rem 0.5rem;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 600;
 }
-.branch-info-tag i {
+
+.branch-card-wrapper .branch-info-tag i {
     font-size: 0.7rem;
 }
+
+/* Debug info para desarrollo */
+.branch-card-wrapper .debug-info {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--branch-border-light);
+}
+
+.branch-card-wrapper .coordinates-info {
+    font-family: monospace;
+    color: var(--branch-text-muted);
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
 /* Responsive design */
 @media screen and (max-width: 768px) {
-    .branch-card {
+    .branch-card-wrapper .branch-card {
         min-height: 320px;
     }
     
-    .branch-header {
+    .branch-card-wrapper .branch-header {
         min-height: 120px;
         padding: 1.25rem;
     }
     
-    .branch-logo i {
+    .branch-card-wrapper .branch-logo i {
         font-size: 2.5rem;
     }
     
-    .branch-content {
+    .branch-card-wrapper .branch-content {
         padding: 1rem;
     }
     
-    .branch-name {
+    .branch-card-wrapper .branch-name {
         font-size: 1.1rem;
     }
     
-    .detail-text {
+    .branch-card-wrapper .detail-text {
         font-size: 0.9rem;
     }
     
-    .branch-actions {
+    .branch-card-wrapper .branch-actions {
         padding: 0.875rem 1rem;
     }
     
-    .branch-actions .p-button {
+    .branch-card-wrapper .branch-actions .p-button {
         font-size: 0.8rem !important;
         padding: 0.625rem 0.875rem !important;
     }
     
-    .type-badge {
+    .branch-card-wrapper .type-badge,
+    .branch-card-wrapper .gps-badge {
         font-size: 0.7rem !important;
         padding: 3px 6px !important;
     }
     
-    .branch-status {
+    .branch-card-wrapper .branch-status {
         font-size: 0.75rem;
         padding: 0.4rem 0.6rem;
     }
     
-    .branch-info-tag {
+    .branch-card-wrapper .branch-info-tag {
         font-size: 0.7rem;
         padding: 0.2rem 0.4rem;
     }
 }
+
 @media screen and (max-width: 480px) {
-    .branch-card {
+    .branch-card-wrapper .branch-card {
         min-height: 300px;
     }
     
-    .branch-header {
+    .branch-card-wrapper .branch-header {
         min-height: 100px;
         padding: 1rem;
     }
     
-    .branch-logo i {
+    .branch-card-wrapper .branch-logo i {
         font-size: 2.2rem;
     }
     
-    .branch-content {
+    .branch-card-wrapper .branch-content {
         padding: 0.875rem;
         gap: 0.75rem;
     }
     
-    .branch-name {
+    .branch-card-wrapper .branch-name {
         font-size: 1rem;
         margin-bottom: 0.75rem;
     }
     
-    .detail-item {
+    .branch-card-wrapper .detail-item {
         gap: 0.5rem;
         padding: 0.5rem 0;
     }
     
-    .detail-icon {
+    .branch-card-wrapper .detail-icon {
         font-size: 1rem;
     }
     
-    .detail-text {
+    .branch-card-wrapper .detail-text {
         font-size: 0.85rem;
     }
     
-    .branch-actions {
+    .branch-card-wrapper .branch-actions {
         flex-direction: column;
         gap: 0.5rem;
         padding: 0.75rem 0.875rem;
     }
     
-    .branch-actions .p-button {
+    .branch-card-wrapper .branch-actions .p-button {
         width: 100%;
         justify-content: center;
     }
 }
+
 /* Mejoras para accesibilidad */
 @media (prefers-reduced-motion: reduce) {
-    .branch-card:hover {
+    .branch-card-wrapper .branch-card:hover {
         animation: none;
         transform: translateY(-2px);
     }
     
-    .branch-actions .p-button::before {
+    .branch-card-wrapper .branch-actions .p-button::before {
         display: none;
     }
 }
+
 /* High contrast mode */
 @media (prefers-contrast: high) {
-    .branch-card {
+    .branch-card-wrapper .branch-card {
         border-width: 2px;
     }
     
-    .detail-item {
+    .branch-card-wrapper .detail-item {
         border-bottom-width: 2px;
     }
     
-    .branch-actions {
+    .branch-card-wrapper .branch-actions {
         border-top-width: 2px;
     }
 }
+
 /* Focus states para navegación por teclado */
-.branch-actions .p-button:focus {
+.branch-card-wrapper .branch-actions .p-button:focus {
     outline: 2px solid var(--branch-primary);
     outline-offset: 2px;
 }
+
 /* Estilos para estado de carga */
-.branch-card.loading {
+.branch-card-wrapper .branch-card.loading {
     pointer-events: none;
     opacity: 0.7;
 }
-.branch-card.loading::before {
+
+.branch-card-wrapper .branch-card.loading::before {
     content: '';
     position: absolute;
     top: 0;
@@ -899,16 +609,49 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    animation: loading-shimmer 2s infinite;
+    animation: branch-loading-shimmer 2s infinite;
     z-index: 10;
 }
-@keyframes loading-shimmer {
+
+@keyframes branch-loading-shimmer {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
 }
-/* Mejoras para texto largo */
-.branch-name,
-.detail-text {
-    word-break: break-word;
-    overflow-wrap: break-word;
+
+/* Para navegadores que no soportan line-clamp */
+@supports not (-webkit-line-clamp: 2) {
+    .branch-card-wrapper .branch-name {
+        max-height: 2.6rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Estilos adicionales para mejor UX */
+.branch-card-wrapper .branch-card:focus-within {
+    outline: 2px solid var(--branch-primary);
+    outline-offset: 2px;
+}
+
+.branch-card-wrapper .branch-card:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* Utilidades del componente */
+.branch-card-wrapper * {
+    box-sizing: border-box;
+}
+
+.branch-card-wrapper img {
+    max-width: 100%;
+    height: auto;
+}
+
+.branch-card-wrapper button {
+    cursor: pointer;
+}
+
+.branch-card-wrapper a {
+    color: inherit;
+    text-decoration: none;
 }

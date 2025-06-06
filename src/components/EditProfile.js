@@ -6,6 +6,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
+import '../styles/EditProfileStyles.css'
 
 const EditProfile = ({ user, onClose }) => {
     // Inicializamos los estados con la información actual; se asume que 'user' incluye campos extra (firstName, lastName, birthDate, bio)

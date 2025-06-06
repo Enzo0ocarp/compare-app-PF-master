@@ -1,7 +1,7 @@
 /**
  * @fileoverview Componente de navegación inferior para aplicación móvil
- * @description Barra de navegación fija en la parte inferior con tabs, badges de notificaciones,
- * indicador visual de tab activo y efectos de ripple para una experiencia móvil moderna.
+ * @description Barra de navegación fija en la parte inferior con tabs y
+ * indicador visual de tab activo para una experiencia móvil moderna.
  * @author Compare Team
  * @version 1.0.0
  * @since 2025
@@ -10,7 +10,6 @@
 // src/components/BottomNav.js
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Badge } from 'primereact/badge';
 import '../styles/BottomNav.css';
 
 /**
@@ -18,7 +17,6 @@ import '../styles/BottomNav.css';
  * @property {string} label - Texto descriptivo del tab
  * @property {string} icon - Clase CSS del ícono de PrimeIcons
  * @property {string} path - Ruta de navegación de React Router
- * @property {number} notifications - Número de notificaciones pendientes
  * @property {string} color - Color temático del tab en formato hexadecimal
  */
 
@@ -29,12 +27,12 @@ import '../styles/BottomNav.css';
  * 
  * Características principales:
  * - 6 tabs de navegación principales
- * - Sistema de badges para notificaciones
  * - Indicador visual deslizante del tab activo
  * - Efectos de ripple en cada tap
  * - Colores temáticos personalizados por sección
  * - Diseño responsive optimizado para móviles
  * - Integración completa con React Router
+ * - Z-index bajo para no interferir con otros elementos
  * 
  * Secciones incluidas:
  * - Home: Página principal
@@ -81,42 +79,36 @@ function BottomNav() {
             label: 'Home', 
             icon: 'pi pi-home', 
             path: '/',
-            notifications: 0,
             color: '#667eea'
         },
         { 
             label: 'Nutricional', 
             icon: 'pi pi-apple', 
             path: '/nutricional',
-            notifications: 0,
             color: '#28a745'
         },
         { 
             label: 'Productos', 
             icon: 'pi pi-box', 
             path: '/productos',
-            notifications: 5, // ofertas nuevas
             color: '#ffc107'
         },
         { 
             label: 'Sucursales', 
             icon: 'pi pi-map-marker', 
             path: '/sucursales',
-            notifications: 2, // nuevas sucursales
             color: '#dc3545'
         },
         { 
             label: 'Reseñas', 
             icon: 'pi pi-star', 
             path: '/resenas',
-            notifications: 3,
             color: '#17a2b8'
         },
         { 
             label: 'Perfil', 
             icon: 'pi pi-user', 
             path: '/perfil',
-            notifications: 0,
             color: '#6f42c1'
         }
     ];
@@ -202,18 +194,6 @@ function BottomNav() {
         return location.pathname === tabPath;
     };
 
-    /**
-     * @description Calcula el total de notificaciones en todos los tabs
-     * @function
-     * @returns {number} Número total de notificaciones
-     * 
-     * @example
-     * getTotalNotifications() // 10 (si hay notificaciones pendientes)
-     */
-    const getTotalNotifications = () => {
-        return tabs.reduce((total, tab) => total + tab.notifications, 0);
-    };
-
     return (
         <nav className="bottom-nav" role="navigation" aria-label="Navegación principal">
             {/* Indicador deslizante del tab activo */}
@@ -238,31 +218,21 @@ function BottomNav() {
                         handleNavigation(tab.path);
                     }}
                     style={{ '--tab-color': tab.color }}
-                    aria-label={`${tab.label}${tab.notifications > 0 ? ` (${tab.notifications} notificaciones)` : ''}`}
+                    aria-label={tab.label}
                     aria-current={isTabActive(tab.path) ? 'page' : undefined}
                     type="button"
                 >
-                    {/* Contenedor del ícono con badge */}
+                    {/* Contenedor del ícono */}
                     <div className="nav-icon-container">
                         <i 
                             className={`bottom-nav-icon ${tab.icon}`}
                             style={{ 
                                 color: isTabActive(tab.path) ? tab.color : '#7a7a7a',
-                                fontSize: '1.5rem',
+                                fontSize: '1.4rem',
                                 transition: 'all 0.2s ease'
                             }}
                             aria-hidden="true"
                         />
-                        
-                        {/* Badge de notificaciones */}
-                        {tab.notifications > 0 && (
-                            <Badge 
-                                value={tab.notifications > 99 ? '99+' : tab.notifications} 
-                                severity="danger" 
-                                className="nav-badge"
-                                aria-label={`${tab.notifications} notificaciones en ${tab.label}`}
-                            />
-                        )}
                     </div>
                     
                     {/* Etiqueta del tab */}
@@ -270,8 +240,8 @@ function BottomNav() {
                         className="bottom-nav-label"
                         style={{ 
                             color: isTabActive(tab.path) ? tab.color : '#7a7a7a',
-                            fontSize: '0.75rem',
-                            fontWeight: isTabActive(tab.path) ? '600' : '400',
+                            fontSize: '0.7rem',
+                            fontWeight: isTabActive(tab.path) ? '600' : '500',
                             transition: 'all 0.2s ease'
                         }}
                     >
@@ -286,17 +256,6 @@ function BottomNav() {
                     ></div>
                 </button>
             ))}
-
-            {/* Indicador total de notificaciones (oculto, solo para accesibilidad) */}
-            {getTotalNotifications() > 0 && (
-                <div 
-                    className="sr-only" 
-                    aria-live="polite"
-                    aria-atomic="true"
-                >
-                    Tienes {getTotalNotifications()} notificaciones pendientes
-                </div>
-            )}
         </nav>
     );
 }

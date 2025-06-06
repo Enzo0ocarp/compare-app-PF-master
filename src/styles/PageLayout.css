@@ -1,0 +1,174 @@
+/* src/components/PageLayout.css */
+
+/* Variables para el layout */
+.page-layout {
+    --header-height: 70px;
+    --bottom-nav-height: 75px;
+    --bottom-nav-safe-area: env(safe-area-inset-bottom, 0px);
+    --total-bottom-space: calc(var(--bottom-nav-height) + var(--bottom-nav-safe-area) + 1rem);
+}
+
+/* Contenedor principal de layout */
+.page-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Contenido principal */
+.page-main {
+    flex: 1;
+    width: 100%;
+    position: relative;
+}
+
+/* Layout con header */
+.page-layout.has-header .page-main {
+    padding-top: 0; /* El header es sticky, no necesita padding */
+}
+
+/* Layout con bottom navigation */
+.page-layout.has-bottom-nav .page-main {
+    padding-bottom: var(--total-bottom-space);
+    margin-bottom: 0;
+}
+
+/* Layout de altura completa */
+.page-layout.full-height {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.page-layout.full-height .page-main {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Variantes de padding */
+.page-layout.padding-none .page-main {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.page-layout.padding-small .page-main {
+    padding-left: var(--spacing-sm, 0.5rem);
+    padding-right: var(--spacing-sm, 0.5rem);
+}
+
+
+
+.page-layout.padding-large .page-main {
+    padding-left: var(--spacing-lg, 1.5rem);
+    padding-right: var(--spacing-lg, 1.5rem);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-layout {
+        --bottom-nav-height: 65px;
+        --total-bottom-space: calc(var(--bottom-nav-height) + var(--bottom-nav-safe-area) + 0.75rem);
+    }
+    
+    .page-layout.padding-default .page-main {
+        padding-left: var(--spacing-sm, 0.5rem);
+        padding-right: var(--spacing-sm, 0.5rem);
+    }
+    
+    .page-layout.padding-large .page-main {
+        padding-left: var(--spacing-md, 1rem);
+        padding-right: var(--spacing-md, 1rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .page-layout {
+        --bottom-nav-height: 60px;
+        --total-bottom-space: calc(var(--bottom-nav-height) + var(--bottom-nav-safe-area) + 0.5rem);
+    }
+}
+
+@media (max-width: 360px) {
+    .page-layout {
+        --bottom-nav-height: 55px;
+    }
+}
+
+/* Utilidades adicionales */
+.page-layout .container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-layout .scroll-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+}
+
+/* Evitar scroll horizontal en móviles */
+.page-layout .page-main {
+    overflow-x: hidden;
+}
+
+/* Clase para contenido que necesita espacio extra al final */
+.page-layout .content-with-actions {
+    padding-bottom: calc(var(--total-bottom-space) + 2rem);
+}
+
+/* Para formularios que necesitan espacio extra */
+.page-layout .form-container {
+    padding-bottom: calc(var(--total-bottom-space) + 3rem);
+}
+
+/* Para listas largas */
+.page-layout .list-container {
+    padding-bottom: calc(var(--total-bottom-space) + 1rem);
+}
+
+/* Smooth scroll */
+.page-layout .page-main {
+    scroll-behavior: smooth;
+}
+
+/* Mejoras de rendimiento */
+.page-layout {
+    contain: layout style;
+}
+
+.page-layout .page-main {
+    will-change: scroll-position;
+}
+
+/* Estados de carga */
+.page-layout.loading {
+    pointer-events: none;
+}
+
+.page-layout.loading .page-main {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+/* Para debug - mostrar áreas */
+.page-layout.debug {
+    outline: 2px solid red;
+}
+
+.page-layout.debug .page-main {
+    outline: 2px solid blue;
+    background: rgba(0, 0, 255, 0.05);
+}
+
+.page-layout.debug::after {
+    content: 'Bottom Safe Area: ' attr(data-bottom-space);
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    z-index: 9999;
+}

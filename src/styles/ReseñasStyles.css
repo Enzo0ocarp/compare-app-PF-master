@@ -1,92 +1,729 @@
-/* src/styles/ReseñasStyles.css */
+/* src/styles/ReseñasStyles.css - Versión con Namespace Específico */
 
-.reseñas-page {
-    margin: 0 auto;
-    background-color: #f4f8f4;
-    color: #333;
+/* IMPORTANTE: Todos los estilos están namespaceados bajo .resenas-page para evitar conflictos */
+
+.resenas-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding-bottom: 80px;
 }
 
-.reseñas-container{
-    padding: 20px;
+/* ===== HERO SECTION ===== */
+.resenas-page .hero-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  padding: 3rem 0;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Título de Sección */
-.section-title {
-    font-size: 1.8em;
-    color: #4CAF50;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 20px;
+.resenas-page .hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stars" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23stars)"/></svg>');
+  opacity: 0.3;
 }
 
-/* Lista de Reseñas */
-.reviews-list {
-    display: flex;
+.resenas-page .hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.resenas-page .hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.resenas-page .hero-title i {
+  font-size: 2.5rem;
+  color: #ffd700;
+}
+
+.resenas-page .hero-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.resenas-page .hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.resenas-page .stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.resenas-page .stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.resenas-page .stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: #ffd700;
+}
+
+.resenas-page .stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+/* ===== LOADING CONTAINER ===== */
+.resenas-page .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 2rem;
+}
+
+.resenas-page .loading-spinner {
+  text-align: center;
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.resenas-page .loading-spinner i {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.resenas-page .loading-spinner h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.resenas-page .loading-spinner p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.resenas-page .reseñas-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ===== CONTROLS SECTION ===== */
+.resenas-page .controls-section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.resenas-page .search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.resenas-page .search-box {
+  flex: 1;
+  min-width: 250px;
+}
+
+.resenas-page .search-input {
+  width: 100%;
+  height: 44px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.resenas-page .search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.resenas-page .filter-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.resenas-page .filter-dropdown,
+.resenas-page .sort-dropdown {
+  min-width: 180px;
+}
+
+.resenas-page .clear-filters-btn {
+  height: 44px;
+  border-radius: 12px;
+}
+
+.resenas-page .add-review-btn {
+  background: linear-gradient(135deg, var(--success-color) 0%, #45a049 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  height: 44px;
+}
+
+.resenas-page .add-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.resenas-page .add-review-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== TABS STYLES ===== */
+.resenas-page .p-tabview .p-tabview-nav {
+  background: white;
+  border-radius: 12px;
+  border: none;
+  padding: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.resenas-page .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  border-radius: 8px;
+  margin: 0 0.25rem;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.resenas-page .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  background: var(--primary-gradient);
+  color: white;
+  border-color: transparent;
+}
+
+.resenas-page .p-tabview .p-tabview-panels {
+  background: transparent;
+  border: none;
+  padding: 2rem 0 0 0;
+}
+
+/* ===== APPLIED FILTERS ===== */
+.resenas-page .applied-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.resenas-page .applied-filters .p-chip {
+  background: var(--primary-color);
+  color: white;
+  border-radius: 20px;
+}
+
+/* ===== NO REVIEWS STATES ===== */
+.resenas-page .no-reviews-found {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.resenas-page .no-reviews-found i {
+  font-size: 4rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.resenas-page .no-reviews-found h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.resenas-page .no-reviews-found p {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+/* ===== REVIEWS SECTION ===== */
+.resenas-page .reviews-section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== STATISTICS SECTION ===== */
+.resenas-page .stats-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.resenas-page .rating-breakdown {
+  margin-bottom: 3rem;
+}
+
+.resenas-page .rating-breakdown h3 {
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.resenas-page .rating-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 100px;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+}
+
+.resenas-page .rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.resenas-page .rating-stars i {
+  color: #ffd700;
+}
+
+.resenas-page .rating-progress {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.resenas-page .rating-progress .p-progressbar-value {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  border-radius: 6px;
+}
+
+.resenas-page .rating-count {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.resenas-page .insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.resenas-page .insight-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.resenas-page .insight-card:hover {
+  transform: translateY(-5px);
+}
+
+.resenas-page .insight-icon {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.resenas-page .insight-card h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.resenas-page .insight-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.resenas-page .insight-card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ===== INFO SECTION ===== */
+.resenas-page .info-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.resenas-page .info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.resenas-page .info-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+  transition: transform 0.3s ease;
+}
+
+.resenas-page .info-card:hover {
+  transform: translateX(5px);
+}
+
+.resenas-page .info-icon {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.resenas-page .info-card h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.resenas-page .info-card p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.resenas-page .guidelines {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.resenas-page .guidelines h4 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.resenas-page .guidelines h4::before {
+  content: '📝';
+  font-size: 1.5rem;
+}
+
+.resenas-page .guidelines ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resenas-page .guidelines li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: 2rem;
+}
+
+.resenas-page .guidelines li:last-child {
+  border-bottom: none;
+}
+
+.resenas-page .guidelines li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0.75rem;
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+/* ===== MODAL STYLES ===== */
+.resenas-page .review-dialog .p-dialog-header {
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.resenas-page .modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.resenas-page .modal-header i {
+  color: #ffd700;
+}
+
+.resenas-page .review-dialog .p-dialog-content {
+  padding: 0;
+  border-radius: 0 0 16px 16px;
+}
+
+.resenas-page .review-dialog .p-dialog-footer {
+  background: #f8f9fa;
+  border-radius: 0 0 16px 16px;
+  padding: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.resenas-page .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.resenas-page .form-actions .p-button {
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .resenas-page .hero-title {
+    font-size: 2rem;
     flex-direction: column;
-    gap: 20px;
-    max-width: 600px;
-    margin: 0 auto;
+    gap: 0.5rem;
+  }
+
+  .resenas-page .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .resenas-page .controls-section {
+    padding: 1rem;
+  }
+
+  .resenas-page .search-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resenas-page .search-box {
+    min-width: auto;
+  }
+
+  .resenas-page .filter-controls {
+    flex-direction: column;
+  }
+
+  .resenas-page .filter-dropdown,
+  .resenas-page .sort-dropdown {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .resenas-page .rating-row {
+    grid-template-columns: 60px 1fr 80px;
+    gap: 0.5rem;
+  }
+
+  .resenas-page .insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resenas-page .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resenas-page .hero-content {
+    padding: 0 0.5rem;
+  }
+
+  .resenas-page .reseñas-container {
+    padding: 0 0.5rem;
+  }
 }
 
-.review-card {
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fff;
+@media (max-width: 480px) {
+  .resenas-page .hero-section {
+    padding: 2rem 0;
+  }
+
+  .resenas-page .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .resenas-page .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .resenas-page .stat-card {
+    padding: 1rem;
+  }
+
+  .resenas-page .stat-number {
+    font-size: 2rem;
+  }
+
+  .resenas-page .controls-section {
+    margin-bottom: 1rem;
+  }
+
+  .resenas-page .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .resenas-page .rating-row {
+    grid-template-columns: 50px 1fr 70px;
+    font-size: 0.9rem;
+  }
+
+  .resenas-page .insight-card,
+  .resenas-page .info-card {
+    padding: 1rem;
+  }
+
+  .resenas-page .insight-value {
+    font-size: 2rem;
+  }
+
+  .resenas-page .guidelines {
+    padding: 1rem;
+  }
 }
 
-.review-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Cabecera de la Reseña */
-.review-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.avatar {
-    background-color: #4CAF50;
-    color: #fff;
+.resenas-page .stat-card {
+  animation: fadeInUp 0.6s ease-out;
 }
 
-.review-user {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #333;
-    margin: 0;
+.resenas-page .stat-card:nth-child(1) { animation-delay: 0.1s; }
+.resenas-page .stat-card:nth-child(2) { animation-delay: 0.2s; }
+.resenas-page .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+.resenas-page .insight-card {
+  animation: slideInRight 0.6s ease-out;
 }
 
-/* Estrellas de Reseña */
-.rating-stars {
-    margin-bottom: 10px;
-    color: #FFB400; /* Color para las estrellas */
+.resenas-page .insight-card:nth-child(1) { animation-delay: 0.1s; }
+.resenas-page .insight-card:nth-child(2) { animation-delay: 0.2s; }
+.resenas-page .insight-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* ===== DARK MODE SUPPORT ===== */
+[data-theme="dark"] .resenas-page {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
 }
 
-/* Texto de la Reseña */
-.review-text {
-    font-size: 1em;
-    color: #555;
-    line-height: 1.5;
+[data-theme="dark"] .resenas-page .controls-section,
+[data-theme="dark"] .resenas-page .reviews-section,
+[data-theme="dark"] .resenas-page .stats-section,
+[data-theme="dark"] .resenas-page .info-section,
+[data-theme="dark"] .resenas-page .loading-spinner {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Botón para Agregar Reseña */
-.actions {
-    text-align: center;
-    margin-top: 30px;
+[data-theme="dark"] .resenas-page .insight-card,
+[data-theme="dark"] .resenas-page .info-card {
+  background: linear-gradient(135deg, #333 0%, #404040 100%);
 }
 
-.add-review-btn {
-    background-color: #4CAF50;
-    border: none;
-    color: #fff;
-    transition: background-color 0.3s ease;
+[data-theme="dark"] .resenas-page .guidelines {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-color: rgba(102, 126, 234, 0.2);
 }
 
-.add-review-btn:hover {
-    background-color: #388E3C;
+[data-theme="dark"] .resenas-page .no-reviews-found {
+  background: #2a2a2a;
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+@media (prefers-reduced-motion: reduce) {
+  .resenas-page * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.resenas-page .search-input:focus,
+.resenas-page .filter-dropdown:focus,
+.resenas-page .sort-dropdown:focus,
+.resenas-page .add-review-btn:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.resenas-page .p-tabview-panels::-webkit-scrollbar {
+  width: 6px;
+}
+
+.resenas-page .p-tabview-panels::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.resenas-page .p-tabview-panels::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+.resenas-page .p-tabview-panels::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
 }

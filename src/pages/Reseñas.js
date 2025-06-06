@@ -1,15 +1,14 @@
-/**
- * @fileoverview Página de reseñas y comentarios de productos de Compare Precios Argentina
- * @description Componente Reseñas que permite a los usuarios ver, crear y gestionar reseñas
- * de productos, con integración a Firebase Authentication y sistema de calificaciones.
- * @author Compare Team
- * @version 1.0.0
- * @since 2025
- */
-
-// src/pages/Reseñas.js
-import React, { useState, useEffect } from 'react';
+// src/pages/Reseñas.js - Versión Corregida
+import React, { useState, useEffect, useRef } from 'react';
 import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
+import { TabView, TabPanel } from 'primereact/tabview';
+import { Rating } from 'primereact/rating';
+import { ProgressBar } from 'primereact/progressbar';
+import { Chip } from 'primereact/chip';
+import { Toast } from 'primereact/toast';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
 import ReviewList from '../components/ReviewList';
@@ -18,151 +17,117 @@ import { getAuth } from 'firebase/auth';
 import { getAllStoreProducts, addReview, getReviews } from '../functions/services/api';
 import '../styles/ReseñasStyles.css';
 
-/**
- * @typedef {Object} Review
- * @property {string|number} id - Identificador único de la reseña
- * @property {string} productId - ID del producto reseñado
- * @property {string} comment - Comentario o texto de la reseña
- * @property {number} rating - Calificación del 1 al 5 estrellas
- * @property {string} userId - ID del usuario que escribió la reseña
- * @property {string} username - Nombre del usuario (opcional)
- * @property {string} createdAt - Fecha de creación en formato ISO
- * @property {string} [updatedAt] - Fecha de última actualización
- * @property {boolean} [verified] - Si la reseña está verificada
- * @property {number} [helpfulCount] - Número de usuarios que encontraron útil la reseña
- */
-
-/**
- * @typedef {Object} Product
- * @property {string|number} id - Identificador único del producto
- * @property {string} nombre - Nombre del producto
- * @property {string} marca - Marca del producto
- * @property {string} presentacion - Presentación o descripción
- * @property {number} precio - Precio del producto
- * @property {string} [image] - URL de la imagen del producto
- * @property {string} [categoria] - Categoría del producto
- */
-
-/**
- * @typedef {Object} ReviewPayload
- * @property {string} productId - ID del producto a reseñar
- * @property {string} comment - Texto del comentario
- * @property {number} rating - Calificación del 1 al 5
- * @property {string|null} userId - ID del usuario autenticado
- */
-
-/**
- * @typedef {Object} FirebaseUser
- * @property {string} uid - ID único del usuario
- * @property {string} displayName - Nombre para mostrar
- * @property {string} email - Email del usuario
- * @property {string} [photoURL] - URL de la foto de perfil
- */
-
-/**
- * @component Reseñas
- * @description Página principal de reseñas que incluye:
- * - Lista de reseñas existentes con calificaciones
- * - Modal para agregar nuevas reseñas
- * - Integración con Firebase Authentication
- * - Validación de formularios de reseñas
- * - Manejo de errores y fallbacks locales
- * - Sistema de calificación por estrellas
- * 
- * @returns {JSX.Element} Componente de la página de reseñas
- * 
- * @example
- * <Reseñas />
- */
 function Reseñas() {
-  /** @type {[Review[], Function]} Lista de reseñas cargadas */
   const [reviews, setReviews] = useState([]);
-  
-  /** @type {[Product[], Function]} Lista de productos disponibles */
   const [products, setProducts] = useState([]);
-  
-  /** @type {[boolean, Function]} Estado de visibilidad del modal de nueva reseña */
+  const [filteredReviews, setFilteredReviews] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  
-  /** @type {[string, Function]} ID del producto seleccionado para reseñar */
   const [selectedProductId, setSelectedProductId] = useState('');
-  
-  /** @type {[string, Function]} Texto del comentario de la nueva reseña */
   const [newReviewText, setNewReviewText] = useState('');
-  
-  /** @type {[number, Function]} Calificación de la nueva reseña (1-5) */
   const [rating, setRating] = useState(0);
-  
-  /** @type {[boolean, Function]} Estado de carga general */
   const [loading, setLoading] = useState(true);
-  
-  /** @type {[boolean, Function]} Estado de envío de nueva reseña */
   const [submitting, setSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRating, setFilterRating] = useState(null);
+  const [sortBy, setSortBy] = useState('newest');
+  const [activeTab, setActiveTab] = useState(0);
 
-  /** @type {FirebaseUser|null} Usuario actual autenticado */
+  // Ref para el Toast - CORREGIDO
+  const toast = useRef(null);
+
   const currentUser = getAuth().currentUser;
 
-  /**
-   * @description Carga los datos iniciales al montar el componente
-   * Obtiene la lista de productos y reseñas desde la API
-   * @function
-   * @since 1.0.0
-   */
+  // Opciones de filtros
+  const ratingOptions = [
+    { label: 'Todas las calificaciones', value: null },
+    { label: '5 estrellas', value: 5 },
+    { label: '4 estrellas', value: 4 },
+    { label: '3 estrellas', value: 3 },
+    { label: '2 estrellas', value: 2 },
+    { label: '1 estrella', value: 1 }
+  ];
+
+  const sortOptions = [
+    { label: 'Más recientes', value: 'newest' },
+    { label: 'Más antiguas', value: 'oldest' },
+    { label: 'Mejor calificadas', value: 'highest' },
+    { label: 'Peor calificadas', value: 'lowest' }
+  ];
+
   useEffect(() => {
-    const loadInitialData = async () => {
-      setLoading(true);
-      try {
-        // Cargar productos y reseñas en paralelo
-        const [allProducts, apiReviews] = await Promise.all([
-          getAllStoreProducts(),
-          getReviews()
-        ]);
-        
-        setProducts(allProducts);
-        setReviews(apiReviews);
-      } catch (error) {
-        console.error('Error cargando datos iniciales:', error);
-        // En caso de error, establecer arrays vacíos
-        setProducts([]);
-        setReviews([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
     loadInitialData();
   }, []);
 
-  /**
-   * @description Maneja el envío de una nueva reseña
-   * Valida los datos, intenta guardar en la API y maneja errores
-   * @async
-   * @function
-   * @since 1.0.0
-   * 
-   * @returns {Promise<void>} Promesa que se resuelve cuando la reseña se guarda
-   * 
-   * @throws {Error} Error de validación o al guardar en la API
-   * 
-   * @example
-   * await handleAddReview(); // Envía la reseña con los datos del formulario
-   */
+  useEffect(() => {
+    filterAndSortReviews();
+  }, [reviews, searchTerm, filterRating, sortBy]);
+
+  const loadInitialData = async () => {
+    setLoading(true);
+    try {
+      const [allProducts, apiReviews] = await Promise.all([
+        getAllStoreProducts(),
+        getReviews()
+      ]);
+      
+      setProducts(allProducts);
+      setReviews(apiReviews);
+    } catch (error) {
+      console.error('Error cargando datos:', error);
+      showToast('error', 'Error', 'No se pudieron cargar los datos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterAndSortReviews = () => {
+    let filtered = [...reviews];
+
+    // Filtrar por término de búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(review => 
+        review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        getProductTitle(review.productId).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filtrar por calificación
+    if (filterRating) {
+      filtered = filtered.filter(review => review.rating === filterRating);
+    }
+
+    // Ordenar
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        case 'oldest':
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        case 'highest':
+          return b.rating - a.rating;
+        case 'lowest':
+          return a.rating - b.rating;
+        default:
+          return 0;
+      }
+    });
+
+    setFilteredReviews(filtered);
+  };
+
   const handleAddReview = async () => {
-    // Validación de campos obligatorios
     if (!selectedProductId || !newReviewText.trim() || !rating) {
-      alert('Por favor complete todos los campos.');
+      showToast('warn', 'Campos incompletos', 'Por favor complete todos los campos');
       return;
     }
 
-    // Validación adicional del rating
     if (rating < 1 || rating > 5) {
-      alert('La calificación debe ser entre 1 y 5 estrellas.');
+      showToast('warn', 'Calificación inválida', 'La calificación debe ser entre 1 y 5 estrellas');
       return;
     }
 
     setSubmitting(true);
     
-    /** @type {ReviewPayload} */
     const reviewPayload = {
       productId: selectedProductId,
       comment: newReviewText.trim(),
@@ -171,38 +136,22 @@ function Reseñas() {
     };
 
     try {
-      // Intentar guardar en la API
       const savedReview = await addReview(reviewPayload);
-      
-      // Agregar la reseña guardada al estado
       setReviews(prev => [savedReview, ...prev]);
       setShowForm(false);
       resetForm();
-      
-      // Mostrar mensaje de éxito
-      alert('Reseña enviada exitosamente. ¡Gracias por tu opinión!');
-      
+      showToast('success', '¡Éxito!', 'Reseña enviada correctamente');
     } catch (error) {
       console.error('Error al guardar reseña:', error);
       
-      const errorDetails =
-        error.response && error.response.data && error.response.data.details
-          ? error.response.data.details
-          : '';
-      
-      // Mostrar error específico si está disponible
-      const errorMessage = `Error al guardar la reseña. ${errorDetails}`;
-      alert(`${errorMessage}\nSe guardará localmente.`);
-      
-      // Guardar localmente como fallback
-      /** @type {Review} */
+      // Fallback local
       const localReview = {
         id: `local_${Date.now()}`,
         productId: selectedProductId,
         comment: newReviewText.trim(),
         rating,
         userId: currentUser ? currentUser.uid : null,
-        username: currentUser ? currentUser.displayName || 'Anónimo' : 'Anónimo',
+        username: currentUser ? currentUser.displayName || 'Usuario' : 'Anónimo',
         createdAt: new Date().toISOString(),
         verified: false
       };
@@ -210,130 +159,89 @@ function Reseñas() {
       setReviews(prev => [localReview, ...prev]);
       setShowForm(false);
       resetForm();
+      showToast('info', 'Guardado localmente', 'Reseña guardada temporalmente');
     } finally {
       setSubmitting(false);
     }
   };
 
-  /**
-   * @description Resetea todos los campos del formulario de reseña
-   * @function
-   * @since 1.0.0
-   * 
-   * @example
-   * resetForm(); // Limpia productId, texto y rating
-   */
   const resetForm = () => {
     setSelectedProductId('');
     setNewReviewText('');
     setRating(0);
   };
 
-  /**
-   * @description Maneja el cierre del modal de nueva reseña
-   * Resetea el formulario y cierra el modal
-   * @function
-   * @since 1.0.0
-   * 
-   * @example
-   * handleCloseForm(); // Cierra modal y limpia formulario
-   */
   const handleCloseForm = () => {
     setShowForm(false);
     resetForm();
   };
 
-  /**
-   * @description Maneja la apertura del modal de nueva reseña
-   * Verifica si el usuario está autenticado antes de abrir
-   * @function
-   * @since 1.0.0
-   * 
-   * @example
-   * handleOpenForm(); // Abre modal si hay usuario autenticado
-   */
   const handleOpenForm = () => {
     if (!currentUser) {
-      alert('Debes iniciar sesión para escribir una reseña.');
+      showToast('warn', 'Autenticación requerida', 'Debes iniciar sesión para escribir reseñas');
       return;
     }
     setShowForm(true);
   };
 
-  /**
-   * @description Filtra reseñas por producto específico
-   * @function
-   * @since 1.0.0
-   * 
-   * @param {string} productId - ID del producto a filtrar
-   * @returns {Review[]} Array de reseñas del producto
-   * 
-   * @example
-   * const productReviews = getReviewsByProduct('123');
-   */
-  const getReviewsByProduct = (productId) => {
-    return reviews.filter(review => review.productId === productId);
+  const getProductTitle = (productId) => {
+    const product = products.find(p => p.id === productId);
+    return product ? product.title : 'Producto no encontrado';
   };
 
-  /**
-   * @description Calcula la calificación promedio de un producto
-   * @function
-   * @since 1.0.0
-   * 
-   * @param {string} productId - ID del producto
-   * @returns {number} Calificación promedio (0-5)
-   * 
-   * @example
-   * const avgRating = getAverageRating('123'); // 4.2
-   */
-  const getAverageRating = (productId) => {
-    const productReviews = getReviewsByProduct(productId);
-    if (productReviews.length === 0) return 0;
-    
-    const total = productReviews.reduce((sum, review) => sum + review.rating, 0);
-    return (total / productReviews.length).toFixed(1);
+  const getAverageRating = () => {
+    if (reviews.length === 0) return 0;
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return (total / reviews.length).toFixed(1);
   };
 
-  /**
-   * @description Contenido del footer del modal de nueva reseña
-   * @type {JSX.Element}
-   */
+  const getRatingDistribution = () => {
+    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    reviews.forEach(review => {
+      distribution[review.rating]++;
+    });
+    return distribution;
+  };
+
+  // FUNCIÓN CORREGIDA - sin dependencias que causen loops
+  const showToast = (severity, summary, detail) => {
+    if (toast.current) {
+      toast.current.show({ severity, summary, detail, life: 3000 });
+    }
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterRating(null);
+    setSortBy('newest');
+  };
+
   const dialogFooter = (
     <div className="form-actions">
-      <button 
-        type="button" 
-        className="submit-btn" 
+      <Button 
+        label={submitting ? "Enviando..." : "Enviar Reseña"}
+        icon={submitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
         onClick={handleAddReview}
         disabled={submitting}
-      >
-        {submitting ? (
-          <>
-            <i className="pi pi-spin pi-spinner"></i>
-            Enviando...
-          </>
-        ) : (
-          'Enviar Reseña'
-        )}
-      </button>
-      <button
-        type="button"
-        className="cancel-btn"
+        className="p-button-success"
+      />
+      <Button
+        label="Cancelar"
+        icon="pi pi-times"
         onClick={handleCloseForm}
         disabled={submitting}
-      >
-        Cancelar
-      </button>
+        className="p-button-text"
+      />
     </div>
   );
 
-  // Mostrar pantalla de carga mientras se obtienen los datos
   if (loading) {
     return (
-      <div className="reseñas-page loading">
+      <div className="reseñas-page">
         <Header />
         <div className="loading-container">
-          <div className="loading-content">
-            <i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}></i>
+          <div className="loading-spinner">
+            <i className="pi pi-spin pi-spinner"></i>
             <h3>Cargando reseñas...</h3>
             <p>Obteniendo las opiniones de nuestros usuarios</p>
           </div>
@@ -343,118 +251,262 @@ function Reseñas() {
     );
   }
 
+  const ratingDistribution = getRatingDistribution();
+  const averageRating = getAverageRating();
+
   return (
     <div className="reseñas-page">
       <Header />
+      <Toast ref={toast} />
       
       <div className="reseñas-container">
-        <div className="page-header">
-          <h2 className="section-title">
-            <i className="pi pi-comments"></i>
-            Reseñas de Clientes
-          </h2>
-          <p className="section-subtitle">
-            Descubre qué opinan otros usuarios sobre los productos
-          </p>
-          
-          {/* Estadísticas de reseñas */}
-          <div className="reviews-stats">
-            <div className="stat-item">
-              <i className="pi pi-comment"></i>
-              <span className="stat-number">{reviews.length}</span>
-              <span className="stat-label">Reseñas totales</span>
-            </div>
-            <div className="stat-item">
-              <i className="pi pi-shopping-bag"></i>
-              <span className="stat-number">{products.length}</span>
-              <span className="stat-label">Productos disponibles</span>
-            </div>
-            <div className="stat-item">
+        {/* Hero Section */}
+        <div className="hero-section">
+          <div className="hero-content">
+            <h1 className="hero-title">
               <i className="pi pi-star-fill"></i>
-              <span className="stat-number">
-                {reviews.length > 0 
-                  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-                  : '0.0'
-                }
-              </span>
-              <span className="stat-label">Calificación promedio</span>
+              Reseñas de Clientes
+            </h1>
+            <p className="hero-subtitle">
+              Descubre las experiencias reales de nuestra comunidad
+            </p>
+            <div className="hero-stats">
+              <div className="stat-card">
+                <div className="stat-number">{reviews.length}</div>
+                <div className="stat-label">Reseñas Totales</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number">{averageRating}</div>
+                <div className="stat-label">Calificación Promedio</div>
+                <Rating value={parseFloat(averageRating)} readOnly cancel={false} />
+              </div>
+              <div className="stat-card">
+                <div className="stat-number">{products.length}</div>
+                <div className="stat-label">Productos Disponibles</div>
+              </div>
             </div>
           </div>
         </div>
-        
-        {/* Lista de reseñas */}
-        <div className="reviews-content">
-          {reviews.length > 0 ? (
-            <>
-              <ReviewList 
-                reviews={reviews} 
-                products={products}
-                getAverageRating={getAverageRating}
-                getReviewsByProduct={getReviewsByProduct}
+
+        {/* Controles y Filtros */}
+        <div className="controls-section">
+          <div className="search-filters">
+            <div className="search-box">
+              <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar en reseñas..."
+                  className="search-input"
+                />
+              </span>
+            </div>
+            
+            <div className="filter-controls">
+              <Dropdown
+                value={filterRating}
+                options={ratingOptions}
+                onChange={(e) => setFilterRating(e.value)}
+                placeholder="Filtrar por calificación"
+                className="filter-dropdown"
               />
               
-              {/* Información adicional */}
-              <div className="reviews-info">
-                <div className="info-card">
-                  <h4>
-                    <i className="pi pi-info-circle"></i>
-                    Sobre las reseñas
-                  </h4>
-                  <ul>
-                    <li>Las reseñas son escritas por usuarios reales</li>
-                    <li>Puedes calificar productos del 1 al 5 estrellas</li>
-                    <li>Tu opinión ayuda a otros compradores</li>
-                    <li>Las reseñas se moderan para mantener la calidad</li>
-                  </ul>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="no-reviews">
-              <div className="no-reviews-content">
-                <i className="pi pi-comment no-reviews-icon"></i>
-                <h3>No hay reseñas aún</h3>
-                <p>Sé el primero en compartir tu opinión sobre nuestros productos</p>
-              </div>
+              <Dropdown
+                value={sortBy}
+                options={sortOptions}
+                onChange={(e) => setSortBy(e.value)}
+                className="sort-dropdown"
+              />
+              
+              <Button
+                icon="pi pi-filter-slash"
+                onClick={clearFilters}
+                className="p-button-outlined clear-filters-btn"
+                tooltip="Limpiar filtros"
+              />
             </div>
-          )}
-        </div>
-        
-        {/* Botón para agregar reseña */}
-        <div className="add-review-section">
-          <button 
-            className="add-review-btn" 
+          </div>
+
+          <Button
+            label="Escribir Reseña"
+            icon="pi pi-plus"
             onClick={handleOpenForm}
             disabled={!currentUser}
-          >
-            <i className="pi pi-plus"></i>
-            {currentUser ? 'Escribir una Reseña' : 'Inicia sesión para reseñar'}
-          </button>
-          
-          {!currentUser && (
-            <p className="auth-message">
-              <i className="pi pi-info-circle"></i>
-              Necesitas una cuenta para escribir reseñas
-            </p>
-          )}
+            className="add-review-btn"
+          />
         </div>
+
+        {/* Tabs de contenido */}
+        <TabView activeIndex={activeTab} onTabChange={(e) => setActiveTab(e.index)}>
+          {/* Tab de Reseñas */}
+          <TabPanel 
+            header={`Todas las Reseñas (${filteredReviews.length})`}
+            leftIcon="pi pi-list"
+          >
+            {filteredReviews.length > 0 ? (
+              <div className="reviews-section">
+                <div className="applied-filters">
+                  {searchTerm && (
+                    <Chip 
+                      label={`Búsqueda: "${searchTerm}"`} 
+                      removable 
+                      onRemove={() => setSearchTerm('')}
+                    />
+                  )}
+                  {filterRating && (
+                    <Chip 
+                      label={`${filterRating} estrellas`} 
+                      removable 
+                      onRemove={() => setFilterRating(null)}
+                    />
+                  )}
+                </div>
+                
+                <ReviewList 
+                  reviews={filteredReviews} 
+                  products={products}
+                  showProductInfo={true}
+                  currentUserId={currentUser?.uid}
+                />
+              </div>
+            ) : (
+              <div className="no-reviews-found">
+                <i className="pi pi-search"></i>
+                <h3>No se encontraron reseñas</h3>
+                <p>Intenta ajustar los filtros de búsqueda</p>
+                <Button
+                  label="Limpiar filtros"
+                  icon="pi pi-refresh"
+                  onClick={clearFilters}
+                  className="p-button-text"
+                />
+              </div>
+            )}
+          </TabPanel>
+
+          {/* Tab de Estadísticas */}
+          <TabPanel 
+            header="Estadísticas"
+            leftIcon="pi pi-chart-bar"
+          >
+            <div className="stats-section">
+              <div className="rating-breakdown">
+                <h3>Distribución de Calificaciones</h3>
+                {[5, 4, 3, 2, 1].map(star => (
+                  <div key={star} className="rating-row">
+                    <div className="rating-stars">
+                      {star} <i className="pi pi-star-fill"></i>
+                    </div>
+                    <ProgressBar 
+                      value={reviews.length > 0 ? (ratingDistribution[star] / reviews.length) * 100 : 0}
+                      className="rating-progress"
+                    />
+                    <span className="rating-count">
+                      {ratingDistribution[star]} reseñas
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="insights-grid">
+                <div className="insight-card">
+                  <i className="pi pi-thumbs-up insight-icon"></i>
+                  <h4>Satisfacción General</h4>
+                  <div className="insight-value">
+                    {reviews.length > 0 
+                      ? `${(((ratingDistribution[4] + ratingDistribution[5]) / reviews.length) * 100).toFixed(1)}%`
+                      : '0%'
+                    }
+                  </div>
+                  <p>de usuarios satisfechos (4-5 estrellas)</p>
+                </div>
+
+                <div className="insight-card">
+                  <i className="pi pi-heart insight-icon"></i>
+                  <h4>Reseñas Positivas</h4>
+                  <div className="insight-value">{ratingDistribution[5]}</div>
+                  <p>calificaciones de 5 estrellas</p>
+                </div>
+
+                <div className="insight-card">
+                  <i className="pi pi-chart-line insight-icon"></i>
+                  <h4>Participación</h4>
+                  <div className="insight-value">
+                    {products.length > 0 
+                      ? `${((reviews.length / products.length) * 100).toFixed(1)}%`
+                      : '0%'
+                    }
+                  </div>
+                  <p>de productos con reseñas</p>
+                </div>
+              </div>
+            </div>
+          </TabPanel>
+
+          {/* Tab de Información */}
+          <TabPanel 
+            header="Información"
+            leftIcon="pi pi-info-circle"
+          >
+            <div className="info-section">
+              <div className="info-grid">
+                <div className="info-card">
+                  <i className="pi pi-shield info-icon"></i>
+                  <h4>Reseñas Verificadas</h4>
+                  <p>Todas nuestras reseñas pasan por un proceso de moderación para garantizar su autenticidad y calidad.</p>
+                </div>
+
+                <div className="info-card">
+                  <i className="pi pi-users info-icon"></i>
+                  <h4>Comunidad Real</h4>
+                  <p>Solo usuarios registrados pueden escribir reseñas, asegurando opiniones genuinas de compradores reales.</p>
+                </div>
+
+                <div className="info-card">
+                  <i className="pi pi-heart info-icon"></i>
+                  <h4>Ayuda a Otros</h4>
+                  <p>Tu opinión es valiosa. Ayuda a otros usuarios a tomar decisiones informadas compartiendo tu experiencia.</p>
+                </div>
+
+                <div className="info-card">
+                  <i className="pi pi-comment info-icon"></i>
+                  <h4>Feedback Constructivo</h4>
+                  <p>Escribe reseñas honestas y detalladas que destaquen tanto aspectos positivos como áreas de mejora.</p>
+                </div>
+              </div>
+
+              <div className="guidelines">
+                <h4>Guías para Escribir Reseñas</h4>
+                <ul>
+                  <li>Sé específico sobre tu experiencia con el producto</li>
+                  <li>Menciona características que te gustaron o no</li>
+                  <li>Compara con expectativas o productos similares</li>
+                  <li>Incluye contexto sobre cómo usaste el producto</li>
+                  <li>Mantén un tono respetuoso y constructivo</li>
+                </ul>
+              </div>
+            </div>
+          </TabPanel>
+        </TabView>
       </div>
-      
+
       {/* Modal para nueva reseña */}
       <Dialog
         header={
           <div className="modal-header">
-            <i className="pi pi-plus-circle"></i>
-            <span>Agregar Reseña</span>
+            <i className="pi pi-star-fill"></i>
+            <span>Escribir Nueva Reseña</span>
           </div>
         }
         visible={showForm}
-        style={{ width: '90vw', maxWidth: '500px' }}
+        style={{ width: '90vw', maxWidth: '600px' }}
         footer={dialogFooter}
         onHide={handleCloseForm}
         className="review-dialog"
         closable={!submitting}
         closeOnEscape={!submitting}
+        modal
       >
         <AddReview
           products={products}
@@ -466,15 +518,6 @@ function Reseñas() {
           onRatingChange={setRating}
           disabled={submitting}
         />
-        
-        {submitting && (
-          <div className="submitting-overlay">
-            <div className="submitting-content">
-              <i className="pi pi-spin pi-spinner"></i>
-              <p>Enviando tu reseña...</p>
-            </div>
-          </div>
-        )}
       </Dialog>
       
       <BottomNav />

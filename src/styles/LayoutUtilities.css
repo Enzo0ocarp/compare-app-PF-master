@@ -1,0 +1,322 @@
+/* src/styles/LayoutUtilities.css */
+/* Utilidades adicionales para trabajar con Header y BottomNav */
+
+/* === VARIABLES PARA LAYOUT === */
+:root {
+  /* Alturas de componentes de navegación */
+  --app-header-height: 70px;
+  --app-bottom-nav-height: 75px;
+  --app-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  
+  /* Espacios calculados */
+  --app-header-space: var(--app-header-height);
+  --app-bottom-space: calc(var(--app-bottom-nav-height) + var(--app-safe-area-bottom));
+  --app-total-nav-space: calc(var(--app-header-space) + var(--app-bottom-space));
+  
+  /* Alturas útiles */
+  --app-content-height: calc(100vh - var(--app-total-nav-space));
+  --app-content-height-no-header: calc(100vh - var(--app-bottom-space));
+  --app-content-height-no-bottom: calc(100vh - var(--app-header-space));
+}
+
+/* === UTILIDADES DE ESPACIADO PARA NAVEGACIÓN === */
+
+/* Espaciado superior para contenido bajo header sticky */
+.app-header-offset {
+  padding-top: var(--app-header-space);
+}
+
+.app-header-margin {
+  margin-top: var(--app-header-space);
+}
+
+/* Espaciado inferior para contenido sobre bottom nav */
+.app-bottom-offset {
+  padding-bottom: var(--app-bottom-space);
+}
+
+.app-bottom-margin {
+  margin-bottom: var(--app-bottom-space);
+}
+
+/* Espaciado completo (header + bottom nav) */
+.app-nav-offset {
+  padding-top: var(--app-header-space);
+  padding-bottom: var(--app-bottom-space);
+}
+
+/* === CONTENEDORES DE ALTURA COMPLETA === */
+
+/* Altura completa menos navegación */
+.app-full-height {
+  height: var(--app-content-height);
+  min-height: var(--app-content-height);
+}
+
+.app-full-height-no-header {
+  height: var(--app-content-height-no-header);
+  min-height: var(--app-content-height-no-header);
+}
+
+.app-full-height-no-bottom {
+  height: var(--app-content-height-no-bottom);
+  min-height: var(--app-content-height-no-bottom);
+}
+
+/* === SCROLL CONTAINERS === */
+
+/* Contenedor con scroll que respeta la navegación */
+.app-scroll-container {
+  height: var(--app-content-height);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.app-scroll-container-no-header {
+  height: var(--app-content-height-no-header);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.app-scroll-container-no-bottom {
+  height: var(--app-content-height-no-bottom);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* === ESPACIOS DE SEGURIDAD === */
+
+/* Espacio extra para formularios */
+.app-form-safe-space {
+  padding-bottom: calc(var(--app-bottom-space) + 2rem);
+}
+
+/* Espacio extra para acciones flotantes */
+.app-actions-safe-space {
+  padding-bottom: calc(var(--app-bottom-space) + 4rem);
+}
+
+/* Espacio mínimo para listas */
+.app-list-safe-space {
+  padding-bottom: calc(var(--app-bottom-space) + 1rem);
+}
+
+/* === LAYOUTS ESPECÍFICOS === */
+
+/* Layout para páginas de contenido estándar */
+.app-page-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-page-layout .app-page-header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-page-layout .app-page-content {
+  flex: 1;
+  padding-bottom: var(--app-bottom-space);
+}
+
+.app-page-layout .app-page-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* Layout para páginas de altura completa */
+.app-fullscreen-layout {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-fullscreen-layout .app-fullscreen-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* === UTILIDADES DE POSICIONAMIENTO === */
+
+/* Posicionamiento relativo al viewport considerando navegación */
+.app-fixed-top {
+  position: fixed;
+  top: var(--app-header-space);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.app-fixed-bottom {
+  position: fixed;
+  bottom: var(--app-bottom-space);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.app-sticky-top {
+  position: sticky;
+  top: var(--app-header-space);
+  z-index: 100;
+}
+
+/* === FAB (Floating Action Button) === */
+.app-fab {
+  position: fixed;
+  bottom: calc(var(--app-bottom-space) + 1rem);
+  right: 1rem;
+  z-index: 1000;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.app-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* === RESPONSIVE ADJUSTMENTS === */
+
+/* Tablets */
+@media (max-width: 768px) {
+  :root {
+    --app-header-height: 65px;
+    --app-bottom-nav-height: 65px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  :root {
+    --app-header-height: 60px;
+    --app-bottom-nav-height: 60px;
+  }
+  
+  .app-fab {
+    bottom: calc(var(--app-bottom-space) + 0.75rem);
+    right: 0.75rem;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  :root {
+    --app-header-height: 55px;
+    --app-bottom-nav-height: 55px;
+  }
+  
+  .app-fab {
+    width: 44px;
+    height: 44px;
+    bottom: calc(var(--app-bottom-space) + 0.5rem);
+    right: 0.5rem;
+  }
+}
+
+/* Large screens - el bottom nav puede ser más alto */
+@media (min-width: 1200px) {
+  :root {
+    --app-bottom-nav-height: 75px;
+  }
+}
+
+/* === UTILIDADES PARA DEBUGGING === */
+.app-debug-layout {
+  outline: 2px solid red !important;
+  position: relative;
+}
+
+.app-debug-layout::before {
+  content: 'Layout Debug';
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: red;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.app-debug-header {
+  outline: 2px solid blue !important;
+}
+
+.app-debug-header::before {
+  content: 'Header: ' var(--app-header-height);
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: blue;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  z-index: 9999;
+}
+
+.app-debug-bottom {
+  outline: 2px solid green !important;
+}
+
+.app-debug-bottom::before {
+  content: 'Bottom: ' var(--app-bottom-space);
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: green;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  z-index: 9999;
+}
+
+/* === ANIMACIONES SUAVES === */
+.app-smooth-layout {
+  transition: padding 0.3s ease, margin 0.3s ease;
+}
+
+/* === ACCESIBILIDAD === */
+@media (prefers-reduced-motion: reduce) {
+  .app-scroll-container,
+  .app-scroll-container-no-header,
+  .app-scroll-container-no-bottom {
+    scroll-behavior: auto;
+  }
+  
+  .app-smooth-layout {
+    transition: none;
+  }
+  
+  .app-fab {
+    transition: none;
+  }
+}
+
+/* === SOPORTE PARA LANDSCAPE EN MÓVILES === */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --app-header-height: 50px;
+    --app-bottom-nav-height: 50px;
+  }
+  
+  .app-fab {
+    width: 40px;
+    height: 40px;
+    bottom: calc(var(--app-bottom-space) + 0.5rem);
+  }
+}
