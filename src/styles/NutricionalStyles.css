@@ -476,6 +476,7 @@
     opacity: 0;
     transform: translateY(20px);
     border: 1px solid var(--border-light);
+    height: 380px;
   }
   
   .nutricional-page .enhanced-category-card.visible {

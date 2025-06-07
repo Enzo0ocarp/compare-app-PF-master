@@ -337,8 +337,6 @@ const Register = () => {
           <a href="/login">Inicia sesión aquí</a>
         </p>
       </div>
-      
-      <BottomNav />
     </>
   );
 };

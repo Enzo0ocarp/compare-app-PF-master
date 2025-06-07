@@ -841,19 +841,6 @@ function Home() {
 
         </div>
       </div>
-
-      {/* FAB (Floating Action Button) - Opcional */}
-      {getFabStyle && (
-        <Button
-          icon="pi pi-plus"
-          className="btn-primary"
-          style={getFabStyle('bottom-right')}
-          tooltip="Buscar producto específico"
-          tooltipOptions={{ position: 'left' }}
-          onClick={() => scrollToElement && scrollToElement('quick-actions-section')}
-          rounded
-        />
-      )}
     </>
   );
 }

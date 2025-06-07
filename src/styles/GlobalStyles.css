@@ -192,9 +192,7 @@ body {
 }
 
 .global-utilities em, 
-.global-utilities i {
-  font-style: italic;
-}
+
 
 /* === ENLACES === */
 .global-utilities a {

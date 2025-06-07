@@ -332,9 +332,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-
-      {/* Navegación inferior */}
-      <BottomNav />
     </div>
   );
 };

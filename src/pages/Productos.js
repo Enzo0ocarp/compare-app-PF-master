@@ -354,7 +354,6 @@ function Productos() {
 
   return (
     <div className="productos-page">
-      <Header />
       <div className="products-container">
         
         {/* Barra de búsqueda y filtros */}
@@ -560,7 +559,6 @@ function Productos() {
           </div>
         </div>
       </div>
-      <BottomNav />
     </div>
   );
 }

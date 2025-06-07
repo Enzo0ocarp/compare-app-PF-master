@@ -217,7 +217,6 @@ function Perfil() {
   if (loading) {
     return (
       <div className="perfil-page loading">
-        <Header />
         <div className="loading-container">
           <div className="loading-spinner">
             <i className="pi pi-spin pi-spinner" style={{ fontSize: '3rem' }}></i>
@@ -370,7 +369,6 @@ function Perfil() {
         </section>
       </div>
       
-      <BottomNav />
       
       {notification && (
         <Notification 

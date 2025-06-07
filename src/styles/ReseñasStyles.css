@@ -1,24 +1,24 @@
-/* src/styles/ReseñasStyles.css - Versión con Namespace Específico */
+/* src/styles/ReseñasStyles.css - Versión Corregida con Namespace */
 
-/* IMPORTANTE: Todos los estilos están namespaceados bajo .resenas-page para evitar conflictos */
+/* IMPORTANTE: Todos los estilos están namespaceados bajo .reseñas-page para evitar conflictos */
 
-.resenas-page {
+.reseñas-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding-bottom: 80px;
+  padding-bottom: var(--app-bottom-space, 80px); /* Usa variable del layout */
 }
 
 /* ===== HERO SECTION ===== */
-.resenas-page .hero-section {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+.reseñas-page .hero-section {
+  background: var(--primary-gradient);
   color: white;
-  padding: 3rem 0;
+  padding: 2rem 0;
   margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
 }
 
-.resenas-page .hero-section::before {
+.reseñas-page .hero-section::before {
   content: '';
   position: absolute;
   top: 0;
@@ -29,444 +29,446 @@
   opacity: 0.3;
 }
 
-.resenas-page .hero-content {
-  max-width: 1200px;
+.reseñas-page .hero-content {
+  max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--container-padding);
   text-align: center;
   position: relative;
   z-index: 1;
 }
 
-.resenas-page .hero-title {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
+.reseñas-page .hero-title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-black);
+  margin-bottom: var(--spacing-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: var(--spacing-md);
 }
 
-.resenas-page .hero-title i {
+.reseñas-page .hero-title i {
   font-size: 2.5rem;
   color: #ffd700;
 }
 
-.resenas-page .hero-subtitle {
-  font-size: 1.2rem;
+.reseñas-page .hero-subtitle {
+  font-size: var(--font-size-lg);
   opacity: 0.9;
-  margin-bottom: 2rem;
-  font-weight: 300;
+  margin-bottom: var(--spacing-xl);
+  font-weight: var(--font-weight-light);
 }
 
-.resenas-page .hero-stats {
+.reseñas-page .hero-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
 }
 
-.resenas-page .stat-card {
+.reseñas-page .stat-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 1.5rem;
+  border-radius: var(--border-radius-2xl);
+  padding: var(--spacing-lg);
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease;
+  transition: var(--transition-base);
 }
 
-.resenas-page .stat-card:hover {
+.reseñas-page .stat-card:hover {
   transform: translateY(-5px);
 }
 
-.resenas-page .stat-number {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
+.reseñas-page .stat-number {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-black);
+  margin-bottom: var(--spacing-sm);
   color: #ffd700;
 }
 
-.resenas-page .stat-label {
-  font-size: 0.9rem;
+.reseñas-page .stat-label {
+  font-size: var(--font-size-sm);
   opacity: 0.8;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 /* ===== LOADING CONTAINER ===== */
-.resenas-page .loading-container {
+.reseñas-page .loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 60vh;
-  padding: 2rem;
+  padding: var(--spacing-xl);
 }
 
-.resenas-page .loading-spinner {
+.reseñas-page .loading-spinner {
   text-align: center;
-  background: white;
-  padding: 3rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  background: var(--bg-card);
+  padding: var(--spacing-3xl);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-large);
 }
 
-.resenas-page .loading-spinner i {
+.reseñas-page .loading-spinner i {
   font-size: 3rem;
   color: var(--primary-color);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
-.resenas-page .loading-spinner h3 {
+.reseñas-page .loading-spinner h3 {
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
-.resenas-page .loading-spinner p {
+.reseñas-page .loading-spinner p {
   color: var(--text-muted);
   margin: 0;
 }
 
 /* ===== MAIN CONTAINER ===== */
-.resenas-page .reseñas-container {
-  max-width: 1200px;
+.reseñas-page .reseñas-container {
+  max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--container-padding);
 }
 
 /* ===== CONTROLS SECTION ===== */
-.resenas-page .controls-section {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+.reseñas-page .controls-section {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-2xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-medium);
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.resenas-page .search-filters {
+.reseñas-page .search-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--spacing-md);
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
-.resenas-page .search-box {
+.reseñas-page .search-box {
   flex: 1;
   min-width: 250px;
 }
 
-.resenas-page .search-input {
+.reseñas-page .search-input {
   width: 100%;
   height: 44px;
-  font-size: 1rem;
-  border-radius: 12px;
+  font-size: var(--font-size-base);
+  border-radius: var(--border-radius-large);
   border: 2px solid #e9ecef;
-  transition: all 0.3s ease;
+  transition: var(--transition-base);
+  padding: var(--spacing-sm) var(--spacing-md);
 }
 
-.resenas-page .search-input:focus {
+.reseñas-page .search-input:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.resenas-page .filter-controls {
+.reseñas-page .filter-controls {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-md);
   flex-wrap: wrap;
 }
 
-.resenas-page .filter-dropdown,
-.resenas-page .sort-dropdown {
+.reseñas-page .filter-dropdown,
+.reseñas-page .sort-dropdown {
   min-width: 180px;
 }
 
-.resenas-page .clear-filters-btn {
+.reseñas-page .clear-filters-btn {
   height: 44px;
-  border-radius: 12px;
+  border-radius: var(--border-radius-large);
 }
 
-.resenas-page .add-review-btn {
-  background: linear-gradient(135deg, var(--success-color) 0%, #45a049 100%);
+.reseñas-page .add-review-btn {
+  background: var(--success-gradient);
   border: none;
   color: white;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  border-radius: var(--border-radius-large);
+  transition: var(--transition-base);
   height: 44px;
 }
 
-.resenas-page .add-review-btn:hover {
+.reseñas-page .add-review-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+  box-shadow: var(--shadow-hover);
 }
 
-.resenas-page .add-review-btn:disabled {
+.reseñas-page .add-review-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* ===== TABS STYLES ===== */
-.resenas-page .p-tabview .p-tabview-nav {
-  background: white;
-  border-radius: 12px;
+.reseñas-page .p-tabview .p-tabview-nav {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-large);
   border: none;
-  padding: 0.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-small);
 }
 
-.resenas-page .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-  border-radius: 8px;
+.reseñas-page .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  border-radius: var(--border-radius-medium);
   margin: 0 0.25rem;
-  padding: 1rem 1.5rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-weight: var(--font-weight-semibold);
+  transition: var(--transition-base);
 }
 
-.resenas-page .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+.reseñas-page .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
   background: var(--primary-gradient);
   color: white;
   border-color: transparent;
 }
 
-.resenas-page .p-tabview .p-tabview-panels {
+.reseñas-page .p-tabview .p-tabview-panels {
   background: transparent;
   border: none;
-  padding: 2rem 0 0 0;
+  padding: var(--spacing-xl) 0 0 0;
 }
 
 /* ===== APPLIED FILTERS ===== */
-.resenas-page .applied-filters {
+.reseñas-page .applied-filters {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
 }
 
-.resenas-page .applied-filters .p-chip {
+.reseñas-page .applied-filters .p-chip {
   background: var(--primary-color);
   color: white;
-  border-radius: 20px;
+  border-radius: var(--border-radius-full);
 }
 
 /* ===== NO REVIEWS STATES ===== */
-.resenas-page .no-reviews-found {
+.reseñas-page .no-reviews-found {
   text-align: center;
-  padding: 4rem 2rem;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  background: var(--bg-card);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-small);
 }
 
-.resenas-page .no-reviews-found i {
+.reseñas-page .no-reviews-found i {
   font-size: 4rem;
   color: var(--text-muted);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
-.resenas-page .no-reviews-found h3 {
+.reseñas-page .no-reviews-found h3 {
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
-.resenas-page .no-reviews-found p {
+.reseñas-page .no-reviews-found p {
   color: var(--text-muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
 }
 
 /* ===== REVIEWS SECTION ===== */
-.resenas-page .reviews-section {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+.reseñas-page .reviews-section {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-2xl);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-small);
 }
 
 /* ===== STATISTICS SECTION ===== */
-.resenas-page .stats-section {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+.reseñas-page .stats-section {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-2xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-small);
 }
 
-.resenas-page .rating-breakdown {
-  margin-bottom: 3rem;
+.reseñas-page .rating-breakdown {
+  margin-bottom: var(--spacing-3xl);
 }
 
-.resenas-page .rating-breakdown h3 {
-  margin-bottom: 1.5rem;
+.reseñas-page .rating-breakdown h3 {
+  margin-bottom: var(--spacing-lg);
   color: var(--text-primary);
   text-align: center;
 }
 
-.resenas-page .rating-row {
+.reseñas-page .rating-row {
   display: grid;
   grid-template-columns: 80px 1fr 100px;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding: 0.5rem 0;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
 }
 
-.resenas-page .rating-stars {
+.reseñas-page .rating-stars {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
+  gap: var(--spacing-sm);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
 }
 
-.resenas-page .rating-stars i {
+.reseñas-page .rating-stars i {
   color: #ffd700;
 }
 
-.resenas-page .rating-progress {
+.reseñas-page .rating-progress {
   height: 12px;
-  border-radius: 6px;
+  border-radius: var(--border-radius-medium);
 }
 
-.resenas-page .rating-progress .p-progressbar-value {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  border-radius: 6px;
+.reseñas-page .rating-progress .p-progressbar-value {
+  background: var(--primary-gradient);
+  border-radius: var(--border-radius-medium);
 }
 
-.resenas-page .rating-count {
-  font-size: 0.9rem;
+.reseñas-page .rating-count {
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
   text-align: right;
 }
 
-.resenas-page .insights-grid {
+.reseñas-page .insights-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  gap: var(--spacing-lg);
 }
 
-.resenas-page .insight-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 16px;
-  padding: 2rem;
+.reseñas-page .insight-card {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, #e9ecef 100%);
+  border-radius: var(--border-radius-2xl);
+  padding: var(--spacing-xl);
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease;
+  transition: var(--transition-base);
 }
 
-.resenas-page .insight-card:hover {
+.reseñas-page .insight-card:hover {
   transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
 }
 
-.resenas-page .insight-icon {
+.reseñas-page .insight-icon {
   font-size: 3rem;
   color: var(--primary-color);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
-.resenas-page .insight-card h4 {
+.reseñas-page .insight-card h4 {
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-lg);
 }
 
-.resenas-page .insight-value {
-  font-size: 2.5rem;
-  font-weight: 800;
+.reseñas-page .insight-value {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-black);
   color: var(--primary-color);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
-.resenas-page .insight-card p {
+.reseñas-page .insight-card p {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   margin: 0;
 }
 
 /* ===== INFO SECTION ===== */
-.resenas-page .info-section {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+.reseñas-page .info-section {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-2xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-small);
 }
 
-.resenas-page .info-grid {
+.reseñas-page .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-3xl);
 }
 
-.resenas-page .info-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 12px;
-  padding: 1.5rem;
+.reseñas-page .info-card {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, #e9ecef 100%);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-lg);
   border-left: 4px solid var(--primary-color);
-  transition: transform 0.3s ease;
+  transition: var(--transition-base);
 }
 
-.resenas-page .info-card:hover {
+.reseñas-page .info-card:hover {
   transform: translateX(5px);
 }
 
-.resenas-page .info-icon {
+.reseñas-page .info-icon {
   font-size: 2rem;
   color: var(--primary-color);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
-.resenas-page .info-card h4 {
+.reseñas-page .info-card h4 {
   color: var(--text-primary);
   margin-bottom: 0.75rem;
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
 }
 
-.resenas-page .info-card p {
+.reseñas-page .info-card p {
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
   margin: 0;
 }
 
-.resenas-page .guidelines {
+.reseñas-page .guidelines {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-xl);
   border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
-.resenas-page .guidelines h4 {
+.reseñas-page .guidelines h4 {
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 }
 
-.resenas-page .guidelines h4::before {
+.reseñas-page .guidelines h4::before {
   content: '📝';
   font-size: 1.5rem;
 }
 
-.resenas-page .guidelines ul {
+.reseñas-page .guidelines ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.resenas-page .guidelines li {
+.reseñas-page .guidelines li {
   padding: 0.75rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   color: var(--text-secondary);
   position: relative;
-  padding-left: 2rem;
+  padding-left: var(--spacing-xl);
 }
 
-.resenas-page .guidelines li:last-child {
+.reseñas-page .guidelines li:last-child {
   border-bottom: none;
 }
 
-.resenas-page .guidelines li::before {
+.reseñas-page .guidelines li::before {
   content: '✓';
   position: absolute;
   left: 0;
@@ -476,157 +478,161 @@
 }
 
 /* ===== MODAL STYLES ===== */
-.resenas-page .review-dialog .p-dialog-header {
+.reseñas-page .review-dialog .p-dialog-header {
   background: var(--primary-gradient);
   color: white;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-2xl) var(--border-radius-2xl) 0 0;
 }
 
-.resenas-page .modal-header {
+.reseñas-page .modal-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
 }
 
-.resenas-page .modal-header i {
+.reseñas-page .modal-header i {
   color: #ffd700;
 }
 
-.resenas-page .review-dialog .p-dialog-content {
+.reseñas-page .review-dialog .p-dialog-content {
   padding: 0;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 var(--border-radius-2xl) var(--border-radius-2xl);
 }
 
-.resenas-page .review-dialog .p-dialog-footer {
-  background: #f8f9fa;
-  border-radius: 0 0 16px 16px;
-  padding: 1.5rem;
+.reseñas-page .review-dialog .p-dialog-footer {
+  background: var(--bg-secondary);
+  border-radius: 0 0 var(--border-radius-2xl) var(--border-radius-2xl);
+  padding: var(--spacing-lg);
   border-top: 1px solid #e9ecef;
 }
 
-.resenas-page .form-actions {
+.reseñas-page .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
+  gap: var(--spacing-md);
 }
 
-.resenas-page .form-actions .p-button {
-  border-radius: 10px;
+.reseñas-page .form-actions .p-button {
+  border-radius: var(--border-radius-medium);
   padding: 0.75rem 1.5rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
-  .resenas-page .hero-title {
-    font-size: 2rem;
+  .reseñas-page {
+    padding-bottom: var(--app-bottom-space, 70px);
+  }
+
+  .reseñas-page .hero-title {
+    font-size: var(--font-size-3xl);
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
   }
 
-  .resenas-page .hero-stats {
+  .reseñas-page .hero-stats {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: var(--spacing-md);
   }
 
-  .resenas-page .controls-section {
-    padding: 1rem;
+  .reseñas-page .controls-section {
+    padding: var(--spacing-md);
   }
 
-  .resenas-page .search-filters {
+  .reseñas-page .search-filters {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .resenas-page .search-box {
+  .reseñas-page .search-box {
     min-width: auto;
   }
 
-  .resenas-page .filter-controls {
+  .reseñas-page .filter-controls {
     flex-direction: column;
   }
 
-  .resenas-page .filter-dropdown,
-  .resenas-page .sort-dropdown {
+  .reseñas-page .filter-dropdown,
+  .reseñas-page .sort-dropdown {
     min-width: auto;
     width: 100%;
   }
 
-  .resenas-page .rating-row {
+  .reseñas-page .rating-row {
     grid-template-columns: 60px 1fr 80px;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
   }
 
-  .resenas-page .insights-grid {
+  .reseñas-page .insights-grid {
     grid-template-columns: 1fr;
   }
 
-  .resenas-page .info-grid {
+  .reseñas-page .info-grid {
     grid-template-columns: 1fr;
   }
 
-  .resenas-page .hero-content {
-    padding: 0 0.5rem;
+  .reseñas-page .hero-content {
+    padding: 0 var(--spacing-sm);
   }
 
-  .resenas-page .reseñas-container {
-    padding: 0 0.5rem;
+  .reseñas-page .reseñas-container {
+    padding: 0 var(--spacing-sm);
   }
 }
 
 @media (max-width: 480px) {
-  .resenas-page .hero-section {
-    padding: 2rem 0;
+  .reseñas-page .hero-section {
+    padding: var(--spacing-xl) 0;
   }
 
-  .resenas-page .hero-title {
-    font-size: 1.5rem;
+  .reseñas-page .hero-title {
+    font-size: var(--font-size-2xl);
   }
 
-  .resenas-page .hero-subtitle {
-    font-size: 1rem;
+  .reseñas-page .hero-subtitle {
+    font-size: var(--font-size-base);
   }
 
-  .resenas-page .stat-card {
-    padding: 1rem;
+  .reseñas-page .stat-card {
+    padding: var(--spacing-md);
   }
 
-  .resenas-page .stat-number {
-    font-size: 2rem;
+  .reseñas-page .stat-number {
+    font-size: var(--font-size-3xl);
   }
 
-  .resenas-page .controls-section {
-    margin-bottom: 1rem;
+  .reseñas-page .controls-section {
+    margin-bottom: var(--spacing-md);
   }
 
-  .resenas-page .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
+  .reseñas-page .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    padding: 0.75rem var(--spacing-md);
+    font-size: var(--font-size-sm);
   }
 
-  .resenas-page .rating-row {
+  .reseñas-page .rating-row {
     grid-template-columns: 50px 1fr 70px;
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
   }
 
-  .resenas-page .insight-card,
-  .resenas-page .info-card {
-    padding: 1rem;
+  .reseñas-page .insight-card,
+  .reseñas-page .info-card {
+    padding: var(--spacing-md);
   }
 
-  .resenas-page .insight-value {
-    font-size: 2rem;
+  .reseñas-page .insight-value {
+    font-size: var(--font-size-3xl);
   }
 
-  .resenas-page .guidelines {
-    padding: 1rem;
+  .reseñas-page .guidelines {
+    padding: var(--spacing-md);
   }
 }
 
 /* ===== ANIMATIONS ===== */
-@keyframes fadeInUp {
+@keyframes reseñas-fadeInUp {
   from {
     opacity: 0;
     transform: translateY(30px);
@@ -637,7 +643,7 @@
   }
 }
 
-@keyframes slideInRight {
+@keyframes reseñas-slideInRight {
   from {
     opacity: 0;
     transform: translateX(30px);
@@ -648,82 +654,388 @@
   }
 }
 
-.resenas-page .stat-card {
-  animation: fadeInUp 0.6s ease-out;
+.reseñas-page .stat-card {
+  animation: reseñas-fadeInUp 0.6s ease-out;
 }
 
-.resenas-page .stat-card:nth-child(1) { animation-delay: 0.1s; }
-.resenas-page .stat-card:nth-child(2) { animation-delay: 0.2s; }
-.resenas-page .stat-card:nth-child(3) { animation-delay: 0.3s; }
+.reseñas-page .stat-card:nth-child(1) { animation-delay: 0.1s; }
+.reseñas-page .stat-card:nth-child(2) { animation-delay: 0.2s; }
+.reseñas-page .stat-card:nth-child(3) { animation-delay: 0.3s; }
 
-.resenas-page .insight-card {
-  animation: slideInRight 0.6s ease-out;
+.reseñas-page .insight-card {
+  animation: reseñas-slideInRight 0.6s ease-out;
 }
 
-.resenas-page .insight-card:nth-child(1) { animation-delay: 0.1s; }
-.resenas-page .insight-card:nth-child(2) { animation-delay: 0.2s; }
-.resenas-page .insight-card:nth-child(3) { animation-delay: 0.3s; }
+.reseñas-page .insight-card:nth-child(1) { animation-delay: 0.1s; }
+.reseñas-page .insight-card:nth-child(2) { animation-delay: 0.2s; }
+.reseñas-page .insight-card:nth-child(3) { animation-delay: 0.3s; }
 
 /* ===== DARK MODE SUPPORT ===== */
-[data-theme="dark"] .resenas-page {
+[data-theme="dark"] .reseñas-page {
   background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
 }
 
-[data-theme="dark"] .resenas-page .controls-section,
-[data-theme="dark"] .resenas-page .reviews-section,
-[data-theme="dark"] .resenas-page .stats-section,
-[data-theme="dark"] .resenas-page .info-section,
-[data-theme="dark"] .resenas-page .loading-spinner {
+[data-theme="dark"] .reseñas-page .controls-section,
+[data-theme="dark"] .reseñas-page .reviews-section,
+[data-theme="dark"] .reseñas-page .stats-section,
+[data-theme="dark"] .reseñas-page .info-section,
+[data-theme="dark"] .reseñas-page .loading-spinner {
   background: #2a2a2a;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="dark"] .resenas-page .insight-card,
-[data-theme="dark"] .resenas-page .info-card {
+[data-theme="dark"] .reseñas-page .insight-card,
+[data-theme="dark"] .reseñas-page .info-card {
   background: linear-gradient(135deg, #333 0%, #404040 100%);
 }
 
-[data-theme="dark"] .resenas-page .guidelines {
+[data-theme="dark"] .reseñas-page .guidelines {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   border-color: rgba(102, 126, 234, 0.2);
 }
 
-[data-theme="dark"] .resenas-page .no-reviews-found {
+[data-theme="dark"] .reseñas-page .no-reviews-found {
   background: #2a2a2a;
 }
 
 /* ===== ACCESSIBILITY IMPROVEMENTS ===== */
 @media (prefers-reduced-motion: reduce) {
-  .resenas-page * {
+  .reseñas-page * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-.resenas-page .search-input:focus,
-.resenas-page .filter-dropdown:focus,
-.resenas-page .sort-dropdown:focus,
-.resenas-page .add-review-btn:focus {
+.reseñas-page .search-input:focus,
+.reseñas-page .filter-dropdown:focus,
+.reseñas-page .sort-dropdown:focus,
+.reseñas-page .add-review-btn:focus {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
 
 /* ===== CUSTOM SCROLLBAR ===== */
-.resenas-page .p-tabview-panels::-webkit-scrollbar {
+.reseñas-page .p-tabview-panels::-webkit-scrollbar {
   width: 6px;
 }
 
-.resenas-page .p-tabview-panels::-webkit-scrollbar-track {
+.reseñas-page .p-tabview-panels::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
 }
 
-.resenas-page .p-tabview-panels::-webkit-scrollbar-thumb {
+.reseñas-page .p-tabview-panels::-webkit-scrollbar-thumb {
   background: var(--primary-color);
   border-radius: 3px;
 }
 
-.resenas-page .p-tabview-panels::-webkit-scrollbar-thumb:hover {
+.reseñas-page .p-tabview-panels::-webkit-scrollbar-thumb:hover {
   background: var(--primary-dark);
 }
+
+/* ===== FIXES ESPECÍFICOS PARA PRIMEREACT ===== */
+
+/* Fix para PrimeReact Rating */
+.reseñas-page .p-rating .p-rating-icon {
+  font-size: 1.2rem !important;
+  margin-right: 0.2rem !important;
+}
+
+.reseñas-page .p-rating .p-rating-icon.p-rating-icon-active {
+  color: #ffd700 !important;
+}
+
+/* Fix para PrimeReact Dropdown */
+.reseñas-page .p-dropdown {
+  border-radius: var(--border-radius-large) !important;
+  border: 2px solid #e9ecef !important;
+  transition: var(--transition-base) !important;
+}
+
+.reseñas-page .p-dropdown:not(.p-disabled):hover {
+  border-color: var(--primary-color) !important;
+}
+
+.reseñas-page .p-dropdown.p-focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* Fix para PrimeReact Button */
+.reseñas-page .p-button {
+  border-radius: var(--border-radius-medium) !important;
+  font-weight: var(--font-weight-medium) !important;
+  transition: var(--transition-base) !important;
+}
+
+.reseñas-page .p-button.p-button-success {
+  background: var(--success-gradient) !important;
+  border-color: var(--success-color) !important;
+}
+
+.reseñas-page .p-button.p-button-text {
+  color: var(--primary-color) !important;
+}
+
+/* Fix para PrimeReact Toast */
+.reseñas-page .p-toast {
+  z-index: var(--z-index-toast) !important;
+}
+
+/* Fix para PrimeReact Dialog */
+.reseñas-page .p-dialog {
+  border-radius: var(--border-radius-2xl) !important;
+  box-shadow: var(--shadow-large) !important;
+}
+
+.reseñas-page .p-dialog .p-dialog-header {
+  border-radius: var(--border-radius-2xl) var(--border-radius-2xl) 0 0 !important;
+}
+
+.reseñas-page .p-dialog .p-dialog-footer {
+  border-radius: 0 0 var(--border-radius-2xl) var(--border-radius-2xl) !important;
+}
+
+/* Fix para PrimeReact ProgressBar */
+.reseñas-page .p-progressbar {
+  border-radius: var(--border-radius-medium) !important;
+  background: #e9ecef !important;
+}
+
+.reseñas-page .p-progressbar .p-progressbar-value {
+  border-radius: var(--border-radius-medium) !important;
+}
+
+/* Fix para PrimeReact TabView */
+.reseñas-page .p-tabview .p-tabview-nav {
+  border: none !important;
+  background: var(--bg-card) !important;
+}
+
+.reseñas-page .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+}
+
+.reseñas-page .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+}
+
+/* Fix para PrimeReact Chip */
+.reseñas-page .p-chip {
+  border-radius: var(--border-radius-full) !important;
+  font-size: var(--font-size-sm) !important;
+  padding: var(--spacing-xs) var(--spacing-sm) !important;
+}
+
+/* Fix para PrimeReact InputText */
+.reseñas-page .p-inputtext {
+  border-radius: var(--border-radius-large) !important;
+  border: 2px solid #e9ecef !important;
+  font-size: var(--font-size-base) !important;
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+}
+
+.reseñas-page .p-inputtext:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* ===== INTEGRACIÓN CON APP LAYOUT ===== */
+
+/* Asegurar que el contenido respete el header */
+.reseñas-page {
+  padding-top: 0; /* El PageLayout maneja el espaciado del header */
+  min-height: calc(100vh - var(--app-header-height, 70px));
+}
+
+/* Ajustar el hero section para no chocar con el header */
+.reseñas-page .hero-section {
+  margin-top: 0;
+}
+
+/* Asegurar que el contenido principal tenga scroll apropiado */
+.reseñas-page .reseñas-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== UTILS ADICIONALES ===== */
+
+/* Clase para elementos que deben ser visibles por encima del bottom nav */
+.reseñas-page .above-bottom-nav {
+  position: relative;
+  z-index: calc(var(--z-index-fixed) - 1);
+}
+
+/* Clase para contenido que necesita scroll interno */
+.reseñas-page .scroll-content {
+  max-height: calc(100vh - var(--app-total-nav-space, 150px));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ===== ESTADOS DE CARGA ESPECÍFICOS ===== */
+.reseñas-page .skeleton-card {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: reseñas-skeleton-loading 1.5s infinite;
+  border-radius: var(--border-radius-2xl);
+  height: 200px;
+  margin-bottom: var(--spacing-lg);
+}
+
+@keyframes reseñas-skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===== MICRO-INTERACCIONES ===== */
+.reseñas-page .interactive-element {
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.reseñas-page .interactive-element:hover {
+  transform: translateY(-2px);
+}
+
+.reseñas-page .interactive-element:active {
+  transform: translateY(0);
+}
+
+/* ===== TOOLTIPS PERSONALIZADOS ===== */
+.reseñas-page .custom-tooltip {
+  position: relative;
+}
+
+.reseñas-page .custom-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-medium);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition-fast);
+  z-index: var(--z-index-tooltip);
+}
+
+.reseñas-page .custom-tooltip:hover::after {
+  opacity: 1;
+}
+
+/* ===== FOCUS STATES MEJORADOS ===== */
+.reseñas-page *:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-small);
+}
+
+/* ===== SOPORTE PARA HIGH CONTRAST ===== */
+@media (prefers-contrast: high) {
+  .reseñas-page {
+    --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-large: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  
+  .reseñas-page .hero-section {
+    background: var(--primary-color);
+  }
+  
+  .reseñas-page .stat-card {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+  
+  .reseñas-page .controls-section,
+  .reseñas-page .reviews-section,
+  .reseñas-page .stats-section,
+  .reseñas-page .info-section {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .reseñas-page {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .reseñas-page .hero-section {
+    background: white !important;
+    color: black !important;
+    border-bottom: 2px solid black;
+  }
+  
+  .reseñas-page .add-review-btn,
+  .reseñas-page .clear-filters-btn,
+  .reseñas-page .p-button {
+    display: none !important;
+  }
+  
+  .reseñas-page .search-filters,
+  .reseñas-page .filter-controls {
+    display: none !important;
+  }
+  
+  .reseñas-page .controls-section {
+    display: none !important;
+  }
+  
+  .reseñas-page .stat-card,
+  .reseñas-page .insight-card,
+  .reseñas-page .info-card {
+    break-inside: avoid;
+    border: 1px solid #ccc;
+    background: white !important;
+  }
+}
+
+/* ===== OPTIMIZACIONES DE RENDIMIENTO ===== */
+.reseñas-page .will-change-transform {
+  will-change: transform;
+}
+
+.reseñas-page .will-change-opacity {
+  will-change: opacity;
+}
+
+.reseñas-page .gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ===== ESPACIADO INTELIGENTE ===== */
+.reseñas-page > * + * {
+  margin-top: var(--spacing-lg);
+}
+
+.reseñas-page .section + .section {
+  margin-top: var(--spacing-2xl);
+}
+
+/* ===== VARIABLES LOCALES PARA CUSTOMIZACIÓN ===== */
+.reseñas-page {
+  --local-border-radius: var(--border-radius-2xl);
+  --local-shadow: var(--shadow-medium);
+  --local-transition: var(--transition-base);
+  --local-padding: var(--spacing-lg);
+}
+
+/* ===== FIN DEL ARCHIVO ===== */

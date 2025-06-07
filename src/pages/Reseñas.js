@@ -1,4 +1,4 @@
-// src/pages/Reseñas.js - Versión Corregida
+// src/pages/Reseñas.js - Versión Corregida para App.js actual
 import React, { useState, useEffect, useRef } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -9,12 +9,16 @@ import { Rating } from 'primereact/rating';
 import { ProgressBar } from 'primereact/progressbar';
 import { Chip } from 'primereact/chip';
 import { Toast } from 'primereact/toast';
-import Header from '../components/Header';
-import BottomNav from '../components/BottomNav';
+
+// Importar componentes (SIN Header y BottomNav ya que App.js los maneja)
 import ReviewList from '../components/ReviewList';
 import AddReview from '../components/AddReview';
+
+// Importar servicios - ACTUALIZADO para usar la nueva API
 import { getAuth } from 'firebase/auth';
 import { getAllStoreProducts, addReview, getReviews } from '../functions/services/api';
+
+// Importar estilos
 import '../styles/ReseñasStyles.css';
 
 function Reseñas() {
@@ -32,7 +36,7 @@ function Reseñas() {
   const [sortBy, setSortBy] = useState('newest');
   const [activeTab, setActiveTab] = useState(0);
 
-  // Ref para el Toast - CORREGIDO
+  // Ref para el Toast
   const toast = useRef(null);
 
   const currentUser = getAuth().currentUser;
@@ -65,30 +69,40 @@ function Reseñas() {
   const loadInitialData = async () => {
     setLoading(true);
     try {
+      // Usar la función legacy que mantiene compatibilidad
       const [allProducts, apiReviews] = await Promise.all([
         getAllStoreProducts(),
         getReviews()
       ]);
       
       setProducts(allProducts);
-      setReviews(apiReviews);
+      setReviews(Array.isArray(apiReviews) ? apiReviews : []);
     } catch (error) {
       console.error('Error cargando datos:', error);
       showToast('error', 'Error', 'No se pudieron cargar los datos');
+      // Fallback con datos vacíos
+      setProducts([]);
+      setReviews([]);
     } finally {
       setLoading(false);
     }
   };
 
   const filterAndSortReviews = () => {
+    if (!Array.isArray(reviews)) {
+      setFilteredReviews([]);
+      return;
+    }
+
     let filtered = [...reviews];
 
     // Filtrar por término de búsqueda
     if (searchTerm) {
-      filtered = filtered.filter(review => 
-        review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        getProductTitle(review.productId).toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      filtered = filtered.filter(review => {
+        const commentMatch = review.comment?.toLowerCase().includes(searchTerm.toLowerCase());
+        const productMatch = getProductTitle(review.productId).toLowerCase().includes(searchTerm.toLowerCase());
+        return commentMatch || productMatch;
+      });
     }
 
     // Filtrar por calificación
@@ -100,13 +114,13 @@ function Reseñas() {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.createdAt) - new Date(a.createdAt);
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
         case 'oldest':
-          return new Date(a.createdAt) - new Date(b.createdAt);
+          return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
         case 'highest':
-          return b.rating - a.rating;
+          return (b.rating || 0) - (a.rating || 0);
         case 'lowest':
-          return a.rating - b.rating;
+          return (a.rating || 0) - (b.rating || 0);
         default:
           return 0;
       }
@@ -190,20 +204,24 @@ function Reseñas() {
   };
 
   const getAverageRating = () => {
-    if (reviews.length === 0) return 0;
-    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    if (!Array.isArray(reviews) || reviews.length === 0) return 0;
+    const total = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
     return (total / reviews.length).toFixed(1);
   };
 
   const getRatingDistribution = () => {
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviews.forEach(review => {
-      distribution[review.rating]++;
-    });
+    if (Array.isArray(reviews)) {
+      reviews.forEach(review => {
+        const rating = review.rating;
+        if (rating >= 1 && rating <= 5) {
+          distribution[rating]++;
+        }
+      });
+    }
     return distribution;
   };
 
-  // FUNCIÓN CORREGIDA - sin dependencias que causen loops
   const showToast = (severity, summary, detail) => {
     if (toast.current) {
       toast.current.show({ severity, summary, detail, life: 3000 });
@@ -238,7 +256,7 @@ function Reseñas() {
   if (loading) {
     return (
       <div className="reseñas-page">
-        <Header />
+        <Toast ref={toast} />
         <div className="loading-container">
           <div className="loading-spinner">
             <i className="pi pi-spin pi-spinner"></i>
@@ -246,7 +264,6 @@ function Reseñas() {
             <p>Obteniendo las opiniones de nuestros usuarios</p>
           </div>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -256,7 +273,6 @@ function Reseñas() {
 
   return (
     <div className="reseñas-page">
-      <Header />
       <Toast ref={toast} />
       
       <div className="reseñas-container">
@@ -519,8 +535,6 @@ function Reseñas() {
           disabled={submitting}
         />
       </Dialog>
-      
-      <BottomNav />
     </div>
   );
 }

@@ -388,7 +388,6 @@ function Sucursales() {
 
   return (
     <div className="sucursales-page">
-      <Header />
       <div className="sucursales-container">
         
         {/* Sección de estadísticas */}
@@ -763,7 +762,6 @@ function Sucursales() {
           </Card>
         </section>
       </div>
-      <BottomNav />
     </div>
   );
 }

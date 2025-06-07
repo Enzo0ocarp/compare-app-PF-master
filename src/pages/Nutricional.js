@@ -376,7 +376,6 @@ function Nutricional() {
 
     return (
         <div className="nutricional-page">
-            <Header />
             <div className="nutricional-container">
                 
                 {/* Hero Section */}
@@ -735,8 +734,6 @@ function Nutricional() {
                     </Card>
                 </section>
             </div>
-
-            <BottomNav />
         </div>
     );
 }
