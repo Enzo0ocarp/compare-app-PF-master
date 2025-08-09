@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Importar páginas
 import Home from './pages/Home';
-import Nutricional from './pages/Nutricional';
+import NutritionalScreen from './pages/Nutricional';
 import Productos from './pages/Productos';
 import Sucursales from './pages/Sucursales';
 import Reseñas from './pages/Reseñas';
@@ -64,7 +64,7 @@ function App() {
                                     padding="default"
                                     className="nutricional-layout"
                                 >
-                                    <Nutricional />
+                                    <NutritionalScreen />
                                 </PageLayout>
                             } 
                         />

@@ -232,7 +232,6 @@ function Perfil() {
   if (!userInfo) {
     return (
       <div className="perfil-page">
-        <Header />
         <div className="no-user-container">
           <div className="no-user-content">
             <i className="pi pi-user" style={{ fontSize: '4rem', color: '#ccc' }}></i>
@@ -253,8 +252,7 @@ function Perfil() {
 
   return (
     <div className="perfil-page">
-      <Header />
-      
+ 
       <div className="perfil-container">
         <section className="section profile-section fade-in">
           <div className="profile-header">
