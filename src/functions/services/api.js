@@ -1,11 +1,15 @@
-// src/services/api.js
+// src/services/api.js - VERSIÓN CORREGIDA PARA TU BACKEND
 import axios from 'axios';
 import { auth } from '../src/firebaseConfig';
 
-// Configuración para tu nuevo backend
+// Configuración para tu backend local
 const backendApi = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000',
-  timeout: 10000
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
 });
 
 // Configuración para Firebase Functions (para reseñas)
@@ -24,56 +28,83 @@ firebaseApi.interceptors.request.use(async (config) => {
   return config;
 });
 
-// === NUEVAS FUNCIONES PARA TU BACKEND ===
+// === FUNCIONES PRINCIPALES PARA TU BACKEND ===
 
 /**
  * Obtiene productos con filtros y paginación
- * @param {Object} params - Parámetros de consulta
- * @param {string} params.type - 'sucursal' o 'producto'
- * @param {string} params.provincia - Código de provincia
- * @param {string} params.localidad - Nombre de localidad
- * @param {string} params.marca - Marca del producto
- * @param {string} params.nombre - Nombre parcial del producto
- * @param {number} params.page - Página (default: 1)
- * @param {number} params.limit - Límite por página (default: 100)
+ * Ajustado para tu estructura de datos: marca, nombre, presentacion, precio, etc.
  */
 export const getProducts = async (params = {}) => {
   try {
+    console.log('🔍 Llamando getProducts con parámetros:', params);
+    
     const response = await backendApi.get('/products', { params });
+    console.log('✅ Respuesta de getProducts:', response.data);
+    
     return response.data;
   } catch (error) {
-    console.error('Error obteniendo productos:', error);
+    console.error('❌ Error obteniendo productos:', error);
+    console.error('Detalles del error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     throw error;
   }
 };
 
 /**
  * Obtiene un producto específico por ID
- * @param {string} id - ID del producto
  */
 export const getProductById = async (id) => {
   try {
+    console.log('🔍 Buscando producto con ID:', id);
+    
     const response = await backendApi.get(`/products/${id}`);
+    console.log('✅ Producto encontrado:', response.data);
+    
     return response.data;
   } catch (error) {
-    console.error('Error obteniendo producto por ID:', error);
+    console.error('❌ Error obteniendo producto por ID:', error);
     throw error;
   }
 };
 
 /**
- * Busca productos por término
- * @param {string} searchTerm - Término de búsqueda
+ * Busca productos por término - FUNCIÓN CORREGIDA
+ * Usa el endpoint /search de tu backend
  */
 export const searchProducts = async (searchTerm) => {
   try {
+    console.log('🔍 Buscando productos con término:', searchTerm);
+    
+    // Validar que hay término de búsqueda
+    if (!searchTerm || searchTerm.trim().length === 0) {
+      console.warn('⚠️ Término de búsqueda vacío');
+      return { query: '', count: 0, results: [] };
+    }
+    
     const response = await backendApi.get('/search', {
-      params: { q: searchTerm }
+      params: { q: searchTerm.trim() }
     });
+    
+    console.log('✅ Resultados de búsqueda:', {
+      query: response.data.query,
+      count: response.data.count,
+      sampleResults: response.data.results.slice(0, 3)
+    });
+    
     return response.data;
   } catch (error) {
-    console.error('Error en búsqueda:', error);
-    throw error;
+    console.error('❌ Error en búsqueda:', error);
+    console.error('Detalles del error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+    
+    // Retornar estructura vacía en caso de error
+    return { query: searchTerm, count: 0, results: [] };
   }
 };
 
@@ -82,89 +113,216 @@ export const searchProducts = async (searchTerm) => {
  */
 export const getBranches = async (params = {}) => {
   try {
+    console.log('🔍 Obteniendo sucursales...');
+    
     const response = await backendApi.get('/products', {
       params: { type: 'sucursal', ...params }
     });
+    
+    console.log('✅ Sucursales obtenidas:', response.data.total);
     return response.data;
   } catch (error) {
-    console.error('Error obteniendo sucursales:', error);
+    console.error('❌ Error obteniendo sucursales:', error);
     throw error;
   }
 };
 
 /**
- * Obtiene productos por marca
- * @param {string} brand - Nombre de la marca
+ * Obtiene productos por marca - FUNCIÓN CORREGIDA
  */
 export const getProductsByBrand = async (brand, params = {}) => {
   try {
+    console.log('🔍 Obteniendo productos de marca:', brand);
+    
     const response = await backendApi.get('/products', {
-      params: { marca: brand, type: 'producto', ...params }
+      params: { 
+        type: 'producto', 
+        marca: brand, 
+        ...params 
+      }
     });
+    
+    console.log('✅ Productos de marca obtenidos:', response.data.total);
     return response.data;
   } catch (error) {
-    console.error('Error obteniendo productos por marca:', error);
+    console.error('❌ Error obteniendo productos por marca:', error);
     throw error;
   }
 };
 
 /**
- * Obtiene productos destacados (aleatorios)
- * @param {number} count - Cantidad de productos a obtener
+ * Obtiene productos por nombre parcial - NUEVA FUNCIÓN
+ */
+export const getProductsByName = async (name, params = {}) => {
+  try {
+    console.log('🔍 Obteniendo productos con nombre:', name);
+    
+    const response = await backendApi.get('/products', {
+      params: { 
+        type: 'producto', 
+        nombre: name, 
+        ...params 
+      }
+    });
+    
+    console.log('✅ Productos por nombre obtenidos:', response.data.total);
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error obteniendo productos por nombre:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene productos destacados (aleatorios) - FUNCIÓN MEJORADA
  */
 export const getFeaturedProducts = async (count = 5) => {
   try {
+    console.log('🔍 Obteniendo productos destacados...');
+    
+    // Obtener una muestra más grande para poder seleccionar aleatoriamente
     const response = await backendApi.get('/products', {
-      params: { type: 'producto', limit: 50 }
+      params: { 
+        type: 'producto', 
+        limit: Math.max(count * 3, 50) // Obtener 3x más para mejor aleatoriedad
+      }
     });
     
-    // Mezclamos y seleccionamos productos aleatorios
-    const shuffled = response.data.data.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+    if (!response.data.data || response.data.data.length === 0) {
+      console.warn('⚠️ No se encontraron productos');
+      return [];
+    }
+    
+    // Filtrar solo productos válidos (que tengan marca y nombre)
+    const validProducts = response.data.data.filter(product => 
+      product.marca && 
+      product.nombre && 
+      product.marca.trim() !== '' && 
+      product.nombre.trim() !== ''
+    );
+    
+    // Mezclar y seleccionar productos aleatorios
+    const shuffled = validProducts.sort(() => 0.5 - Math.random());
+    const featured = shuffled.slice(0, count);
+    
+    console.log('✅ Productos destacados seleccionados:', featured.length);
+    return featured;
   } catch (error) {
-    console.error('Error obteniendo productos destacados:', error);
-    throw error;
+    console.error('❌ Error obteniendo productos destacados:', error);
+    return [];
   }
 };
 
 /**
- * Obtiene estadísticas generales
+ * Obtiene estadísticas generales - FUNCIÓN CORREGIDA
  */
 export const getStats = async () => {
   try {
+    console.log('🔍 Obteniendo estadísticas...');
+    
     const [productsResponse, branchesResponse] = await Promise.all([
       backendApi.get('/products', { params: { type: 'producto', limit: 1 } }),
       backendApi.get('/products', { params: { type: 'sucursal', limit: 1 } })
     ]);
     
-    return {
-      totalProducts: productsResponse.data.total,
-      totalBranches: branchesResponse.data.total
+    const stats = {
+      totalProducts: productsResponse.data.total || 0,
+      totalBranches: branchesResponse.data.total || 0
     };
+    
+    console.log('✅ Estadísticas obtenidas:', stats);
+    return stats;
   } catch (error) {
-    console.error('Error obteniendo estadísticas:', error);
-    throw error;
+    console.error('❌ Error obteniendo estadísticas:', error);
+    return {
+      totalProducts: 0,
+      totalBranches: 0
+    };
   }
+};
+
+/**
+ * Función de utilidad para obtener marcas únicas
+ */
+export const getUniqueBrands = async (limit = 100) => {
+  try {
+    console.log('🔍 Obteniendo marcas únicas...');
+    
+    const response = await backendApi.get('/products', {
+      params: { 
+        type: 'producto', 
+        limit: limit * 5 // Obtener más registros para extraer marcas únicas
+      }
+    });
+    
+    if (!response.data.data) return [];
+    
+    // Extraer marcas únicas y filtrar valores válidos
+    const brands = [...new Set(
+      response.data.data
+        .map(product => product.marca)
+        .filter(marca => marca && marca.trim() !== '')
+    )].sort();
+    
+    console.log('✅ Marcas únicas encontradas:', brands.length);
+    return brands.slice(0, limit);
+  } catch (error) {
+    console.error('❌ Error obteniendo marcas únicas:', error);
+    return [];
+  }
+};
+
+/**
+ * Función de utilidad para formatear productos para el frontend
+ */
+export const formatProductForDisplay = (product) => {
+  // Si el producto ya tiene el formato correcto, devolverlo tal como está
+  if (product.title && product.price !== undefined) {
+    return product;
+  }
+  
+  // Formatear desde tu estructura de backend
+  return {
+    id: product.id || product.producto_id || `${Date.now()}-${Math.random()}`,
+    title: product.nombre || 'Producto sin nombre',
+    price: product.precio || 0,
+    originalPrice: product.precio_max || null,
+    description: product.presentacion || '',
+    category: product.marca || 'Sin marca',
+    brand: product.marca || 'Sin marca',
+    presentation: product.presentacion || '',
+    sucursal: product.sucursal || 'No especificada',
+    
+    // Datos adicionales
+    image: product.image || null,
+    hasImage: Boolean(product.image),
+    
+    // Rating simulado (puedes conectar con tu sistema de reseñas)
+    rating: { 
+      rate: (4 + Math.random()).toFixed(1), 
+      count: Math.floor(Math.random() * 100) + 10 
+    },
+    
+    // Metadatos
+    lastUpdated: product.fecha_relevamiento || new Date().toISOString(),
+    sucursalId: product.sucursal_id,
+    productoId: product.producto_id
+  };
 };
 
 // === FUNCIONES LEGACY (mantenidas para compatibilidad) ===
 
 /**
- * @deprecated Usar getProducts() en su lugar
+ * @deprecated Usar getProducts() con formatProductForDisplay()
  */
 export const getAllStoreProducts = async () => {
-  console.warn('getAllStoreProducts() está deprecado. Usa getProducts() en su lugar.');
+  console.warn('getAllStoreProducts() está deprecado. Usa getProducts() con formatProductForDisplay().');
   try {
     const response = await getProducts({ type: 'producto', limit: 100 });
-    return response.data.map(product => ({
-      id: product.id,
-      title: product.nombre,
-      price: product.precio || 0,
-      description: `${product.marca} - ${product.presentacion || ''}`,
-      category: product.marca,
-      image: '/placeholder-product.png', // Placeholder ya que no hay imágenes
-      rating: { rate: 4.0, count: Math.floor(Math.random() * 100) }
-    }));
+    
+    if (!response.data) return [];
+    
+    return response.data.map(formatProductForDisplay);
   } catch (error) {
     console.error('Error en getAllStoreProducts:', error);
     return [];
@@ -198,3 +356,62 @@ export const addReview = async (reviewData) => {
     throw error;
   }
 };
+
+// === FUNCIONES DE DEBUG ===
+
+/**
+ * Función de debugging para probar la conexión
+ */
+export const testConnection = async () => {
+  try {
+    console.log('🔧 Probando conexión con backend...');
+    
+    const response = await backendApi.get('/products', {
+      params: { limit: 1 }
+    });
+    
+    console.log('✅ Conexión exitosa:', {
+      status: response.status,
+      total: response.data.total,
+      dataLength: response.data.data?.length
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('❌ Error de conexión:', error);
+    return false;
+  }
+};
+
+/**
+ * Función para probar específicamente la búsqueda
+ */
+export const testSearch = async (term = 'aceite') => {
+  try {
+    console.log('🔧 Probando búsqueda con término:', term);
+    
+    const result = await searchProducts(term);
+    
+    console.log('✅ Búsqueda funcionando:', {
+      query: result.query,
+      count: result.count,
+      hasResults: result.results.length > 0
+    });
+    
+    return result;
+  } catch (error) {
+    console.error('❌ Error en test de búsqueda:', error);
+    return null;
+  }
+};
+
+// Exportar funciones de debug solo en desarrollo
+if (process.env.NODE_ENV === 'development') {
+  window.debugAPI = {
+    testConnection,
+    testSearch,
+    getProducts,
+    searchProducts,
+    formatProductForDisplay
+  };
+}
