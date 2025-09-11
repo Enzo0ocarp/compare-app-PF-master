@@ -1,239 +1,287 @@
-// src/components/Notification.js - VERSIÓN MEJORADA
-import React, { useEffect, useRef, useState } from 'react';
-import { Toast } from 'primereact/toast';
-import '../styles/NotificationStyles.css';
+// src/components/Notification.js - Sistema de notificaciones corregido
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const Notification = ({ 
-  type = 'info', 
-  message, 
-  title,
-  onClose, 
-  duration = 5000,
-  autoClose = true,
-  position = 'top-right',
-  closable = true,
-  actions = null,
-  avatar = null,
-  expandable = false,
-  persistent = false
-}) => {
-  const toast = useRef(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [progress, setProgress] = useState(100);
+// Contexto de notificaciones
+const NotificationContext = createContext();
 
-  // Iconos según el tipo
-  const getIcon = (notificationType) => {
-    const icons = {
-      success: 'pi pi-check-circle',
-      error: 'pi pi-times-circle',
-      warning: 'pi pi-exclamation-triangle',
-      info: 'pi pi-info-circle'
+// Provider de notificaciones
+export const NotificationProvider = ({ children }) => {
+  const [notifications, setNotifications] = useState([]);
+
+  const showNotification = (message, type = 'info', duration = 5000) => {
+    const id = Date.now() + Math.random();
+    const notification = {
+      id,
+      message,
+      type,
+      duration,
+      timestamp: new Date()
     };
-    return icons[notificationType] || icons.info;
-  };
 
-  // Títulos por defecto según el tipo
-  const getDefaultTitle = (notificationType) => {
-    const titles = {
-      success: 'Éxito',
-      error: 'Error',
-      warning: 'Advertencia',
-      info: 'Información'
-    };
-    return titles[notificationType] || 'Notificación';
-  };
+    setNotifications(prev => [...prev, notification]);
 
-  useEffect(() => {
-    if (toast.current && message) {
-      const toastMessage = {
-        severity: type,
-        summary: title || getDefaultTitle(type),
-        detail: message,
-        life: autoClose ? duration : 0,
-        closable: closable,
-        icon: getIcon(type)
-      };
-
-      // Agregar contenido personalizado si hay acciones o avatar
-      if (actions || avatar || expandable) {
-        toastMessage.content = (
-          <div className={`notification-toast ${type} ${persistent ? 'persistent' : ''} ${expandable ? 'expandable' : ''} ${isExpanded ? 'expanded' : ''}`}>
-            {/* Header */}
-            <div className="notification-header">
-              {avatar && (
-                <img src={avatar} alt="Avatar" className="notification-avatar" />
-              )}
-              <div className="notification-icon">
-                <i className={getIcon(type)}></i>
-              </div>
-              <h4 className="notification-title">{title || getDefaultTitle(type)}</h4>
-              {closable && (
-                <button 
-                  className="notification-close"
-                  onClick={() => {
-                    toast.current.clear();
-                    if (onClose) onClose();
-                  }}
-                  aria-label="Cerrar notificación"
-                >
-                  <i className="pi pi-times"></i>
-                </button>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="notification-content">
-              <p>{message}</p>
-            </div>
-
-            {/* Expandir/Contraer */}
-            {expandable && message.length > 100 && (
-              <button 
-                className="notification-expand-btn"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                {isExpanded ? 'Ver menos' : 'Ver más'}
-              </button>
-            )}
-
-            {/* Actions */}
-            {actions && (
-              <div className="notification-actions">
-                {actions.map((action, index) => (
-                  <button
-                    key={index}
-                    className={`notification-action ${action.primary ? 'primary' : ''}`}
-                    onClick={() => {
-                      if (action.onClick) action.onClick();
-                      if (action.closeOnClick !== false) {
-                        toast.current.clear();
-                        if (onClose) onClose();
-                      }
-                    }}
-                  >
-                    {action.icon && <i className={action.icon}></i>}
-                    {action.label}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Progress bar para auto-close */}
-            {autoClose && !persistent && (
-              <div 
-                className="notification-progress"
-                style={{ width: `${progress}%` }}
-              ></div>
-            )}
-          </div>
-        );
-      }
-
-      toast.current.show(toastMessage);
-
-      // Manejar la barra de progreso
-      if (autoClose && !persistent) {
-        const interval = setInterval(() => {
-          setProgress(prev => {
-            if (prev <= 0) {
-              clearInterval(interval);
-              return 0;
-            }
-            return prev - (100 / (duration / 100));
-          });
-        }, 100);
-
-        return () => clearInterval(interval);
-      }
+    // Auto-remove después del duration especificado
+    if (duration > 0) {
+      setTimeout(() => {
+        removeNotification(id);
+      }, duration);
     }
-  }, [type, message, title, onClose, duration, autoClose, closable, actions, avatar, expandable, persistent, isExpanded, progress]);
 
-  // Configurar posición del toast
-  const getToastPosition = () => {
-    const positions = {
-      'top-left': 'top-left',
-      'top-center': 'top-center',
-      'top-right': 'top-right',
-      'bottom-left': 'bottom-left',
-      'bottom-center': 'bottom-center',
-      'bottom-right': 'bottom-right'
-    };
-    return positions[position] || 'top-right';
+    return id;
+  };
+
+  const removeNotification = (id) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
   };
 
   return (
-    <Toast 
-      ref={toast} 
-      position={getToastPosition()}
-      className={`notification-container ${position}`}
-    />
+    <NotificationContext.Provider value={{
+      notifications,
+      showNotification,
+      removeNotification,
+      clearAllNotifications
+    }}>
+      {children}
+      <NotificationContainer />
+    </NotificationContext.Provider>
   );
 };
 
-// Hook personalizado para usar notificaciones
+// Hook para usar notificaciones
 export const useNotification = () => {
-  const [notification, setNotification] = useState(null);
-
-  const showNotification = (options) => {
-    setNotification({
-      ...options,
-      key: Date.now() // Para forzar re-render
-    });
-  };
-
-  const hideNotification = () => {
-    setNotification(null);
-  };
-
-  const showSuccess = (message, options = {}) => {
-    showNotification({
-      type: 'success',
-      message,
-      ...options
-    });
-  };
-
-  const showError = (message, options = {}) => {
-    showNotification({
-      type: 'error',
-      message,
-      duration: 8000, // Errores se muestran más tiempo
-      ...options
-    });
-  };
-
-  const showWarning = (message, options = {}) => {
-    showNotification({
-      type: 'warning',
-      message,
-      ...options
-    });
-  };
-
-  const showInfo = (message, options = {}) => {
-    showNotification({
-      type: 'info',
-      message,
-      ...options
-    });
-  };
-
-  return {
-    notification,
-    showNotification,
-    hideNotification,
-    showSuccess,
-    showError,
-    showWarning,
-    showInfo,
-    NotificationComponent: notification ? (
-      <Notification 
-        key={notification.key}
-        {...notification} 
-        onClose={hideNotification} 
-      />
-    ) : null
-  };
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error('useNotification debe ser usado dentro de NotificationProvider');
+  }
+  return context;
 };
 
-export default Notification;
+// Componente contenedor de notificaciones
+const NotificationContainer = () => {
+  const { notifications, removeNotification } = useNotification();
+
+  if (notifications.length === 0) return null;
+
+  return (
+    <div className="notification-container">
+      {notifications.map(notification => (
+        <NotificationItem
+          key={notification.id}
+          notification={notification}
+          onClose={() => removeNotification(notification.id)}
+        />
+      ))}
+      
+      <style jsx>{`
+        .notification-container {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          max-width: 400px;
+          width: 100%;
+        }
+
+        @media (max-width: 768px) {
+          .notification-container {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// Componente individual de notificación
+const NotificationItem = ({ notification, onClose }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  useEffect(() => {
+    // Animación de entrada
+    const timer = setTimeout(() => setIsVisible(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClose = () => {
+    setIsRemoving(true);
+    setTimeout(onClose, 300); // Esperar a que termine la animación
+  };
+
+  const getNotificationConfig = (type) => {
+    const configs = {
+      success: {
+        icon: 'fas fa-check-circle',
+        className: 'notification-success',
+        iconColor: '#10b981'
+      },
+      error: {
+        icon: 'fas fa-times-circle',
+        className: 'notification-error',
+        iconColor: '#ef4444'
+      },
+      warning: {
+        icon: 'fas fa-exclamation-triangle',
+        className: 'notification-warning',
+        iconColor: '#f59e0b'
+      },
+      info: {
+        icon: 'fas fa-info-circle',
+        className: 'notification-info',
+        iconColor: '#3b82f6'
+      }
+    };
+
+    return configs[type] || configs.info;
+  };
+
+  const config = getNotificationConfig(notification.type);
+
+  return (
+    <div 
+      className={`notification-item ${config.className} ${isVisible ? 'visible' : ''} ${isRemoving ? 'removing' : ''}`}
+      role="alert"
+      aria-live="polite"
+    >
+      <div className="notification-content">
+        <div className="notification-icon" style={{ color: config.iconColor }}>
+          <i className={config.icon}></i>
+        </div>
+        
+        <div className="notification-message">
+          {notification.message}
+        </div>
+        
+        <button 
+          className="notification-close"
+          onClick={handleClose}
+          aria-label="Cerrar notificación"
+        >
+          <i className="fas fa-times"></i>
+        </button>
+      </div>
+
+      <style jsx>{`
+        .notification-item {
+          background: white;
+          border-radius: 12px;
+          padding: 16px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e5e7eb;
+          transform: translateX(100%);
+          opacity: 0;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(10px);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .notification-item::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: currentColor;
+        }
+
+        .notification-item.visible {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        .notification-item.removing {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        .notification-content {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .notification-icon {
+          flex-shrink: 0;
+          margin-top: 2px;
+          font-size: 18px;
+        }
+
+        .notification-message {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          line-height: 1.4;
+          color: #374151;
+        }
+
+        .notification-close {
+          flex-shrink: 0;
+          background: none;
+          border: none;
+          color: #6b7280;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          margin-top: 2px;
+          font-size: 14px;
+        }
+
+        .notification-close:hover {
+          background: rgba(0, 0, 0, 0.1);
+          color: #374151;
+        }
+
+        .notification-success {
+          border-left: 4px solid #10b981;
+        }
+
+        .notification-error {
+          border-left: 4px solid #ef4444;
+        }
+
+        .notification-warning {
+          border-left: 4px solid #f59e0b;
+        }
+
+        .notification-info {
+          border-left: 4px solid #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+          .notification-item {
+            padding: 12px;
+          }
+
+          .notification-content {
+            gap: 8px;
+          }
+
+          .notification-message {
+            font-size: 13px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .notification-item {
+            transition: opacity 0.2s ease;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default NotificationProvider;

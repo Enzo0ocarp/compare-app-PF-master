@@ -1,0 +1,325 @@
+/* src/styles/ComparisonStyles.css - ESTILOS PARA COMPARACIÓN DE PRODUCTOS */
+
+/* === CONTENEDOR PRINCIPAL === */
+.nutri-comparison-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.nutri-comparison-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+/* === HEADER === */
+.nutri-comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.nutri-close-btn {
+  width: 32px;
+  height: 32px;
+  background: #f8f9fa;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nutri-close-btn:hover {
+  background: #e9ecef;
+  transform: scale(1.05);
+}
+
+/* === RESUMEN DE SCORES === */
+.nutri-scores-summary {
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.nutri-score-card {
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nutri-score-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #16a085, #3498db);
+}
+
+.nutri-score-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* === SELECTOR DE MÉTRICA === */
+.nutri-metric-selector {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fff3cd;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+}
+
+.nutri-select {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.nutri-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* === COMPARACIÓN DETALLADA === */
+.nutri-detailed-comparison {
+  margin-bottom: 32px;
+}
+
+.nutri-metric-comparison {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.nutri-metric-focused {
+  background: linear-gradient(135deg, #fff3cd 0%, #fef7e0 100%);
+  border-color: #ffc107;
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(255, 193, 7, 0.2);
+}
+
+.nutri-metric-header {
+  margin-bottom: 16px;
+}
+
+.nutri-metric-description {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* === BARRAS DE COMPARACIÓN === */
+.nutri-metric-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nutri-metric-bar-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.nutri-metric-bar-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nutri-metric-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nutri-metric-bar-bg {
+  flex: 1;
+  height: 24px;
+  background: #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.nutri-metric-bar {
+  height: 100%;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nutri-metric-bar.bg-green-500 {
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.nutri-metric-bar.bg-red-500 {
+  background: linear-gradient(90deg, #dc3545, #fd7e14);
+}
+
+.nutri-metric-bar.bg-yellow-500 {
+  background: linear-gradient(90deg, #ffc107, #fd7e14);
+}
+
+.nutri-metric-bar.bg-blue-500 {
+  background: linear-gradient(90deg, #007bff, #6f42c1);
+}
+
+.nutri-metric-value {
+  font-weight: 600;
+  font-size: 14px;
+  color: #495057;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* === INSIGHTS === */
+.nutri-metric-insights {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(40, 167, 69, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+/* === INFORMACIÓN ADICIONAL === */
+.nutri-additional-info {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #e9ecef;
+}
+
+.nutri-info-card {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.nutri-info-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* === TAGS === */
+.nutri-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nutri-tag-green {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.nutri-tag-blue {
+  background: #cce5ff;
+  color: #004085;
+  border: 1px solid #99d6ff;
+}
+
+.nutri-tag-purple {
+  background: #e2e3ff;
+  color: #3d348b;
+  border: 1px solid #c8c9ff;
+}
+
+.nutri-tag-orange {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .nutri-comparison-container {
+    padding: 16px;
+    margin: 8px;
+  }
+  
+  .nutri-comparison-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .nutri-scores-summary .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .nutri-metric-bar-container {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .nutri-metric-bar-wrapper {
+    order: 2;
+  }
+  
+  .nutri-metric-value {
+    order: 3;
+    text-align: left;
+    min-width: auto;
+  }
+  
+  .nutri-additional-info .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .nutri-comparison-container {
+    padding: 12px;
+    margin: 4px;
+    border-radius: 12px;
+  }
+  
+  .nutri-metric-focused {
+    transform: none;
+  }
+  
+  .nutri-score-card {
+    padding: 12px;
+  }
+  
+  .nutri-metric-comparison {
+    padding: 12px;
+  }
+}

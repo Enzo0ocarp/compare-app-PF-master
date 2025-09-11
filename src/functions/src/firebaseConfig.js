@@ -1,7 +1,7 @@
-// FirebaseConfig.js
+// src/firebaseConfig.js - CONFIGURACIÓN FIREBASE ACTUALIZADA
 import { initializeApp } from "firebase/app";
 import { getAuth, signOut } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // Importa Firestore
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnsDVZSQSkFYuZyBLdT96CgLbZB_lcYyg",
@@ -16,10 +16,19 @@ const firebaseConfig = {
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 
-// Obtener el servicio de autenticación
+// Obtener servicios
 const auth = getAuth(app);
-
-// Inicializar Firestore
 const db = getFirestore(app);
 
-export { auth, signOut, db }; // Exporta db junto con auth y signOut
+// Solo para desarrollo - conectar al emulador si está disponible
+if (process.env.NODE_ENV === 'development' && window.location.hostname === 'localhost') {
+  try {
+    // Conectar al emulador de Firestore si está corriendo
+    // connectFirestoreEmulator(db, 'localhost', 8080);
+    console.log('🔧 Modo desarrollo - usando Firebase real');
+  } catch (error) {
+    console.log('Firebase emulator no disponible, usando Firebase real');
+  }
+}
+
+export { auth, signOut, db };

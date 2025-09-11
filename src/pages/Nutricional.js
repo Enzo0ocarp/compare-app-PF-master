@@ -1,32 +1,27 @@
-import React, { useState, useEffect, useCallback } from 'react';
+// src/pages/NutritionalScreen.jsx - VERSIÓN ACTUALIZADA PARA NUEVA ESTRUCTURA FIREBASE
+import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../functions/src/firebaseConfig';
 import '../styles/NutricionalStyles.css';
+import '../styles/ComparisonStyles.css';
 import { 
   Search, Filter, Plus, Check, X, Clock, AlertCircle, TrendingUp, 
   Award, Users, BarChart3, Info, ChevronDown, Eye, Edit2, 
   CheckCircle, XCircle, Upload, Save, Heart, Share2, 
-  Bookmark, Settings, Star, ThumbsUp
+  Bookmark, Settings, Star, ThumbsUp, Package, AlertTriangle
 } from 'lucide-react';
 
-// Importar servicios de Firebase
+// Importar servicios actualizados
 import {
   getNutritionalProducts,
   searchNutritionalProducts,
-  addNutritionalContribution,
-  getPendingContributions,
-  reviewContribution,
-  addProductReview,
-  getProductReviews,
-  saveComparison,
-  getUserPreferences,
-  saveUserPreferences,
-  getNutritionalStats,
+  addNutritionalProduct,
+  getCategories,
   calculateNutritionalScore
-} from '../functions/services/nutritionalService'; // Corregido: sin functions/
+} from '../functions/services/nutritionalService';
 
-// Importar componente para agregar productos
-import AddProductModal from '../components/AddProductModal';
+// Importar componentes
+import ProductComparison from '../components/ProductComparison';
 
 const NutritionalScreen = () => {
   // Estado de autenticación
@@ -34,89 +29,60 @@ const NutritionalScreen = () => {
   
   // Estados principales
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('todos');
-  const [viewMode, setViewMode] = useState('grid');
   const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    withNutrition: 0,
+    categories: 0
+  });
   
   // Estados de modales
-  const [showContributionModal, setShowContributionModal] = useState(false);
   const [showComparisonModal, setShowComparisonModal] = useState(false);
-  const [showPreferencesModal, setShowPreferencesModal] = useState(false);
-  const [showAddProductModal, setShowAddProductModal] = useState(false); // NUEVO
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
   
   // Estados de funcionalidad
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [pendingContributions, setPendingContributions] = useState([]);
-  const [userRole, setUserRole] = useState('user');
-  const [userPreferences, setUserPreferences] = useState({});
-  
-  // Estado para el formulario de contribución
-  const [contributionForm, setContributionForm] = useState({
-    productId: '',
-    productName: '',
-    nutritionalData: {
-      calories: '',
-      proteins: '',
-      carbs: '',
-      fats: '',
-      fiber: '',
-      sodium: '',
-      sugar: '',
-      saturatedFats: '',
-      vitamins: '',
-      minerals: ''
-    },
-    source: 'manual',
-    notes: '',
-    images: []
-  });
-
-  // NUEVA FUNCIÓN: Manejar producto agregado
-  const handleProductAdded = (newProduct) => {
-    // Agregar el nuevo producto a la lista actual
-    setProducts(prevProducts => [newProduct, ...prevProducts]);
-    
-    // Actualizar estadísticas
-    setStats(prevStats => ({
-      ...prevStats,
-      totalProducts: (prevStats.totalProducts || 0) + 1
-    }));
-    
-    console.log('✅ Producto agregado a la lista:', newProduct.nombre);
-  };
+  const [userRole, setUserRole] = useState('user'); // Simulado para demo
 
   // Cargar datos iniciales
   useEffect(() => {
     loadInitialData();
-  }, [user]);
+  }, []);
 
   const loadInitialData = async () => {
     setIsLoading(true);
     try {
-      // Cargar productos y estadísticas en paralelo
-      const [productsData, statsData] = await Promise.all([
-        getNutritionalProducts(20),
-        getNutritionalStats()
+      console.log('📊 Cargando datos iniciales...');
+      
+      // Cargar productos y categorías en paralelo
+      const [productsData, categoriesData] = await Promise.all([
+        getNutritionalProducts(20, filterCategory !== 'todos' ? filterCategory : null),
+        getCategories()
       ]);
       
       setProducts(productsData);
+      setCategories(categoriesData);
+      
+      // Calcular estadísticas
+      const statsData = {
+        totalProducts: productsData.length,
+        withNutrition: productsData.filter(p => p.hasNutritionalInfo).length,
+        categories: categoriesData.length
+      };
       setStats(statsData);
-
-      // Si hay usuario, cargar sus preferencias y contribuciones pendientes
-      if (user) {
-        const [preferences, pending] = await Promise.all([
-          getUserPreferences(user.uid),
-          userRole === 'admin' ? getPendingContributions() : Promise.resolve([])
-        ]);
-        
-        setUserPreferences(preferences);
-        setPendingContributions(pending);
-      }
+      
+      console.log('✅ Datos cargados:', {
+        productos: productsData.length,
+        categorias: categoriesData.length,
+        conInfo: statsData.withNutrition
+      });
+      
     } catch (error) {
-      console.error('Error cargando datos:', error);
+      console.error('❌ Error cargando datos:', error);
     } finally {
       setIsLoading(false);
     }
@@ -140,117 +106,35 @@ const NutritionalScreen = () => {
     }
   };
 
-  // Enviar contribución
-  const submitContribution = async () => {
-    if (!user) {
-      alert('Debes iniciar sesión para contribuir');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      
-      const contributionData = {
-        productId: contributionForm.productId,
-        productName: contributionForm.productName,
-        nutritionalData: {
-          ...contributionForm.nutritionalData,
-          score: calculateNutritionalScore(contributionForm.nutritionalData)
-        },
-        source: contributionForm.source,
-        notes: contributionForm.notes,
-        images: contributionForm.images
-      };
-
-      await addNutritionalContribution(contributionData, user.uid);
-      
-      setShowContributionModal(false);
-      resetContributionForm();
-      
-      // Recargar contribuciones pendientes si es admin
-      if (userRole === 'admin') {
-        const pending = await getPendingContributions();
-        setPendingContributions(pending);
-      }
-      
-      alert('¡Contribución enviada! Será revisada por nuestro equipo.');
-    } catch (error) {
-      console.error('Error enviando contribución:', error);
-      alert('Error al enviar la contribución. Inténtalo de nuevo.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Resetear formulario de contribución
-  const resetContributionForm = () => {
-    setContributionForm({
-      productId: '',
-      productName: '',
-      nutritionalData: {
-        calories: '',
-        proteins: '',
-        carbs: '',
-        fats: '',
-        fiber: '',
-        sodium: '',
-        sugar: '',
-        saturatedFats: '',
-        vitamins: '',
-        minerals: ''
-      },
-      source: 'manual',
-      notes: '',
-      images: []
-    });
-  };
-
-  // Aprobar/Rechazar contribución (Admin)
-  const handleContributionReview = async (contributionId, action) => {
-    if (!user || userRole !== 'admin') return;
-
-    try {
-      setIsLoading(true);
-      await reviewContribution(contributionId, action, user.uid);
-      
-      // Actualizar lista de contribuciones pendientes
-      const updatedPending = pendingContributions.filter(c => c.id !== contributionId);
-      setPendingContributions(updatedPending);
-      
-      // Recargar productos si se aprobó
-      if (action === 'approve') {
-        await loadInitialData();
-      }
-      
-    } catch (error) {
-      console.error('Error revisando contribución:', error);
-      alert('Error al procesar la contribución');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Manejar contribución
-  const handleContribution = (product) => {
-    if (!user) {
-      alert('Debes iniciar sesión para contribuir');
-      return;
-    }
+  // Filtrar por categoría
+  const handleCategoryFilter = async (categoria) => {
+    setFilterCategory(categoria);
+    setIsLoading(true);
     
-    setContributionForm({
-      ...contributionForm,
-      productId: product.id,
-      productName: product.nombre
-    });
-    setShowContributionModal(true);
+    try {
+      const results = await getNutritionalProducts(20, categoria !== 'todos' ? categoria : null);
+      setProducts(results);
+    } catch (error) {
+      console.error('Error filtrando por categoría:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Manejar producto agregado desde modal
+  const handleProductAdded = (newProduct) => {
+    setProducts(prevProducts => [newProduct, ...prevProducts]);
+    setStats(prevStats => ({
+      ...prevStats,
+      totalProducts: prevStats.totalProducts + 1,
+      withNutrition: prevStats.withNutrition + 1
+    }));
+    console.log('✅ Producto agregado a la lista:', newProduct.nombre);
   };
 
   // Comparar productos
-  const handleCompare = async () => {
+  const handleCompare = () => {
     if (selectedProducts.length >= 2) {
-      if (user) {
-        await saveComparison(selectedProducts, user.uid);
-      }
       setShowComparisonModal(true);
     }
   };
@@ -259,9 +143,16 @@ const NutritionalScreen = () => {
   const toggleProductSelection = (productId) => {
     if (selectedProducts.includes(productId)) {
       setSelectedProducts(selectedProducts.filter(id => id !== productId));
-    } else if (selectedProducts.length < 3) {
+    } else if (selectedProducts.length < 4) { // Máximo 4 productos
       setSelectedProducts([...selectedProducts, productId]);
+    } else {
+      alert('Máximo 4 productos para comparar');
     }
+  };
+
+  // Remover producto de comparación
+  const removeFromComparison = (productId) => {
+    setSelectedProducts(selectedProducts.filter(id => id !== productId));
   };
 
   // Obtener color según score
@@ -271,14 +162,16 @@ const NutritionalScreen = () => {
     return 'nutri-score-low';
   };
 
-  // Filtrar productos
+  // Filtrar productos según criterios
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           product.marca?.toLowerCase().includes(searchTerm.toLowerCase());
+    
     const matchesFilter = filterCategory === 'todos' || 
+                          product.categoria === filterCategory ||
                           (filterCategory === 'con-info' && product.hasNutritionalInfo) ||
-                          (filterCategory === 'sin-info' && !product.hasNutritionalInfo) ||
-                          (filterCategory === 'pendientes' && product.nutritionalData?.status === 'pending');
+                          (filterCategory === 'sin-info' && !product.hasNutritionalInfo);
+    
     return matchesSearch && matchesFilter;
   });
 
@@ -295,11 +188,11 @@ const NutritionalScreen = () => {
 
   return (
     <div className="nutritional-page nutritional-container">
-      {/* Header Estadísticas Mejorado */}
+      {/* Header Estadísticas */}
       <div className="nutri-header-enhanced">
         <div className="nutri-header-content">
           <div className="nutri-header-main">
-            <h1>Centro Nutricional</h1>
+            <h1>Compare & Nourish</h1>
             <p className="nutri-header-subtitle">
               Decisiones inteligentes para una vida más saludable
             </p>
@@ -309,7 +202,7 @@ const NutritionalScreen = () => {
                 <span>¡Hola, {user.displayName || 'Usuario'}!</span>
                 <div className="nutri-user-points">
                   <Award className="w-4 h-4" />
-                  <span>{userPreferences.points || 0} puntos</span>
+                  <span>0 puntos</span>
                 </div>
               </div>
             )}
@@ -318,31 +211,31 @@ const NutritionalScreen = () => {
           <div className="nutri-stats-grid-enhanced">
             <div className="nutri-stat-card-modern">
               <div className="nutri-stat-icon-container">
+                <Package className="nutri-stat-icon" />
+              </div>
+              <div className="nutri-stat-content">
+                <div className="nutri-stat-value">{stats.totalProducts}</div>
+                <div className="nutri-stat-label">Productos totales</div>
+              </div>
+            </div>
+            
+            <div className="nutri-stat-card-modern">
+              <div className="nutri-stat-icon-container">
                 <BarChart3 className="nutri-stat-icon" />
               </div>
               <div className="nutri-stat-content">
-                <div className="nutri-stat-value">{stats.totalProducts || 0}</div>
-                <div className="nutri-stat-label">Productos con info</div>
+                <div className="nutri-stat-value">{stats.withNutrition}</div>
+                <div className="nutri-stat-label">Con información nutricional</div>
               </div>
             </div>
             
             <div className="nutri-stat-card-modern">
               <div className="nutri-stat-icon-container">
-                <Users className="nutri-stat-icon" />
+                <Filter className="nutri-stat-icon" />
               </div>
               <div className="nutri-stat-content">
-                <div className="nutri-stat-value">{pendingContributions.length}</div>
-                <div className="nutri-stat-label">Contribuciones pendientes</div>
-              </div>
-            </div>
-            
-            <div className="nutri-stat-card-modern">
-              <div className="nutri-stat-icon-container">
-                <TrendingUp className="nutri-stat-icon" />
-              </div>
-              <div className="nutri-stat-content">
-                <div className="nutri-stat-value">95%</div>
-                <div className="nutri-stat-label">Precisión datos</div>
+                <div className="nutri-stat-value">{stats.categories}</div>
+                <div className="nutri-stat-label">Categorías</div>
               </div>
             </div>
             
@@ -351,15 +244,17 @@ const NutritionalScreen = () => {
                 <Star className="nutri-stat-icon" />
               </div>
               <div className="nutri-stat-content">
-                <div className="nutri-stat-value">{stats.totalReviews || 0}</div>
-                <div className="nutri-stat-label">Reseñas totales</div>
+                <div className="nutri-stat-value">
+                  {Math.round((stats.withNutrition / Math.max(stats.totalProducts, 1)) * 100)}%
+                </div>
+                <div className="nutri-stat-label">Cobertura nutricional</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Controles mejorados */}
+      {/* Controles de búsqueda y filtros */}
       <div className="nutri-controls-enhanced">
         <div className="nutri-controls-content">
           <div className="nutri-controls-flex-modern">
@@ -386,38 +281,20 @@ const NutritionalScreen = () => {
               <select
                 className="nutri-filter-select-modern"
                 value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
+                onChange={(e) => handleCategoryFilter(e.target.value)}
               >
-                <option value="todos">Todos los productos</option>
+                <option value="todos">Todas las categorías</option>
                 <option value="con-info">Con información nutricional</option>
                 <option value="sin-info">Sin información nutricional</option>
-                <option value="pendientes">Pendiente de aprobación</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.nombre}
+                  </option>
+                ))}
               </select>
-              
-              {user && (
-                <button
-                  onClick={() => setShowPreferencesModal(true)}
-                  className="nutri-preferences-btn"
-                >
-                  <Settings className="w-4 h-4" />
-                  Preferencias
-                </button>
-              )}
             </div>
             
-            {/* NUEVO: Botón para agregar productos */}
-            {user && (
-              <button
-                onClick={() => setShowAddProductModal(true)}
-                className="nutri-add-product-btn-enhanced"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Agregar Producto</span>
-                <div className="nutri-btn-glow"></div>
-              </button>
-            )}
-            
-            {/* Botón comparar mejorado */}
+            {/* Botón Comparar */}
             {selectedProducts.length >= 2 && (
               <button
                 onClick={handleCompare}
@@ -443,79 +320,7 @@ const NutritionalScreen = () => {
         </div>
       </div>
 
-      {/* Panel Admin - Contribuciones Pendientes Mejorado */}
-      {user && userRole === 'admin' && pendingContributions.length > 0 && (
-        <div className="nutri-admin-panel-enhanced">
-          <div className="nutri-pending-container-modern">
-            <div className="nutri-pending-header-modern">
-              <div className="nutri-pending-title">
-                <Clock className="w-6 h-6" />
-                <h3>Contribuciones Pendientes</h3>
-                <span className="nutri-pending-count">{pendingContributions.length}</span>
-              </div>
-            </div>
-            
-            <div className="nutri-pending-grid">
-              {pendingContributions.map(contribution => (
-                <div key={contribution.id} className="nutri-pending-card-modern">
-                  <div className="nutri-pending-card-header">
-                    <h4 className="nutri-pending-product-name">{contribution.productName}</h4>
-                    <span className="nutri-pending-date">
-                      {new Date(contribution.createdAt?.toDate()).toLocaleDateString()}
-                    </span>
-                  </div>
-                  
-                  <div className="nutri-pending-contributor">
-                    <span>Por: {contribution.userId}</span>
-                  </div>
-                  
-                  <div className="nutri-pending-nutrition-preview">
-                    <div className="nutri-mini-grid">
-                      <div className="nutri-mini-item">
-                        <span className="nutri-mini-label">Cal</span>
-                        <span className="nutri-mini-value">{contribution.nutritionalData.calories}</span>
-                      </div>
-                      <div className="nutri-mini-item">
-                        <span className="nutri-mini-label">Prot</span>
-                        <span className="nutri-mini-value">{contribution.nutritionalData.proteins}g</span>
-                      </div>
-                      <div className="nutri-mini-item">
-                        <span className="nutri-mini-label">Carb</span>
-                        <span className="nutri-mini-value">{contribution.nutritionalData.carbs}g</span>
-                      </div>
-                      <div className="nutri-mini-item">
-                        <span className="nutri-mini-label">Gras</span>
-                        <span className="nutri-mini-value">{contribution.nutritionalData.fats}g</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="nutri-pending-actions-modern">
-                    <button
-                      onClick={() => handleContributionReview(contribution.id, 'approve')}
-                      className="nutri-approve-btn-modern"
-                      disabled={isLoading}
-                    >
-                      <CheckCircle className="w-4 h-4" />
-                      Aprobar
-                    </button>
-                    <button
-                      onClick={() => handleContributionReview(contribution.id, 'reject')}
-                      className="nutri-reject-btn-modern"
-                      disabled={isLoading}
-                    >
-                      <XCircle className="w-4 h-4" />
-                      Rechazar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Grid de productos mejorado */}
+      {/* Grid de productos */}
       <div className="nutri-products-section-enhanced">
         {isLoading && (
           <div className="nutri-loading-overlay">
@@ -551,28 +356,15 @@ const NutritionalScreen = () => {
                     </>
                   )}
                 </div>
-                
-                {product.nutritionalData?.status === 'pending' && (
-                  <div className="nutri-status-badge nutri-status-pending">
-                    <Clock className="w-3 h-3" />
-                    Pendiente
-                  </div>
-                )}
               </div>
               
               <div className="nutri-product-body-enhanced">
                 <div className="nutri-product-image-container">
                   <img
-                    src={product.imagen || '/api/placeholder/150/150'}
+                    src="/api/placeholder/150/150"
                     alt={product.nombre}
                     className="nutri-product-image-modern"
                   />
-                  {product.averageRating > 0 && (
-                    <div className="nutri-rating-overlay">
-                      <Star className="w-3 h-3 nutri-star-filled" />
-                      <span>{product.averageRating}</span>
-                    </div>
-                  )}
                 </div>
                 
                 <div className="nutri-product-info">
@@ -580,18 +372,20 @@ const NutritionalScreen = () => {
                   <p className="nutri-product-meta-modern">
                     {product.marca} • {product.presentacion}
                   </p>
-                  <p className="nutri-product-price-modern">${product.precio}</p>
+                  <p className="nutri-product-category">
+                    {product.categoria}
+                  </p>
                 </div>
                 
-                {product.hasNutritionalInfo ? (
+                {product.hasNutritionalInfo && product.nutritionalData ? (
                   <div className="nutri-info-section-enhanced">
                     {/* Score Nutricional */}
-                    <div className={`nutri-score-badge-modern ${getScoreColor(product.nutritionalData?.score || 0)}`}>
+                    <div className={`nutri-score-badge-modern ${getScoreColor(product.nutritionalData.score || 0)}`}>
                       <div className="nutri-score-icon">
                         <Award className="w-4 h-4" />
                       </div>
                       <span className="nutri-score-text">
-                        {product.nutritionalData?.score || 0}/10
+                        {(product.nutritionalData.score || 0).toFixed(1)}/10
                       </span>
                     </div>
                     
@@ -600,27 +394,40 @@ const NutritionalScreen = () => {
                       <div className="nutri-data-item-modern">
                         <span className="nutri-data-label-modern">Calorías</span>
                         <span className="nutri-data-value-modern">
-                          {product.nutritionalData?.calories}
+                          {product.nutritionalData.calories} kcal
                         </span>
                       </div>
                       <div className="nutri-data-item-modern">
                         <span className="nutri-data-label-modern">Proteínas</span>
                         <span className="nutri-data-value-modern">
-                          {product.nutritionalData?.proteins}g
+                          {product.nutritionalData.proteins}g
                         </span>
                       </div>
                       <div className="nutri-data-item-modern">
                         <span className="nutri-data-label-modern">Carbos</span>
                         <span className="nutri-data-value-modern">
-                          {product.nutritionalData?.carbs}g
+                          {product.nutritionalData.carbs}g
                         </span>
                       </div>
                       <div className="nutri-data-item-modern">
                         <span className="nutri-data-label-modern">Grasas</span>
                         <span className="nutri-data-value-modern">
-                          {product.nutritionalData?.fats}g
+                          {product.nutritionalData.fats}g
                         </span>
                       </div>
+                    </div>
+                    
+                    {/* Tags especiales */}
+                    <div className="nutri-special-tags">
+                      {product.nutritionalData.isVegan && (
+                        <span className="nutri-tag nutri-tag-green">Vegano</span>
+                      )}
+                      {product.nutritionalData.isGlutenFree && (
+                        <span className="nutri-tag nutri-tag-blue">Sin Gluten</span>
+                      )}
+                      {product.nutritionalData.isOrganic && (
+                        <span className="nutri-tag nutri-tag-purple">Orgánico</span>
+                      )}
                     </div>
                     
                     <div className="nutri-product-actions-modern">
@@ -648,7 +455,7 @@ const NutritionalScreen = () => {
                       Sin información nutricional
                     </p>
                     <button
-                      onClick={() => handleContribution(product)}
+                      onClick={() => alert('Funcionalidad próximamente')}
                       className="nutri-contribute-btn-modern"
                       disabled={!user}
                     >
@@ -671,293 +478,21 @@ const NutritionalScreen = () => {
         )}
       </div>
 
-      {/* Modal de Agregar Producto NUEVO */}
-      <AddProductModal
-        isOpen={showAddProductModal}
-        onClose={() => setShowAddProductModal(false)}
-        onProductAdded={handleProductAdded}
-      />
-
-      {/* Modal de Contribución Mejorado */}
-      {showContributionModal && (
-        <div className="nutri-modal-overlay-modern">
-          <div className="nutri-modal-modern nutri-modal-contribution">
-            <div className="nutri-modal-header-modern">
-              <div className="nutri-modal-title-container">
-                <h2 className="nutri-modal-title-modern">Contribuir Información</h2>
-                <p className="nutri-modal-subtitle-modern">
-                  Producto: {contributionForm.productName}
-                </p>
-              </div>
-              <button 
-                onClick={() => setShowContributionModal(false)}
-                className="nutri-modal-close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="nutri-modal-body-modern">
-              <div className="nutri-info-banner-modern">
-                <Info className="w-5 h-5" />
-                <p>
-                  Ingresa los valores por cada 100g o 100ml del producto. 
-                  Tu contribución será revisada antes de ser publicada.
-                </p>
-              </div>
-              
-              <div className="nutri-form-sections">
-                <div className="nutri-form-section">
-                  <h3 className="nutri-form-section-title">Información Básica</h3>
-                  <div className="nutri-form-grid-modern">
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Calorías (kcal)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.calories}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            calories: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                    
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Proteínas (g)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.proteins}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            proteins: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                    
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Carbohidratos (g)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.carbs}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            carbs: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                    
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Grasas totales (g)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.fats}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            fats: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="nutri-form-section">
-                  <h3 className="nutri-form-section-title">Información Adicional</h3>
-                  <div className="nutri-form-grid-modern">
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Fibra (g)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.fiber}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            fiber: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                    
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Sodio (mg)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.sodium}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            sodium: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                    
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Azúcares (g)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.sugar}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            sugar: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                    
-                    <div className="nutri-form-group-modern">
-                      <label className="nutri-form-label-modern">Grasas saturadas (g)</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="nutri-form-input-modern"
-                        value={contributionForm.nutritionalData.saturatedFats}
-                        onChange={(e) => setContributionForm({
-                          ...contributionForm,
-                          nutritionalData: {
-                            ...contributionForm.nutritionalData,
-                            saturatedFats: e.target.value
-                          }
-                        })}
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="nutri-form-section">
-                  <h3 className="nutri-form-section-title">Fuente y Notas</h3>
-                  <div className="nutri-form-group-modern nutri-form-full-width">
-                    <label className="nutri-form-label-modern">Fuente de información</label>
-                    <select
-                      className="nutri-form-select-modern"
-                      value={contributionForm.source}
-                      onChange={(e) => setContributionForm({
-                        ...contributionForm,
-                        source: e.target.value
-                      })}
-                    >
-                      <option value="manual">Ingreso manual desde etiqueta</option>
-                      <option value="photo">Foto de etiqueta nutricional</option>
-                      <option value="official">Sitio web oficial del producto</option>
-                    </select>
-                  </div>
-                  
-                  <div className="nutri-form-group-modern nutri-form-full-width">
-                    <label className="nutri-form-label-modern">Notas adicionales</label>
-                    <textarea
-                      rows="3"
-                      className="nutri-form-textarea-modern"
-                      placeholder="Ej: Valores tomados del envase de 500g..."
-                      value={contributionForm.notes}
-                      onChange={(e) => setContributionForm({
-                        ...contributionForm,
-                        notes: e.target.value
-                      })}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="nutri-modal-footer-modern">
-              <button
-                onClick={() => setShowContributionModal(false)}
-                className="nutri-btn-secondary-modern"
-                disabled={isLoading}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={submitContribution}
-                className="nutri-btn-primary-modern"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="nutri-loading-spinner-small"></div>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4" />
-                    Enviar contribución
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Comparación (versión simplificada) */}
-      {showComparisonModal && (
+      {/* Modal de Comparación */}
+      {showComparisonModal && selectedProducts.length >= 2 && (
         <div className="nutri-modal-overlay-modern">
           <div className="nutri-modal-modern nutri-modal-wide">
-            <div className="nutri-modal-header-modern">
-              <div className="nutri-modal-title-container">
-                <h2 className="nutri-modal-title-modern">Comparación Nutricional</h2>
-                <p className="nutri-modal-subtitle-modern">
-                  Análisis de {selectedProducts.length} productos
-                </p>
-              </div>
-              <button 
-                onClick={() => {
-                  setShowComparisonModal(false);
-                  setSelectedProducts([]);
-                }}
-                className="nutri-modal-close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="nutri-modal-body-modern">
-              <div className="nutri-comparison-container">
-                <p>Funcionalidad de comparación mejorada próximamente...</p>
-                <div className="nutri-comparison-preview">
-                  {selectedProducts.map(productId => {
-                    const product = products.find(p => p.id === productId);
-                    return product ? (
-                      <div key={productId} className="nutri-comparison-item">
-                        <h4>{product.nombre}</h4>
-                        <p>{product.marca}</p>
-                      </div>
-                    ) : null;
-                  })}
-                </div>
-              </div>
-            </div>
+            <ProductComparison
+              selectedProducts={selectedProducts}
+              products={products}
+              onClose={() => setShowComparisonModal(false)}
+              onRemoveProduct={removeFromComparison}
+            />
           </div>
         </div>
       )}
 
-      {/* Modal de Detalles del Producto (versión simplificada) */}
+      {/* Modal de Detalles del Producto */}
       {selectedProduct && (
         <div className="nutri-modal-overlay-modern">
           <div className="nutri-modal-modern">
@@ -977,31 +512,119 @@ const NutritionalScreen = () => {
             </div>
             
             <div className="nutri-modal-body-modern">
-              {selectedProduct.hasNutritionalInfo ? (
+              {selectedProduct.hasNutritionalInfo && selectedProduct.nutritionalData ? (
                 <div className="nutri-detail-content">
                   <div className="nutri-detail-score-section">
-                    <div className={`nutri-score-badge-large ${getScoreColor(selectedProduct.nutritionalData?.score || 0)}`}>
+                    <div className={`nutri-score-badge-large ${getScoreColor(selectedProduct.nutritionalData.score || 0)}`}>
                       <Award className="w-8 h-8" />
-                      <span>Score: {selectedProduct.nutritionalData?.score || 0}/10</span>
+                      <span>Score: {(selectedProduct.nutritionalData.score || 0).toFixed(1)}/10</span>
                     </div>
                   </div>
                   
                   <div className="nutri-detail-grid-modern">
                     <div className="nutri-detail-card-modern">
-                      <span className="nutri-detail-value">{selectedProduct.nutritionalData?.calories}</span>
-                      <span className="nutri-detail-label">Calorías</span>
+                      <span className="nutri-detail-value">{selectedProduct.nutritionalData.calories}</span>
+                      <span className="nutri-detail-label">Calorías (kcal)</span>
                     </div>
                     <div className="nutri-detail-card-modern">
-                      <span className="nutri-detail-value">{selectedProduct.nutritionalData?.proteins}g</span>
+                      <span className="nutri-detail-value">{selectedProduct.nutritionalData.proteins}g</span>
                       <span className="nutri-detail-label">Proteínas</span>
                     </div>
                     <div className="nutri-detail-card-modern">
-                      <span className="nutri-detail-value">{selectedProduct.nutritionalData?.carbs}g</span>
+                      <span className="nutri-detail-value">{selectedProduct.nutritionalData.carbs}g</span>
                       <span className="nutri-detail-label">Carbohidratos</span>
                     </div>
                     <div className="nutri-detail-card-modern">
-                      <span className="nutri-detail-value">{selectedProduct.nutritionalData?.fats}g</span>
+                      <span className="nutri-detail-value">{selectedProduct.nutritionalData.fats}g</span>
                       <span className="nutri-detail-label">Grasas</span>
+                    </div>
+                    <div className="nutri-detail-card-modern">
+                      <span className="nutri-detail-value">{selectedProduct.nutritionalData.fiber || 0}g</span>
+                      <span className="nutri-detail-label">Fibra</span>
+                    </div>
+                    <div className="nutri-detail-card-modern">
+                      <span className="nutri-detail-value">{selectedProduct.nutritionalData.sodium || 0}mg</span>
+                      <span className="nutri-detail-label">Sodio</span>
+                    </div>
+                  </div>
+
+                  {/* Información adicional */}
+                  {selectedProduct.nutritionalData.ingredients && selectedProduct.nutritionalData.ingredients.length > 0 && (
+                    <div className="nutri-ingredients-section">
+                      <h3 className="text-lg font-semibold mb-3">Ingredientes</h3>
+                      <div className="nutri-ingredients-list">
+                        {selectedProduct.nutritionalData.ingredients.slice(0, 10).map((ingredient, index) => (
+                          <span key={index} className="nutri-ingredient-tag">
+                            {ingredient}
+                          </span>
+                        ))}
+                        {selectedProduct.nutritionalData.ingredients.length > 10 && (
+                          <span className="nutri-ingredient-more">
+                            +{selectedProduct.nutritionalData.ingredients.length - 10} más
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Alertas y características */}
+                  <div className="nutri-alerts-section">
+                    {selectedProduct.nutritionalData.allergens && selectedProduct.nutritionalData.allergens.length > 0 && (
+                      <div className="nutri-alert nutri-alert-warning">
+                        <AlertTriangle className="w-5 h-5" />
+                        <div>
+                          <strong>Contiene alérgenos:</strong> {selectedProduct.nutritionalData.allergens.join(', ')}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="nutri-characteristics">
+                      {selectedProduct.nutritionalData.isVegan && (
+                        <div className="nutri-characteristic nutri-characteristic-positive">
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Apto para veganos</span>
+                        </div>
+                      )}
+                      {selectedProduct.nutritionalData.isGlutenFree && (
+                        <div className="nutri-characteristic nutri-characteristic-positive">
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Sin gluten</span>
+                        </div>
+                      )}
+                      {selectedProduct.nutritionalData.isOrganic && (
+                        <div className="nutri-characteristic nutri-characteristic-positive">
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Orgánico</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Metadatos */}
+                  <div className="nutri-metadata-section">
+                    <div className="nutri-metadata-grid">
+                      <div className="nutri-metadata-item">
+                        <span className="nutri-metadata-label">Fuente:</span>
+                        <span className="nutri-metadata-value">{selectedProduct.nutritionalData.source || 'No especificada'}</span>
+                      </div>
+                      <div className="nutri-metadata-item">
+                        <span className="nutri-metadata-label">Verificado:</span>
+                        <span className={`nutri-metadata-value ${selectedProduct.nutritionalData.verified ? 'text-green-600' : 'text-yellow-600'}`}>
+                          {selectedProduct.nutritionalData.verified ? 'Sí' : 'Pendiente'}
+                        </span>
+                      </div>
+                      <div className="nutri-metadata-item">
+                        <span className="nutri-metadata-label">Confianza:</span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-500 h-2 rounded-full" 
+                              style={{ width: `${(selectedProduct.nutritionalData.confidence || 0) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-sm">{Math.round((selectedProduct.nutritionalData.confidence || 0) * 100)}%</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1012,7 +635,7 @@ const NutritionalScreen = () => {
                   <button
                     onClick={() => {
                       setSelectedProduct(null);
-                      handleContribution(selectedProduct);
+                      alert('Funcionalidad de contribución próximamente');
                     }}
                     className="nutri-contribute-btn-modern"
                   >

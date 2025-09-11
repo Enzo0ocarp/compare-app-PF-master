@@ -1,4 +1,4 @@
-// src/services/nutritionalService.js
+// src/services/nutritionalService.js - VERSIÓN ACTUALIZADA PARA NUEVA ESTRUCTURA FIREBASE
 import { 
   collection, 
   addDoc, 
@@ -16,541 +16,335 @@ import {
 } from 'firebase/firestore';
 import { db } from '../src/firebaseConfig';
 
-// Colecciones de Firebase
+// Colecciones de Firebase actualizadas
 const COLLECTIONS = {
-  PRODUCTS: 'nutritional_products',
-  CONTRIBUTIONS: 'nutritional_contributions',
-  REVIEWS: 'nutritional_reviews',
-  COMPARISONS: 'nutritional_comparisons',
+  PRODUCTS: 'products',
+  NUTRITION_DATA: 'nutrition_data', 
+  CATEGORIES: 'categories',
+  NUTRITIONAL_CONTRIBUTIONS: 'nutritional_contributions',
+  NUTRITIONAL_REVIEWS: 'nutritional_reviews',
+  NUTRITIONAL_COMPARISONS: 'nutritional_comparisons',
   USER_PREFERENCES: 'user_preferences'
 };
 
-// ===== PRODUCTOS NUTRICIONALES =====
+// ===== PRODUCTOS CON INFORMACIÓN NUTRICIONAL =====
 
 /**
- * Obtiene todos los productos con información nutricional
- * @param {number} limitCount - Límite de productos a obtener
- * @param {object} lastDoc - Último documento para paginación
- * @returns {Promise<Array>} Lista de productos
+ * Obtiene productos con datos nutricionales
+ * @param {number} limitCount - Límite de productos
+ * @param {string} categoria - Filtro por categoría
+ * @returns {Promise<Array>} Lista de productos con datos nutricionales
  */
-export const getNutritionalProducts = async (limitCount = 20, lastDoc = null) => {
+export const getNutritionalProducts = async (limitCount = 20, categoria = null) => {
   try {
-    let q = query(
+    console.log('🔍 Obteniendo productos nutricionales...');
+    
+    // Consulta base para productos activos
+    let productQuery = query(
       collection(db, COLLECTIONS.PRODUCTS),
-      where('hasNutritionalInfo', '==', true),
-      orderBy('createdAt', 'desc'),
+      where('activo', '==', true),
+      orderBy('fecha_actualizacion', 'desc'),
       limit(limitCount)
     );
 
-    if (lastDoc) {
-      q = query(q, startAfter(lastDoc));
+    // Agregar filtro de categoría si se especifica
+    if (categoria && categoria !== 'todos') {
+      productQuery = query(
+        collection(db, COLLECTIONS.PRODUCTS),
+        where('activo', '==', true),
+        where('categoria_principal', '==', categoria),
+        orderBy('fecha_actualizacion', 'desc'),
+        limit(limitCount)
+      );
     }
 
-    const querySnapshot = await getDocs(q);
+    const productsSnapshot = await getDocs(productQuery);
     const products = [];
     
-    querySnapshot.forEach((doc) => {
-      products.push({
-        id: doc.id,
-        ...doc.data(),
-        lastDoc: doc // Para paginación
-      });
-    });
+    // Procesar cada producto y buscar sus datos nutricionales
+    for (const productDoc of productsSnapshot.docs) {
+      const productData = productDoc.data();
+      
+      // Buscar datos nutricionales del producto
+      const nutritionQuery = query(
+        collection(db, COLLECTIONS.NUTRITION_DATA),
+        where('producto_id', '==', productData.id)
+      );
+      
+      const nutritionSnapshot = await getDocs(nutritionQuery);
+      let nutritionalData = null;
+      
+      if (!nutritionSnapshot.empty) {
+        nutritionalData = nutritionSnapshot.docs[0].data();
+      }
+      
+      // Construir objeto producto completo
+      const producto = {
+        id: productDoc.id,
+        firebaseId: productDoc.id,
+        ...productData,
+        
+        // Información nutricional
+        hasNutritionalInfo: nutritionalData !== null,
+        nutritionalData: nutritionalData ? {
+          calories: nutritionalData.calorias_100g || 0,
+          proteins: nutritionalData.proteinas_g || 0,
+          carbs: nutritionalData.carbohidratos_g || 0,
+          fats: nutritionalData.grasas_g || 0,
+          fiber: nutritionalData.fibra_g || 0,
+          sodium: nutritionalData.sodio_mg || 0,
+          sugar: nutritionalData.azucares_g || 0,
+          saturatedFats: nutritionalData.grasas_saturadas_g || 0,
+          
+          // Información adicional
+          ingredients: nutritionalData.ingredientes || [],
+          allergens: nutritionalData.alergenos || [],
+          isVegan: nutritionalData.apto_vegano || false,
+          isVegetarian: nutritionalData.apto_vegetariano || false,
+          isGlutenFree: nutritionalData.sin_gluten || false,
+          isOrganic: nutritionalData.organico || false,
+          
+          // Metadatos
+          source: nutritionalData.fuente || 'manual',
+          verified: nutritionalData.verificado || false,
+          confidence: nutritionalData.confianza || 0,
+          lastUpdated: nutritionalData.fecha_actualizacion,
+          
+          // Score nutricional calculado
+          score: calculateNutritionalScore(nutritionalData)
+        } : null,
+        
+        // Información del producto
+        nombre: productData.nombre,
+        marca: productData.marca,
+        precio: 0, // Se puede obtener de otra colección si existe
+        presentacion: productData.presentacion,
+        categoria: productData.categoria_principal,
+        subcategoria: productData.subcategoria_volumen,
+        pesoGramos: productData.peso_gramos,
+        volumenMl: productData.volumen_ml,
+        
+        // Metadatos
+        lastUpdated: productData.fecha_actualizacion,
+        createdBy: productData.creado_por,
+        active: productData.activo
+      };
+      
+      products.push(producto);
+    }
 
+    console.log(`✅ Productos nutricionales obtenidos: ${products.length}`);
     return products;
+    
   } catch (error) {
-    console.error('Error obteniendo productos nutricionales:', error);
+    console.error('❌ Error obteniendo productos nutricionales:', error);
     throw error;
   }
 };
 
 /**
- * Busca productos por nombre o marca
+ * Busca productos nutricionales por término
  * @param {string} searchTerm - Término de búsqueda
  * @returns {Promise<Array>} Productos encontrados
  */
 export const searchNutritionalProducts = async (searchTerm) => {
   try {
-    const productsRef = collection(db, COLLECTIONS.PRODUCTS);
+    console.log('🔍 Buscando productos:', searchTerm);
     
-    // Búsqueda por nombre
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      return [];
+    }
+
+    const searchTermLower = searchTerm.toLowerCase();
+    
+    // Búsqueda por nombre (Firebase no soporta búsqueda de texto completo nativa)
     const nameQuery = query(
-      productsRef,
-      where('nombre', '>=', searchTerm),
-      where('nombre', '<=', searchTerm + '\uf8ff'),
-      limit(10)
+      collection(db, COLLECTIONS.PRODUCTS),
+      where('activo', '==', true),
+      orderBy('nombre'),
+      limit(20)
     );
 
-    // Búsqueda por marca
-    const brandQuery = query(
-      productsRef,
-      where('marca', '>=', searchTerm),
-      where('marca', '<=', searchTerm + '\uf8ff'),
-      limit(10)
-    );
-
-    const [nameResults, brandResults] = await Promise.all([
-      getDocs(nameQuery),
-      getDocs(brandQuery)
-    ]);
-
-    const products = new Map();
-
-    nameResults.forEach((doc) => {
-      products.set(doc.id, { id: doc.id, ...doc.data() });
-    });
-
-    brandResults.forEach((doc) => {
-      products.set(doc.id, { id: doc.id, ...doc.data() });
-    });
-
-    return Array.from(products.values());
-  } catch (error) {
-    console.error('Error buscando productos:', error);
-    throw error;
-  }
-};
-
-/**
- * Agrega un nuevo producto nutricional
- * @param {object} productData - Datos del producto
- * @returns {Promise<string>} ID del producto creado
- */
-export const addNutritionalProduct = async (productData) => {
-  try {
-    const docRef = await addDoc(collection(db, COLLECTIONS.PRODUCTS), {
-      ...productData,
-      hasNutritionalInfo: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      status: 'active',
-      verificationCount: 0,
-      averageRating: 0,
-      totalReviews: 0
-    });
-
-    return docRef.id;
-  } catch (error) {
-    console.error('Error agregando producto:', error);
-    throw error;
-  }
-};
-
-/**
- * Actualiza información nutricional de un producto
- * @param {string} productId - ID del producto
- * @param {object} nutritionalData - Datos nutricionales
- * @returns {Promise<void>}
- */
-export const updateProductNutrition = async (productId, nutritionalData) => {
-  try {
-    const productRef = doc(db, COLLECTIONS.PRODUCTS, productId);
+    const snapshot = await getDocs(nameQuery);
+    const products = [];
     
-    await updateDoc(productRef, {
-      nutritionalData: {
-        ...nutritionalData,
-        score: calculateNutritionalScore(nutritionalData),
-        lastUpdated: serverTimestamp()
-      },
-      hasNutritionalInfo: true,
-      updatedAt: serverTimestamp()
-    });
-  } catch (error) {
-    console.error('Error actualizando información nutricional:', error);
-    throw error;
-  }
-};
-
-// ===== CONTRIBUCIONES =====
-
-/**
- * Agrega una nueva contribución nutricional
- * @param {object} contributionData - Datos de la contribución
- * @param {string} userId - ID del usuario contribuyente
- * @returns {Promise<string>} ID de la contribución
- */
-export const addNutritionalContribution = async (contributionData, userId) => {
-  try {
-    const docRef = await addDoc(collection(db, COLLECTIONS.CONTRIBUTIONS), {
-      ...contributionData,
-      userId,
-      status: 'pending',
-      createdAt: serverTimestamp(),
-      votes: {
-        helpful: 0,
-        notHelpful: 0,
-        users: []
-      }
-    });
-
-    return docRef.id;
-  } catch (error) {
-    console.error('Error agregando contribución:', error);
-    throw error;
-  }
-};
-
-/**
- * Obtiene contribuciones pendientes (para admins)
- * @returns {Promise<Array>} Lista de contribuciones pendientes
- */
-export const getPendingContributions = async () => {
-  try {
-    const q = query(
-      collection(db, COLLECTIONS.CONTRIBUTIONS),
-      where('status', '==', 'pending'),
-      orderBy('createdAt', 'desc')
-    );
-
-    const querySnapshot = await getDocs(q);
-    const contributions = [];
-
-    querySnapshot.forEach((doc) => {
-      contributions.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-
-    return contributions;
-  } catch (error) {
-    console.error('Error obteniendo contribuciones pendientes:', error);
-    throw error;
-  }
-};
-
-/**
- * Aprueba o rechaza una contribución
- * @param {string} contributionId - ID de la contribución
- * @param {string} action - 'approve' o 'reject'
- * @param {string} adminId - ID del administrador
- * @returns {Promise<void>}
- */
-export const reviewContribution = async (contributionId, action, adminId) => {
-  try {
-    const contributionRef = doc(db, COLLECTIONS.CONTRIBUTIONS, contributionId);
-    const contributionDoc = await getDoc(contributionRef);
-    
-    if (!contributionDoc.exists()) {
-      throw new Error('Contribución no encontrada');
-    }
-
-    const contributionData = contributionDoc.data();
-
-    if (action === 'approve') {
-      // Actualizar el producto con los nuevos datos
-      await updateProductNutrition(contributionData.productId, contributionData.nutritionalData);
+    // Filtrar productos que contengan el término de búsqueda
+    for (const productDoc of snapshot.docs) {
+      const productData = productDoc.data();
       
-      // Actualizar puntos del usuario (gamificación)
-      await updateUserPoints(contributionData.userId, 10);
-    }
-
-    // Actualizar estado de la contribución
-    await updateDoc(contributionRef, {
-      status: action === 'approve' ? 'approved' : 'rejected',
-      reviewedBy: adminId,
-      reviewedAt: serverTimestamp()
-    });
-
-  } catch (error) {
-    console.error('Error revisando contribución:', error);
-    throw error;
-  }
-};
-
-// ===== RESEÑAS Y CALIFICACIONES =====
-
-/**
- * Agrega una reseña a un producto
- * @param {string} productId - ID del producto
- * @param {object} reviewData - Datos de la reseña
- * @param {string} userId - ID del usuario
- * @returns {Promise<string>} ID de la reseña
- */
-export const addProductReview = async (productId, reviewData, userId) => {
-  try {
-    const docRef = await addDoc(collection(db, COLLECTIONS.REVIEWS), {
-      productId,
-      userId,
-      ...reviewData,
-      createdAt: serverTimestamp(),
-      helpful: 0,
-      reported: false
-    });
-
-    // Actualizar promedio de calificación del producto
-    await updateProductRating(productId);
-
-    return docRef.id;
-  } catch (error) {
-    console.error('Error agregando reseña:', error);
-    throw error;
-  }
-};
-
-/**
- * Obtiene reseñas de un producto
- * @param {string} productId - ID del producto
- * @returns {Promise<Array>} Lista de reseñas
- */
-export const getProductReviews = async (productId) => {
-  try {
-    const q = query(
-      collection(db, COLLECTIONS.REVIEWS),
-      where('productId', '==', productId),
-      where('reported', '==', false),
-      orderBy('createdAt', 'desc')
-    );
-
-    const querySnapshot = await getDocs(q);
-    const reviews = [];
-
-    querySnapshot.forEach((doc) => {
-      reviews.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-
-    return reviews;
-  } catch (error) {
-    console.error('Error obteniendo reseñas:', error);
-    throw error;
-  }
-};
-
-// ===== COMPARACIONES =====
-
-/**
- * Guarda una comparación de productos
- * @param {Array} productIds - IDs de productos a comparar
- * @param {string} userId - ID del usuario
- * @returns {Promise<string>} ID de la comparación
- */
-export const saveComparison = async (productIds, userId) => {
-  try {
-    const docRef = await addDoc(collection(db, COLLECTIONS.COMPARISONS), {
-      productIds,
-      userId,
-      createdAt: serverTimestamp(),
-      shared: false,
-      public: false
-    });
-
-    return docRef.id;
-  } catch (error) {
-    console.error('Error guardando comparación:', error);
-    throw error;
-  }
-};
-
-/**
- * Obtiene comparaciones guardadas del usuario
- * @param {string} userId - ID del usuario
- * @returns {Promise<Array>} Lista de comparaciones
- */
-export const getUserComparisons = async (userId) => {
-  try {
-    const q = query(
-      collection(db, COLLECTIONS.COMPARISONS),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
-    );
-
-    const querySnapshot = await getDocs(q);
-    const comparisons = [];
-
-    querySnapshot.forEach((doc) => {
-      comparisons.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-
-    return comparisons;
-  } catch (error) {
-    console.error('Error obteniendo comparaciones:', error);
-    throw error;
-  }
-};
-
-// ===== PREFERENCIAS DE USUARIO =====
-
-/**
- * Guarda las preferencias nutricionales del usuario
- * @param {string} userId - ID del usuario
- * @param {object} preferences - Preferencias del usuario
- * @returns {Promise<void>}
- */
-export const saveUserPreferences = async (userId, preferences) => {
-  try {
-    const userPrefRef = doc(db, COLLECTIONS.USER_PREFERENCES, userId);
-    
-    await updateDoc(userPrefRef, {
-      ...preferences,
-      updatedAt: serverTimestamp()
-    }).catch(async () => {
-      // Si el documento no existe, créalo
-      await addDoc(collection(db, COLLECTIONS.USER_PREFERENCES), {
-        userId,
-        ...preferences,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-    });
-  } catch (error) {
-    console.error('Error guardando preferencias:', error);
-    throw error;
-  }
-};
-
-/**
- * Obtiene las preferencias del usuario
- * @param {string} userId - ID del usuario
- * @returns {Promise<object>} Preferencias del usuario
- */
-export const getUserPreferences = async (userId) => {
-  try {
-    const userPrefRef = doc(db, COLLECTIONS.USER_PREFERENCES, userId);
-    const docSnap = await getDoc(userPrefRef);
-
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      // Retornar preferencias por defecto
-      return {
-        dietaryRestrictions: [],
-        allergies: [],
-        nutritionalGoals: [],
-        preferredBrands: [],
-        notifications: {
-          newProducts: true,
-          priceAlerts: true,
-          nutritionalTips: true
+      const nombre = (productData.nombre || '').toLowerCase();
+      const marca = (productData.marca || '').toLowerCase();
+      
+      if (nombre.includes(searchTermLower) || marca.includes(searchTermLower)) {
+        // Buscar datos nutricionales
+        const nutritionQuery = query(
+          collection(db, COLLECTIONS.NUTRITION_DATA),
+          where('producto_id', '==', productData.id)
+        );
+        
+        const nutritionSnapshot = await getDocs(nutritionQuery);
+        let nutritionalData = null;
+        
+        if (!nutritionSnapshot.empty) {
+          nutritionalData = nutritionSnapshot.docs[0].data();
         }
-      };
+        
+        const producto = {
+          id: productDoc.id,
+          firebaseId: productDoc.id,
+          ...productData,
+          hasNutritionalInfo: nutritionalData !== null,
+          nutritionalData: nutritionalData ? {
+            calories: nutritionalData.calorias_100g || 0,
+            proteins: nutritionalData.proteinas_g || 0,
+            carbs: nutritionalData.carbohidratos_g || 0,
+            fats: nutritionalData.grasas_g || 0,
+            fiber: nutritionalData.fibra_g || 0,
+            sodium: nutritionalData.sodio_mg || 0,
+            sugar: nutritionalData.azucares_g || 0,
+            saturatedFats: nutritionalData.grasas_saturadas_g || 0,
+            score: calculateNutritionalScore(nutritionalData)
+          } : null
+        };
+        
+        products.push(producto);
+      }
     }
+
+    console.log(`✅ Productos encontrados: ${products.length}`);
+    return products;
+    
   } catch (error) {
-    console.error('Error obteniendo preferencias:', error);
+    console.error('❌ Error en búsqueda:', error);
     throw error;
   }
 };
 
-// ===== FUNCIONES AUXILIARES =====
+/**
+ * Obtiene categorías disponibles
+ * @returns {Promise<Array>} Lista de categorías
+ */
+export const getCategories = async () => {
+  try {
+    const categoriesQuery = query(
+      collection(db, COLLECTIONS.CATEGORIES),
+      where('activa', '==', true),
+      orderBy('orden')
+    );
+    
+    const snapshot = await getDocs(categoriesQuery);
+    const categories = [];
+    
+    snapshot.forEach((doc) => {
+      categories.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    return categories;
+  } catch (error) {
+    console.error('Error obteniendo categorías:', error);
+    return [];
+  }
+};
 
 /**
- * Calcula el score nutricional de un producto
+ * Calcula el score nutricional basado en los datos
  * @param {object} nutritionalData - Datos nutricionales
- * @returns {number} Score del 1 al 10
+ * @returns {number} Score del 0 al 10
  */
 export const calculateNutritionalScore = (nutritionalData) => {
   if (!nutritionalData) return 0;
   
-  let score = 10;
+  let score = 5; // Empezar desde el medio
   
-  // Penalizaciones
-  if (nutritionalData.saturatedFats > 5) score -= 2;
-  if (nutritionalData.sodium > 400) score -= 1.5;
-  if (nutritionalData.sugar > 10) score -= 2;
-  if (nutritionalData.calories > 500) score -= 1;
+  // Factores positivos (aumentan score)
+  if (nutritionalData.proteinas_g > 5) score += 1;
+  if (nutritionalData.fibra_g > 3) score += 1;
+  if (nutritionalData.apto_vegano) score += 0.5;
+  if (nutritionalData.organico) score += 0.5;
+  if (nutritionalData.sin_gluten) score += 0.3;
   
-  // Bonificaciones
-  if (nutritionalData.fiber > 3) score += 1;
-  if (nutritionalData.proteins > 5) score += 0.5;
-  if (nutritionalData.vitamins && nutritionalData.vitamins.length > 0) score += 0.5;
+  // Factores negativos (reducen score)
+  if (nutritionalData.azucares_g > 10) score -= 1.5;
+  if (nutritionalData.grasas_saturadas_g > 5) score -= 1;
+  if (nutritionalData.sodio_mg > 400) score -= 1;
+  if (nutritionalData.calorias_100g > 500) score -= 0.5;
   
-  return Math.max(0, Math.min(10, Math.round(score * 10) / 10));
+  // Mantener score entre 0 y 10
+  score = Math.max(0, Math.min(10, score));
+  
+  return Math.round(score * 10) / 10; // Redondear a 1 decimal
 };
 
 /**
- * Actualiza la calificación promedio de un producto
- * @param {string} productId - ID del producto
- * @returns {Promise<void>}
+ * Agrega un nuevo producto con información nutricional
+ * @param {object} productData - Datos del producto y nutrición
+ * @returns {Promise<string>} ID del producto creado
  */
-const updateProductRating = async (productId) => {
+export const addNutritionalProduct = async (productData) => {
   try {
-    const reviewsQuery = query(
-      collection(db, COLLECTIONS.REVIEWS),
-      where('productId', '==', productId),
-      where('reported', '==', false)
-    );
-
-    const reviewsSnapshot = await getDocs(reviewsQuery);
-    let totalRating = 0;
-    let reviewCount = 0;
-
-    reviewsSnapshot.forEach((doc) => {
-      const review = doc.data();
-      totalRating += review.rating;
-      reviewCount++;
-    });
-
-    const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
-
-    const productRef = doc(db, COLLECTIONS.PRODUCTS, productId);
-    await updateDoc(productRef, {
-      averageRating: Math.round(averageRating * 10) / 10,
-      totalReviews: reviewCount,
-      updatedAt: serverTimestamp()
-    });
-
-  } catch (error) {
-    console.error('Error actualizando calificación del producto:', error);
-    throw error;
-  }
-};
-
-/**
- * Actualiza los puntos del usuario (sistema de gamificación)
- * @param {string} userId - ID del usuario
- * @param {number} points - Puntos a agregar
- * @returns {Promise<void>}
- */
-const updateUserPoints = async (userId, points) => {
-  try {
-    const userPrefRef = doc(db, COLLECTIONS.USER_PREFERENCES, userId);
-    const userDoc = await getDoc(userPrefRef);
+    console.log('💾 Agregando nuevo producto nutricional...');
     
-    const currentPoints = userDoc.exists() ? (userDoc.data().points || 0) : 0;
+    // Separar datos del producto y datos nutricionales
+    const { nutritionalData, ...productInfo } = productData;
     
-    await updateDoc(userPrefRef, {
-      points: currentPoints + points,
-      updatedAt: serverTimestamp()
-    }).catch(async () => {
-      // Si el documento no existe, créalo
-      await addDoc(collection(db, COLLECTIONS.USER_PREFERENCES), {
-        userId,
-        points,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-    });
-  } catch (error) {
-    console.error('Error actualizando puntos del usuario:', error);
-    throw error;
-  }
-};
-
-/**
- * Obtiene estadísticas generales de la plataforma
- * @returns {Promise<object>} Estadísticas
- */
-export const getNutritionalStats = async () => {
-  try {
-    const [productsSnap, contributionsSnap, reviewsSnap] = await Promise.all([
-      getDocs(query(collection(db, COLLECTIONS.PRODUCTS), where('hasNutritionalInfo', '==', true))),
-      getDocs(query(collection(db, COLLECTIONS.CONTRIBUTIONS), where('status', '==', 'approved'))),
-      getDocs(collection(db, COLLECTIONS.REVIEWS))
-    ]);
-
-    return {
-      totalProducts: productsSnap.size,
-      totalContributions: contributionsSnap.size,
-      totalReviews: reviewsSnap.size,
-      lastUpdated: new Date().toISOString()
+    // Crear documento de producto
+    const productDoc = {
+      ...productInfo,
+      activo: true,
+      creado_por: productData.contributedBy || 'user',
+      fecha_creacion: serverTimestamp(),
+      fecha_actualizacion: serverTimestamp(),
+      id: productData.originalId || `${Date.now()}`,
+      categoria_principal: productData.categoria || 'general',
+      subcategoria_volumen: productData.subcategoria || 'general',
+      peso_gramos: productData.pesoGramos || null,
+      volumen_ml: productData.volumenMl || null,
+      unidad_medida: 'unidad'
     };
+    
+    const productRef = await addDoc(collection(db, COLLECTIONS.PRODUCTS), productDoc);
+    
+    // Si hay datos nutricionales, crear documento separado
+    if (nutritionalData) {
+      const nutritionDoc = {
+        producto_id: productDoc.id,
+        calorias_100g: nutritionalData.calories || 0,
+        proteinas_g: nutritionalData.proteins || 0,
+        carbohidratos_g: nutritionalData.carbs || 0,
+        grasas_g: nutritionalData.fats || 0,
+        fibra_g: nutritionalData.fiber || 0,
+        sodio_mg: nutritionalData.sodium || 0,
+        azucares_g: nutritionalData.sugar || 0,
+        grasas_saturadas_g: nutritionalData.saturatedFats || 0,
+        
+        // Información adicional
+        ingredientes: nutritionalData.ingredients || [],
+        alergenos: nutritionalData.allergens || [],
+        apto_vegano: nutritionalData.isVegan || false,
+        apto_vegetariano: nutritionalData.isVegetarian || false,
+        sin_gluten: nutritionalData.isGlutenFree || false,
+        organico: nutritionalData.isOrganic || false,
+        
+        // Metadatos
+        fuente: nutritionalData.source || 'manual',
+        verificado: nutritionalData.verified || false,
+        confianza: nutritionalData.confidence || 0.8,
+        creado_por: productData.contributedBy || 'user',
+        fecha_creacion: serverTimestamp(),
+        fecha_actualizacion: serverTimestamp()
+      };
+      
+      await addDoc(collection(db, COLLECTIONS.NUTRITION_DATA), nutritionDoc);
+    }
+    
+    console.log('✅ Producto agregado exitosamente');
+    return productRef.id;
+    
   } catch (error) {
-    console.error('Error obteniendo estadísticas:', error);
+    console.error('❌ Error agregando producto:', error);
     throw error;
   }
 };

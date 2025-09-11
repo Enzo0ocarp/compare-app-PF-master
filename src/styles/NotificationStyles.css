@@ -824,3 +824,348 @@
   color: var(--text-primary) !important;
   transform: scale(1.1) !important;
 }
+
+/* src/styles/NutritionalStylesAdditions.css - ESTILOS ADICIONALES PARA NUEVA FUNCIONALIDAD */
+
+/* === TAGS ESPECIALES === */
+.nutri-special-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+/* === INGREDIENTES === */
+.nutri-ingredients-section {
+  margin: 24px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #007bff;
+}
+
+.nutri-ingredients-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nutri-ingredient-tag {
+  background: #e9ecef;
+  color: #495057;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #dee2e6;
+}
+
+.nutri-ingredient-more {
+  background: #6c757d;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* === ALERTAS Y CARACTERÍSTICAS === */
+.nutri-alerts-section {
+  margin: 24px 0;
+}
+
+.nutri-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.nutri-alert-warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+}
+
+.nutri-characteristics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nutri-characteristic {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nutri-characteristic-positive {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* === METADATOS === */
+.nutri-metadata-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #e9ecef;
+}
+
+.nutri-metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.nutri-metadata-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nutri-metadata-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nutri-metadata-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+/* === CATEGORÍA EN PRODUCTO === */
+.nutri-product-category {
+  font-size: 12px;
+  color: #6c757d;
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 8px;
+  border: 1px solid #dee2e6;
+}
+
+/* === MODAL ANCHO === */
+.nutri-modal-wide {
+  max-width: 90%;
+  width: 1200px;
+}
+
+/* === MEJORAS RESPONSIVE === */
+@media (max-width: 768px) {
+  .nutri-modal-wide {
+    max-width: 95%;
+    width: auto;
+  }
+  
+  .nutri-ingredients-list {
+    gap: 4px;
+  }
+  
+  .nutri-ingredient-tag,
+  .nutri-ingredient-more {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+  
+  .nutri-metadata-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .nutri-detail-grid-modern {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .nutri-characteristics {
+    gap: 6px;
+  }
+  
+  .nutri-characteristic {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nutri-special-tags {
+    gap: 4px;
+  }
+  
+  .nutri-ingredients-section {
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  .nutri-alert {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .nutri-metadata-item {
+    gap: 2px;
+  }
+  
+  .nutri-metadata-label {
+    font-size: 11px;
+  }
+  
+  .nutri-metadata-value {
+    font-size: 13px;
+  }
+}
+
+/* === ESTADOS DE CARGA === */
+.nutri-loading-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.nutri-product-skeleton {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 20px;
+  animation: nutri-skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.nutri-skeleton-header {
+  height: 20px;
+  background: #e9ecef;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.nutri-skeleton-image {
+  height: 120px;
+  background: #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.nutri-skeleton-line {
+  height: 16px;
+  background: #e9ecef;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.nutri-skeleton-line.short {
+  width: 60%;
+}
+
+.nutri-skeleton-line.medium {
+  width: 80%;
+}
+
+@keyframes nutri-skeleton-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* === MEJORAS DE ACCESIBILIDAD === */
+.nutri-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.nutri-focus-visible:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* === ANIMACIONES DE ENTRADA === */
+.nutri-fade-in {
+  animation: nutri-fadeIn 0.3s ease-out;
+}
+
+.nutri-slide-up {
+  animation: nutri-slideUp 0.3s ease-out;
+}
+
+@keyframes nutri-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nutri-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === TEXTO TRUNCADO === */
+.nutri-text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nutri-text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nutri-text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* === UTILIDADES DE COLOR === */
+.text-green-600 { color: #059669; }
+.text-yellow-600 { color: #d97706; }
+.text-red-600 { color: #dc2626; }
+.text-blue-600 { color: #2563eb; }
+.text-gray-600 { color: #4b5563; }
+
+.bg-green-50 { background-color: #ecfdf5; }
+.bg-yellow-50 { background-color: #fffbeb; }
+.bg-red-50 { background-color: #fef2f2; }
+.bg-blue-50 { background-color: #eff6ff; }
+
+.border-green-200 { border-color: #bbf7d0; }
+.border-yellow-200 { border-color: #fde68a; }
+.border-red-200 { border-color: #fecaca; }
+.border-blue-200 { border-color: #bfdbfe; }
