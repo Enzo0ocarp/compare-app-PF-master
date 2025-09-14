@@ -1,7 +1,9 @@
-// src/components/ProfileHeader.js
-import React from 'react';
+// src/components/ProfileHeader.js - COMPLETO Y COMPATIBLE CON FIREBASE ACTUAL
+import React, { useRef } from 'react';
 
-const ProfileHeader = ({ user, onLogout, isAdmin }) => {
+const ProfileHeader = ({ user, onLogout, isAdmin, onPhotoUpload, uploadingPhoto }) => {
+  const fileInputRef = useRef(null);
+
   const getInitials = (firstName, lastName) => {
     const first = firstName?.charAt(0) || '';
     const last = lastName?.charAt(0) || '';
@@ -16,29 +18,74 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
     }).format(new Date(date));
   };
 
+  const handlePhotoClick = () => {
+    if (uploadingPhoto) return; // Evitar clicks durante upload
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file && onPhotoUpload) {
+      onPhotoUpload(file);
+    }
+    // Limpiar el input para permitir seleccionar el mismo archivo de nuevo
+    event.target.value = '';
+  };
+
   return (
     <div className="profile-header">
       <div className="profile-banner">
         <div className="profile-main-info">
-          {/* Avatar */}
+          {/* Avatar mejorado con funcionalidad de cambio */}
           <div className="profile-avatar">
-            {user.photoURL ? (
-              <img 
-                src={user.photoURL} 
-                alt={`${user.firstName} ${user.lastName}`}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextElementSibling.style.display = 'flex';
-                }}
-              />
-            ) : null}
             <div 
-              className="avatar-placeholder"
-              style={{ display: user.photoURL ? 'none' : 'flex' }}
+              className={`avatar-container ${uploadingPhoto ? 'uploading' : ''}`}
+              onClick={handlePhotoClick}
             >
-              {getInitials(user.firstName, user.lastName)}
+              {user.photoURL ? (
+                <img 
+                  src={user.photoURL} 
+                  alt={`${user.firstName} ${user.lastName}`}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div 
+                className="avatar-placeholder"
+                style={{ display: user.photoURL ? 'none' : 'flex' }}
+              >
+                {getInitials(user.firstName, user.lastName)}
+              </div>
+              
+              {/* Overlay de cambio de foto */}
+              <div className="photo-overlay">
+                {uploadingPhoto ? (
+                  <div className="upload-spinner">
+                    <i className="fas fa-spinner fa-spin"></i>
+                    <span>Subiendo...</span>
+                  </div>
+                ) : (
+                  <>
+                    <i className="fas fa-camera"></i>
+                    <span>Cambiar foto</span>
+                  </>
+                )}
+              </div>
             </div>
+            
             <div className="status-indicator online"></div>
+            
+            {/* Input oculto para seleccionar archivo */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/jpg,image/webp"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              disabled={uploadingPhoto}
+            />
           </div>
 
           {/* Información principal */}
@@ -102,6 +149,7 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           color: white;
           position: relative;
           overflow: hidden;
+          margin-bottom: 2rem;
         }
 
         .profile-header::before {
@@ -140,13 +188,33 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           flex-shrink: 0;
         }
 
-        .profile-avatar img,
+        .avatar-container {
+          position: relative;
+          width: 120px;
+          height: 120px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border-radius: 50%;
+          overflow: hidden;
+        }
+
+        .avatar-container:not(.uploading):hover {
+          transform: scale(1.05);
+        }
+
+        .avatar-container.uploading {
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+
+        .avatar-container img,
         .avatar-placeholder {
           width: 120px;
           height: 120px;
           border-radius: 50%;
           border: 4px solid rgba(255, 255, 255, 0.3);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
         }
 
         .avatar-placeholder {
@@ -160,6 +228,46 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           backdrop-filter: blur(10px);
         }
 
+        .photo-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          border-radius: 50%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          color: white;
+          font-size: 0.875rem;
+          font-weight: 600;
+          gap: 0.25rem;
+        }
+
+        .avatar-container:hover .photo-overlay {
+          opacity: 1;
+        }
+
+        .avatar-container.uploading .photo-overlay {
+          opacity: 1;
+          background: rgba(0, 0, 0, 0.8);
+        }
+
+        .upload-spinner {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .upload-spinner i {
+          font-size: 1.5rem;
+        }
+
         .status-indicator {
           position: absolute;
           bottom: 8px;
@@ -168,10 +276,12 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           height: 24px;
           border-radius: 50%;
           border: 3px solid white;
+          z-index: 10;
         }
 
         .status-indicator.online {
           background: #10b981;
+          box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
         }
 
         .profile-info {
@@ -187,6 +297,7 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           align-items: center;
           gap: 1rem;
           flex-wrap: wrap;
+          line-height: 1.2;
         }
 
         .admin-badge {
@@ -199,6 +310,7 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           font-size: 0.875rem;
           font-weight: 600;
           backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .profile-email,
@@ -211,12 +323,19 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           margin: 0.5rem 0;
           font-size: 1rem;
           opacity: 0.9;
+          line-height: 1.4;
         }
 
         .profile-bio {
           font-style: italic;
           max-width: 500px;
           line-height: 1.6;
+          align-items: flex-start;
+        }
+
+        .profile-bio i {
+          margin-top: 0.2rem;
+          flex-shrink: 0;
         }
 
         .profile-actions {
@@ -241,12 +360,15 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           backdrop-filter: blur(10px);
           min-width: 160px;
           justify-content: center;
+          text-decoration: none;
+          font-size: 0.875rem;
         }
 
         .action-btn:hover {
           background: rgba(255, 255, 255, 0.2);
           border-color: rgba(255, 255, 255, 0.5);
           transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .logout-btn:hover {
@@ -258,6 +380,7 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           font-size: 1rem;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
           .profile-banner {
             flex-direction: column;
@@ -284,10 +407,20 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           .action-btn {
             flex: 1;
           }
+
+          .profile-bio {
+            text-align: center;
+            max-width: none;
+          }
         }
 
         @media (max-width: 480px) {
-          .profile-avatar img,
+          .profile-banner {
+            padding: 1rem;
+          }
+
+          .avatar-container,
+          .avatar-container img,
           .avatar-placeholder {
             width: 100px;
             height: 100px;
@@ -304,6 +437,37 @@ const ProfileHeader = ({ user, onLogout, isAdmin }) => {
           .action-btn {
             min-width: auto;
             padding: 0.75rem;
+          }
+
+          .profile-email,
+          .profile-member-since,
+          .profile-bio,
+          .profile-location {
+            font-size: 0.875rem;
+          }
+        }
+
+        /* Accesibilidad */
+        @media (prefers-reduced-motion: reduce) {
+          .avatar-container,
+          .action-btn,
+          .photo-overlay {
+            transition: none;
+          }
+
+          .upload-spinner i {
+            animation: none;
+          }
+        }
+
+        /* Mejoras para pantallas táctiles */
+        @media (hover: none) {
+          .photo-overlay {
+            opacity: 0.8;
+          }
+          
+          .avatar-container:hover {
+            transform: none;
           }
         }
       `}</style>

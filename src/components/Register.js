@@ -1,4 +1,4 @@
-// src/components/Register.js
+// src/components/Register.js - VERSIÓN CORREGIDA
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -48,19 +48,20 @@ const Register = () => {
     return errorMessages[errorCode] || 'Error al crear la cuenta. Intenta nuevamente.';
   };
 
+  // FUNCIÓN CORREGIDA: usar let en lugar de const
   const validateAge = (birthDate) => {
     if (!birthDate) return 'La fecha de nacimiento es obligatoria';
     
     const birth = new Date(birthDate);
     const today = new Date();
-    const age = today.getFullYear() - birth.getFullYear();
+    let age = today.getFullYear() - birth.getFullYear(); // CAMBIO: let en lugar de const
     const monthDiff = today.getMonth() - birth.getMonth();
     
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
+      age--; // ESTO YA NO CAUSARÁ ERROR
     }
     
-    if (age < 13) return 'Debes tener al least 13 años para registrarte';
+    if (age < 13) return 'Debes tener al menos 13 años para registrarte';
     if (age > 120) return 'Por favor verifica la fecha de nacimiento';
     
     return true;
@@ -85,7 +86,8 @@ const Register = () => {
       stats: {
         searchesCount: 0,
         favoritesCount: 0,
-        contributionsCount: 0
+        contributionsCount: 0,
+        reviewsCount: 0
       },
       isActive: true
     };
