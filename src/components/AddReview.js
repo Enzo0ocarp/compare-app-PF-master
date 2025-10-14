@@ -1,4 +1,4 @@
-// src/components/AddReview.js - Versión Mejorada
+// src/components/AddReview.js - SIN IMÁGENES
 import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -21,46 +21,41 @@ const AddReview = ({
   const [validationErrors, setValidationErrors] = useState({});
   const [showGuidelines, setShowGuidelines] = useState(false);
 
-  // Opciones para el dropdown de productos
+  // Opciones para el dropdown de productos SIN IMÁGENES
   const productOptions = products.map(product => ({
     label: product.title || product.name || `Producto ${product.id}`,
     value: product.id,
-    description: product.brand || product.description || '',
-    image: product.image || '/placeholder-product.png'
+    brand: product.brand || product.marca || '',
+    presentation: product.presentation || ''
   }));
 
-  // Template personalizado para las opciones del dropdown
+  // Template personalizado SIN IMAGEN
   const productOptionTemplate = (option) => {
     return (
-      <div className="product-option">
-        <img 
-          src={option.image} 
-          alt={option.label}
-          className="product-option-image"
-          onError={(e) => e.target.src = '/placeholder-product.png'}
-        />
+      <div className="product-option-no-image">
+        <div className="product-option-icon">
+          <i className="pi pi-box"></i>
+        </div>
         <div className="product-option-content">
           <div className="product-option-title">{option.label}</div>
-          {option.description && (
-            <div className="product-option-description">{option.description}</div>
+          {option.brand && (
+            <div className="product-option-brand">{option.brand}</div>
+          )}
+          {option.presentation && (
+            <div className="product-option-presentation">{option.presentation}</div>
           )}
         </div>
       </div>
     );
   };
 
-  // Template para el valor seleccionado
+  // Template para el valor seleccionado SIN IMAGEN
   const selectedProductTemplate = (option) => {
     if (!option) return <span>Selecciona un producto para reseñar</span>;
     
     return (
-      <div className="selected-product">
-        <img 
-          src={option.image} 
-          alt={option.label}
-          className="selected-product-image"
-          onError={(e) => e.target.src = '/placeholder-product.png'}
-        />
+      <div className="selected-product-no-image">
+        <i className="pi pi-box"></i>
         <span className="selected-product-label">{option.label}</span>
       </div>
     );
@@ -89,7 +84,6 @@ const AddReview = ({
     setValidationErrors(errors);
   }, [selectedProductId, newReviewText, rating, productOptions]);
 
-  // Manejadores de eventos
   const handleProductChange = (e) => {
     onProductIdChange(e.value);
   };
@@ -102,7 +96,6 @@ const AddReview = ({
     onRatingChange(e.value);
   };
 
-  // Progreso del formulario
   const getFormProgress = () => {
     let progress = 0;
     if (selectedProductId) progress += 33;
@@ -111,7 +104,6 @@ const AddReview = ({
     return progress;
   };
 
-  // Descripción de la calificación
   const getRatingDescription = (ratingValue) => {
     switch (ratingValue) {
       case 1: return '⭐ Muy malo - No lo recomiendo';

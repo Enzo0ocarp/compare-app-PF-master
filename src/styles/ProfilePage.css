@@ -8,6 +8,79 @@
   --profile-card-spacing: 1.5rem;
 }
 
+/* Asegurar que el contenedor tenga el espaciado correcto */
+.tab-content {
+  animation: fadeInUp 0.5s ease-out;
+  padding: 0;
+  margin: 0;
+}
+
+/* Sobrescribir estilos globales si hay conflictos */
+.user-products-section * {
+  box-sizing: border-box;
+}
+
+/* Transiciones suaves */
+.user-products-section .product-card,
+.user-products-section .filter-btn,
+.user-products-section .favorite-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sombras consistentes con el resto de la app */
+.user-products-section .product-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.user-products-section .product-card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Compatibilidad con theme system (si lo implementas en el futuro) */
+[data-theme="dark"] .user-products-section {
+  background: #1f2937;
+}
+
+[data-theme="dark"] .user-products-section .product-card {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+/* Scrollbar personalizado para la sección */
+.user-products-section::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.user-products-section::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.user-products-section::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.user-products-section::-webkit-scrollbar-thumb:hover {
+  background: #5a67d8;
+}
+
+/* Focus visible para accesibilidad */
+.user-products-section button:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Optimización de rendimiento */
+.user-products-section .products-grid {
+  will-change: transform;
+}
+
+.user-products-section .product-card {
+  will-change: transform, box-shadow;
+}
+
 /* === CONTENEDOR PRINCIPAL === */
 .profile-page {
   min-height: 100vh;

@@ -1,4 +1,4 @@
-// src/components/ReviewList.js - Versión Mejorada
+// src/components/ReviewList.js - SIN IMÁGENES
 import React, { useState } from 'react';
 import { Card } from 'primereact/card';
 import { Rating } from 'primereact/rating';
@@ -6,30 +6,7 @@ import { Button } from 'primereact/button';
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
 import { Chip } from 'primereact/chip';
-import { Timeline } from 'primereact/timeline';
 import '../styles/ReviewList.css';
-
-/**
- * @typedef {Object} Review
- * @property {string|number} id - ID único de la reseña
- * @property {string} productId - ID del producto reseñado
- * @property {string} comment - Texto de la reseña
- * @property {number} rating - Calificación (1-5)
- * @property {string} userId - ID del usuario
- * @property {string} username - Nombre del usuario
- * @property {string} createdAt - Fecha de creación
- * @property {boolean} verified - Si la reseña está verificada
- * @property {number} helpfulCount - Votos útiles
- */
-
-/**
- * @typedef {Object} Product
- * @property {string|number} id - ID del producto
- * @property {string} title - Título del producto
- * @property {string} name - Nombre del producto
- * @property {string} brand - Marca del producto
- * @property {string} image - URL de imagen
- */
 
 const ReviewList = ({ 
   reviews = [], 
@@ -41,25 +18,19 @@ const ReviewList = ({
   const [expandedReviews, setExpandedReviews] = useState(new Set());
   const [helpfulVotes, setHelpfulVotes] = useState(new Map());
 
-  /**
-   * Obtiene información del producto por ID
-   */
   const getProductInfo = (productId) => {
     const product = products.find(p => p.id === productId);
     return product ? {
       title: product.title || product.name || `Producto ${product.id}`,
-      brand: product.brand || 'Marca no especificada',
-      image: product.image || '/placeholder-product.png'
+      brand: product.brand || product.marca || 'Marca no especificada',
+      presentation: product.presentation || ''
     } : {
       title: 'Producto no encontrado',
       brand: '',
-      image: '/placeholder-product.png'
+      presentation: ''
     };
   };
 
-  /**
-   * Maneja la expansión/contracción de reseñas largas
-   */
   const toggleExpanded = (reviewId) => {
     const newExpanded = new Set(expandedReviews);
     if (newExpanded.has(reviewId)) {
@@ -70,9 +41,6 @@ const ReviewList = ({
     setExpandedReviews(newExpanded);
   };
 
-  /**
-   * Maneja los votos de "útil"
-   */
   const handleHelpfulVote = (reviewId) => {
     if (!currentUserId) return;
     
@@ -86,9 +54,6 @@ const ReviewList = ({
     }
   };
 
-  /**
-   * Formatea la fecha de creación
-   */
   const formatDate = (dateString) => {
     if (!dateString) return 'Fecha no disponible';
     
@@ -98,7 +63,8 @@ const ReviewList = ({
       const diffTime = Math.abs(now - date);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
-      if (diffDays === 1) return 'Hace 1 día';
+      if (diffDays === 0) return 'Hoy';
+      if (diffDays === 1) return 'Ayer';
       if (diffDays < 7) return `Hace ${diffDays} días`;
       if (diffDays < 30) return `Hace ${Math.ceil(diffDays / 7)} semanas`;
       if (diffDays < 365) return `Hace ${Math.ceil(diffDays / 30)} meses`;
@@ -113,30 +79,25 @@ const ReviewList = ({
     }
   };
 
-  /**
-   * Obtiene el color de la calificación
-   */
   const getRatingColor = (rating) => {
-    if (rating >= 4) return '#4caf50'; // Verde
-    if (rating >= 3) return '#ff9800'; // Naranja
-    if (rating >= 2) return '#f44336'; // Rojo
-    return '#9e9e9e'; // Gris
+    if (rating >= 4) return '#4caf50';
+    if (rating >= 3) return '#ff9800';
+    if (rating >= 2) return '#f44336';
+    return '#9e9e9e';
   };
 
-  /**
-   * Trunca texto largo
-   */
   const truncateText = (text, maxLength = 200) => {
     if (!text || text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
   };
 
-  /**
-   * Genera iniciales del usuario
-   */
   const getUserInitials = (username) => {
     if (!username) return 'U';
-    return username.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
+    const words = username.trim().split(' ');
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return username.substring(0, 2).toUpperCase();
   };
 
   if (!reviews || reviews.length === 0) {
@@ -162,7 +123,8 @@ const ReviewList = ({
 
         return (
           <Card key={review.id} className="review-card fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-            {/* Header de la reseña */}
+            
+            {/* Header */}
             <div className="review-header">
               <div className="user-info">
                 <Avatar
@@ -197,19 +159,19 @@ const ReviewList = ({
                 </div>
               </div>
 
-              {/* Información del producto */}
+              {/* Información del producto SINIMAGEN */}
               {showProductInfo && (
-                <div className="product-info">
-                  <img 
-                    src={productInfo.image} 
-                    alt={productInfo.title}
-                    className="product-thumb"
-                    onError={(e) => e.target.src = '/placeholder-product.png'}
-                  />
+                <div className="product-info-no-image">
+                  <div className="product-icon">
+                    <i className="pi pi-box"></i>
+                  </div>
                   <div className="product-details">
                     <span className="product-title">{productInfo.title}</span>
                     {productInfo.brand && (
                       <span className="product-brand">{productInfo.brand}</span>
+                    )}
+                    {productInfo.presentation && (
+                      <span className="product-presentation">{productInfo.presentation}</span>
                     )}
                   </div>
                 </div>
@@ -245,7 +207,7 @@ const ReviewList = ({
               )}
             </div>
 
-            {/* Footer de la reseña */}
+            {/* Footer */}
             <div className="review-footer">
               <div className="review-actions">
                 <Button
