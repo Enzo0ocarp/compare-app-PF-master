@@ -23,6 +23,97 @@
   background: var(--sucursales-bg);
   position: relative;
 }
+/* src/styles/SucursalesStyles.css - AGREGAR AL FINAL DEL ARCHIVO */
+
+/* === TABS === */
+.sucursales-tabs {
+  margin-bottom: var(--spacing-2xl);
+  animation: fadeInUp var(--sucursales-animation-duration) ease-out 0.2s both;
+}
+
+.sucursales-tabs .p-tabview-nav {
+  background: var(--sucursales-card-bg);
+  border-radius: var(--sucursales-border-radius) var(--sucursales-border-radius) 0 0;
+  border: 1px solid var(--sucursales-border);
+  border-bottom: none;
+  padding: 0;
+}
+
+.sucursales-tabs .p-tabview-nav li .p-tabview-nav-link {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  border: none;
+  background: transparent;
+}
+
+.sucursales-tabs .p-tabview-nav li .p-tabview-nav-link:hover {
+  background: var(--bg-light);
+  color: var(--text-primary);
+}
+
+.sucursales-tabs .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  background: var(--sucursales-primary);
+  color: white;
+  border-radius: var(--sucursales-border-radius) var(--sucursales-border-radius) 0 0;
+}
+
+.sucursales-tabs .p-tabview-panels {
+  background: transparent;
+  border: none;
+  padding: var(--spacing-xl) 0;
+}
+
+/* === FAVORITOS === */
+.favorites-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  animation: fadeInDown var(--sucursales-animation-duration) ease-out;
+}
+
+.favorites-header h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.favorites-header h3 .pi-heart-fill {
+  color: #dc3545;
+  animation: pulse 2s infinite;
+}
+
+.favorites-header p {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* === RESPONSIVE TABS === */
+@media (max-width: 768px) {
+  .sucursales-tabs .p-tabview-nav {
+    flex-direction: column;
+  }
+
+  .sucursales-tabs .p-tabview-nav li {
+    width: 100%;
+  }
+
+  .sucursales-tabs .p-tabview-nav li .p-tabview-nav-link {
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+  }
+
+  .sucursales-tabs .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    border-radius: 0;
+  }
+}
 
 .sucursales-container {
   max-width: 1400px;

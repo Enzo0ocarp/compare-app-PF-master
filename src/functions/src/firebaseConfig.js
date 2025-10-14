@@ -1,7 +1,7 @@
 // src/functions/src/firebaseConfig.js - CONFIGURACIÓN ACTUALIZADA CON VARIABLES DE ENTORNO Y STORAGE
 import { initializeApp } from 'firebase/app';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 
 // Configuración de Firebase usando variables de entorno
@@ -201,6 +201,112 @@ export const validateImageFile = (file) => {
   }
   
   return true;
+};
+
+export const getUserFavoriteBranches = async (userId) => {
+  try {
+    if (!userId) {
+      throw new Error('userId es requerido');
+    }
+
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      console.log('Usuario no existe, creando documento...');
+      await setDoc(userRef, {
+        favoriteBranches: [],
+        createdAt: new Date().toISOString()
+      });
+      return [];
+    }
+
+    return userDoc.data().favoriteBranches || [];
+  } catch (error) {
+    console.error('Error obteniendo favoritos:', error);
+    throw error;
+  }
+};
+
+/**
+ * Agregar sucursal a favoritos
+ */
+export const addBranchToFavorites = async (userId, branchId) => {
+  try {
+    if (!userId || !branchId) {
+      throw new Error('userId y branchId son requeridos');
+    }
+
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      // Crear documento si no existe
+      await setDoc(userRef, {
+        favoriteBranches: [branchId],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    } else {
+      // Actualizar documento existente
+      await updateDoc(userRef, {
+        favoriteBranches: arrayUnion(branchId),
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    console.log('Sucursal agregada a favoritos:', branchId);
+    return true;
+  } catch (error) {
+    console.error('Error agregando favorito:', error);
+    throw error;
+  }
+};
+
+/**
+ * Remover sucursal de favoritos
+ */
+export const removeBranchFromFavorites = async (userId, branchId) => {
+  try {
+    if (!userId || !branchId) {
+      throw new Error('userId y branchId son requeridos');
+    }
+
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      console.warn('Usuario no existe, no hay favoritos para remover');
+      return false;
+    }
+
+    await updateDoc(userRef, {
+      favoriteBranches: arrayRemove(branchId),
+      updatedAt: new Date().toISOString()
+    });
+
+    console.log('Sucursal removida de favoritos:', branchId);
+    return true;
+  } catch (error) {
+    console.error('Error removiendo favorito:', error);
+    throw error;
+  }
+};
+
+/**
+ * Toggle favorito (agregar o remover)
+ */
+export const toggleBranchFavorite = async (userId, branchId, isFavorite) => {
+  try {
+    if (isFavorite) {
+      return await removeBranchFromFavorites(userId, branchId);
+    } else {
+      return await addBranchToFavorites(userId, branchId);
+    }
+  } catch (error) {
+    console.error('Error en toggle favorito:', error);
+    throw error;
+  }
 };
 
 // Log de inicialización

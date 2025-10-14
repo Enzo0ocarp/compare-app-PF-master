@@ -2,6 +2,189 @@
 import axios from 'axios';
 import { auth } from '../src/firebaseConfig';
 
+// Mapeo COMPLETO de códigos de provincia
+const PROVINCIA_MAP = {
+  'AR-B': 'Buenos Aires',
+  'AR-C': 'Ciudad Autónoma de Buenos Aires',
+  'AR-K': 'Catamarca',
+  'AR-H': 'Chaco',
+  'AR-U': 'Chubut',
+  'AR-X': 'Córdoba',
+  'AR-W': 'Corrientes',
+  'AR-E': 'Entre Ríos',
+  'AR-P': 'Formosa',
+  'AR-Y': 'Jujuy',
+  'AR-L': 'La Pampa',
+  'AR-F': 'La Rioja',
+  'AR-M': 'Mendoza',
+  'AR-N': 'Misiones',
+  'AR-Q': 'Neuquén',
+  'AR-R': 'Río Negro',
+  'AR-A': 'Salta',
+  'AR-J': 'San Juan',
+  'AR-D': 'San Luis',
+  'AR-Z': 'Santa Cruz',
+  'AR-S': 'Santa Fe',
+  'AR-G': 'Santiago del Estero',
+  'AR-V': 'Tierra del Fuego',
+  'AR-T': 'Tucumán'
+};
+
+/**
+ * Convierte código de provincia a nombre completo
+ * Si no encuentra el código, lo retorna tal cual para debug
+ */
+export const getProvinceName = (provinciaCode) => {
+  if (!provinciaCode) return 'Sin provincia';
+  
+  // Si ya es un nombre completo, devolverlo
+  if (!provinciaCode.startsWith('AR-')) {
+    return provinciaCode;
+  }
+  
+  // Buscar en el mapeo
+  const name = PROVINCIA_MAP[provinciaCode];
+  
+  // Si no se encuentra, registrar para debug y devolver el código
+  if (!name) {
+    console.warn(`⚠️ Código de provincia desconocido: ${provinciaCode}`);
+    return provinciaCode; // Devolver el código tal cual
+  }
+  
+  return name;
+};
+
+/**
+ * Obtiene todas las provincias únicas de las sucursales
+ * MEJORADO: Agrupa códigos desconocidos
+ */
+export const getUniqueProvinces = async () => {
+  try {
+    const response = await getBranches({ limit: 1000 });
+    const allBranches = response.data || [];
+    
+    // Extraer códigos únicos
+    const provinciaCodes = [...new Set(
+      allBranches
+        .map(branch => branch.provincia)
+        .filter(Boolean)
+    )];
+    
+    console.log('🗺️ Códigos de provincia encontrados:', provinciaCodes);
+    
+    // Convertir códigos a nombres
+    const provinces = provinciaCodes
+      .map(code => {
+        const name = getProvinceName(code);
+        return {
+          code: code,
+          name: name,
+          isUnknown: !PROVINCIA_MAP[code] && code.startsWith('AR-')
+        };
+      })
+      .sort((a, b) => {
+        // Ordenar: conocidas primero, luego desconocidas
+        if (a.isUnknown && !b.isUnknown) return 1;
+        if (!a.isUnknown && b.isUnknown) return -1;
+        return a.name.localeCompare(b.name);
+      });
+    
+    // Log de provincias desconocidas
+    const unknown = provinces.filter(p => p.isUnknown);
+    if (unknown.length > 0) {
+      console.warn('⚠️ Provincias con códigos desconocidos:', unknown);
+    }
+    
+    console.log('✅ Total de provincias únicas:', provinces.length);
+    
+    return provinces;
+  } catch (error) {
+    console.error('Error obteniendo provincias:', error);
+    return [];
+  }
+};
+
+/**
+ * NUEVO: Detecta y registra todos los códigos desconocidos
+ */
+export const findUnknownProvinceCodes = async () => {
+  try {
+    const response = await getBranches({ limit: 1000 });
+    const allBranches = response.data || [];
+    
+    const unknownCodes = new Set();
+    
+    allBranches.forEach(branch => {
+      const code = branch.provincia;
+      if (code && code.startsWith('AR-') && !PROVINCIA_MAP[code]) {
+        unknownCodes.add(code);
+      }
+    });
+    
+    if (unknownCodes.size > 0) {
+      console.log('🔍 CÓDIGOS DESCONOCIDOS ENCONTRADOS:');
+      console.log([...unknownCodes]);
+      console.log('\n📋 Agregar al PROVINCIA_MAP:');
+      [...unknownCodes].forEach(code => {
+        console.log(`  '${code}': 'Nombre de Provincia',`);
+      });
+    } else {
+      console.log('✅ Todos los códigos de provincia están mapeados');
+    }
+    
+    return [...unknownCodes];
+  } catch (error) {
+    console.error('Error buscando códigos desconocidos:', error);
+    return [];
+  }
+};
+
+// FUNCIÓN MEJORADA: getBranches con debug
+export const getBranches = async (params = {}) => {
+  try {
+    console.log('🔍 Obteniendo sucursales con parámetros:', params);
+    
+    const response = await backendApi.get('/products', {
+      params: { 
+        type: 'sucursal',
+        ...params 
+      }
+    });
+    
+    // Enriquecer datos con nombre de provincia completo
+    if (response.data && response.data.data) {
+      response.data.data = response.data.data.map(branch => ({
+        ...branch,
+        provinciaCompleta: getProvinceName(branch.provincia),
+        // Guardar el código original para filtros
+        provinciaCode: branch.provincia
+      }));
+      
+      // Debug: contar provincias únicas
+      const uniqueProvinces = [...new Set(
+        response.data.data.map(b => b.provincia).filter(Boolean)
+      )];
+      
+      console.log(`✅ Sucursales obtenidas: ${response.data.total}`);
+      console.log(`📍 Provincias únicas en esta carga: ${uniqueProvinces.length}`);
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error obteniendo sucursales:', error);
+    throw error;
+  }
+};
+
+// Exponer función de debug en desarrollo
+if (process.env.NODE_ENV === 'development') {
+  window.findUnknownProvinceCodes = findUnknownProvinceCodes;
+  window.checkProvinces = async () => {
+    const provinces = await getUniqueProvinces();
+    console.log('🗺️ PROVINCIAS ENCONTRADAS:', provinces);
+    return provinces;
+  };
+}
 // Configuración para tu backend local
 const backendApi = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000',
@@ -108,24 +291,6 @@ export const searchProducts = async (searchTerm) => {
   }
 };
 
-/**
- * Obtiene todas las sucursales
- */
-export const getBranches = async (params = {}) => {
-  try {
-    console.log('🔍 Obteniendo sucursales...');
-    
-    const response = await backendApi.get('/products', {
-      params: { type: 'sucursal', ...params }
-    });
-    
-    console.log('✅ Sucursales obtenidas:', response.data.total);
-    return response.data;
-  } catch (error) {
-    console.error('❌ Error obteniendo sucursales:', error);
-    throw error;
-  }
-};
 
 /**
  * Obtiene productos por marca - FUNCIÓN CORREGIDA
