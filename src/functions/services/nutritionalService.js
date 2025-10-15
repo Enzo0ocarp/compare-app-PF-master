@@ -27,45 +27,54 @@ const COLLECTIONS = {
   USER_PREFERENCES: 'user_preferences'
 };
 
-// ===== PRODUCTOS CON INFORMACIÓN NUTRICIONAL =====
+// ===== PAGINACIÓN MEJORADA =====
 
 /**
- * Obtiene productos con datos nutricionales
- * @param {number} limitCount - Límite de productos
+ * Obtiene productos con paginación completa
+ * @param {number} pageSize - Tamaño de página
+ * @param {Object} lastDoc - Último documento de la página anterior
  * @param {string} categoria - Filtro por categoría
- * @returns {Promise<Array>} Lista de productos con datos nutricionales
+ * @returns {Promise<Object>} {products, lastVisible, hasMore}
  */
-export const getNutritionalProducts = async (limitCount = 20, categoria = null) => {
+export const getNutritionalProductsPaginated = async (pageSize = 20, lastDoc = null, categoria = null) => {
   try {
-    console.log('🔍 Obteniendo productos nutricionales...');
+    console.log('🔍 Cargando productos paginados...');
     
-    // Consulta base para productos activos
     let productQuery = query(
       collection(db, COLLECTIONS.PRODUCTS),
       where('activo', '==', true),
       orderBy('fecha_actualizacion', 'desc'),
-      limit(limitCount)
+      limit(pageSize)
     );
 
-    // Agregar filtro de categoría si se especifica
+    // Filtro de categoría
     if (categoria && categoria !== 'todos') {
       productQuery = query(
         collection(db, COLLECTIONS.PRODUCTS),
         where('activo', '==', true),
         where('categoria_principal', '==', categoria),
         orderBy('fecha_actualizacion', 'desc'),
-        limit(limitCount)
+        limit(pageSize)
+      );
+    }
+
+    // Paginación: empezar después del último documento
+    if (lastDoc) {
+      productQuery = query(
+        productQuery,
+        startAfter(lastDoc)
       );
     }
 
     const productsSnapshot = await getDocs(productQuery);
     const products = [];
+    let lastVisible = null;
     
-    // Procesar cada producto y buscar sus datos nutricionales
+    // Procesar productos
     for (const productDoc of productsSnapshot.docs) {
       const productData = productDoc.data();
       
-      // Buscar datos nutricionales del producto
+      // Buscar datos nutricionales
       const nutritionQuery = query(
         collection(db, COLLECTIONS.NUTRITION_DATA),
         where('producto_id', '==', productData.id)
@@ -78,10 +87,11 @@ export const getNutritionalProducts = async (limitCount = 20, categoria = null) 
         nutritionalData = nutritionSnapshot.docs[0].data();
       }
       
-      // Construir objeto producto completo
+      // Construir producto completo
       const producto = {
         id: productDoc.id,
         firebaseId: productDoc.id,
+        docRef: productDoc, // Guardar referencia para paginación
         ...productData,
         
         // Información nutricional
@@ -110,19 +120,23 @@ export const getNutritionalProducts = async (limitCount = 20, categoria = null) 
           confidence: nutritionalData.confianza || 0,
           lastUpdated: nutritionalData.fecha_actualizacion,
           
-          // Score nutricional calculado
+          // Score nutricional
           score: calculateNutritionalScore(nutritionalData)
         } : null,
         
         // Información del producto
         nombre: productData.nombre,
         marca: productData.marca,
-        precio: 0, // Se puede obtener de otra colección si existe
+        precio: 0,
         presentacion: productData.presentacion,
         categoria: productData.categoria_principal,
         subcategoria: productData.subcategoria_volumen,
         pesoGramos: productData.peso_gramos,
         volumenMl: productData.volumen_ml,
+        
+        // Imagen
+        imageUrl: productData.imageUrl || '/api/placeholder/150/150',
+        imageStatus: productData.imageStatus || null,
         
         // Metadatos
         lastUpdated: productData.fecha_actualizacion,
@@ -131,17 +145,69 @@ export const getNutritionalProducts = async (limitCount = 20, categoria = null) 
       };
       
       products.push(producto);
+      lastVisible = productDoc; // Guardar último documento
     }
 
-    console.log(`✅ Productos nutricionales obtenidos: ${products.length}`);
-    return products;
+    const hasMore = productsSnapshot.docs.length === pageSize;
+    
+    console.log(`✅ Productos cargados: ${products.length}, Hay más: ${hasMore}`);
+    
+    return {
+      products,
+      lastVisible,
+      hasMore
+    };
     
   } catch (error) {
-    console.error('❌ Error obteniendo productos nutricionales:', error);
+    console.error('❌ Error cargando productos paginados:', error);
     throw error;
   }
 };
 
+/**
+ * Carga TODOS los productos (sin límite) - Usar con precaución
+ * @param {string} categoria - Filtro opcional por categoría
+ * @returns {Promise<Array>} Todos los productos
+ */
+export const getAllNutritionalProducts = async (categoria = null) => {
+  try {
+    console.log('⚠️ CARGANDO TODOS LOS PRODUCTOS - Esto puede tardar...');
+    
+    const allProducts = [];
+    let lastDoc = null;
+    let hasMore = true;
+    let pageCount = 0;
+    const pageSize = 50; // Cargar de a 50 para no sobrecargar
+    
+    while (hasMore) {
+      const { products, lastVisible, hasMore: moreAvailable } = await getNutritionalProductsPaginated(
+        pageSize,
+        lastDoc,
+        categoria
+      );
+      
+      allProducts.push(...products);
+      lastDoc = lastVisible;
+      hasMore = moreAvailable;
+      pageCount++;
+      
+      console.log(`📄 Página ${pageCount} cargada, Total: ${allProducts.length}`);
+      
+      // Límite de seguridad: máximo 20 páginas (1000 productos)
+      if (pageCount >= 20) {
+        console.warn('⚠️ Límite de seguridad alcanzado (1000 productos)');
+        break;
+      }
+    }
+    
+    console.log(`✅ TOTAL DE PRODUCTOS CARGADOS: ${allProducts.length}`);
+    return allProducts;
+    
+  } catch (error) {
+    console.error('❌ Error cargando todos los productos:', error);
+    throw error;
+  }
+};
 /**
  * Busca productos nutricionales por término
  * @param {string} searchTerm - Término de búsqueda
