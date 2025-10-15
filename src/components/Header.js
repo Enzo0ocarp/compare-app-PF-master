@@ -1,29 +1,24 @@
-// Header.js - Versión Corregida con Namespace
+// Header.js - Versión Corregida SIN modo oscuro y SIN /ofertas
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Menu } from 'primereact/menu';
 import { Badge } from 'primereact/badge';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { auth } from '../functions/src/firebaseConfig';
+import { auth, db } from '../functions/src/firebaseConfig';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
+import { collection, query, where, orderBy, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { useNotification } from './Notification';
 import logo from '../img/logo.jpg';
 import '../styles/Header.css';
 
-/**
- * Componente de encabezado optimizado con namespace correcto
- * CORREGIDO: Ahora aplica el namespace .app-header para evitar conflictos
- */
 const Header = ({ 
     projectLogo, 
-    onSearch, 
-    showThemeToggle = true, 
     showNotifications = true,
     className = ""
 }) => {
     const [user, setUser] = useState(null);
-    const [darkMode, setDarkMode] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -32,65 +27,57 @@ const Header = ({
     const notificationsRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-
-    // Detectar tema del sistema y aplicar
-    useEffect(() => {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const savedTheme = localStorage.getItem('theme');
-        setDarkMode(savedTheme ? savedTheme === 'dark' : prefersDark);
-    }, []);
-
-    // Aplicar tema al DOM
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-        localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-    }, [darkMode]);
+    const { showNotification } = useNotification();
 
     // Listener de autenticación
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             setUser(currentUser);
-            if (currentUser) {
-                loadUserNotifications();
-            } else {
-                setNotifications([]);
-            }
         });
         return () => unsubscribe();
     }, []);
 
-    // Cargar notificaciones (simuladas)
-    const loadUserNotifications = () => {
-        const mockNotifications = [
-            { 
-                id: 1, 
-                text: 'Nueva oferta disponible en DIA', 
-                type: 'info', 
-                unread: true,
-                time: 'Hace 2 horas',
-                url: '/productos?filter=ofertas'
-            },
-            { 
-                id: 2, 
-                text: 'Precio actualizado en tu lista de favoritos', 
-                type: 'success', 
-                unread: true,
-                time: 'Hace 1 hora',
-                url: '/favoritos'
-            }
-        ];
-        setNotifications(mockNotifications);
-    };
+    // Cargar notificaciones REALES desde Firestore
+    useEffect(() => {
+        if (!user) {
+            setNotifications([]);
+            return;
+        }
 
-    const toggleTheme = () => setDarkMode(!darkMode);
+        const notificationsQuery = query(
+            collection(db, 'notifications'),
+            where('userId', '==', user.uid),
+            orderBy('createdAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(
+            notificationsQuery,
+            (snapshot) => {
+                const notifs = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    createdAt: doc.data().createdAt?.toDate() || new Date()
+                }));
+                setNotifications(notifs);
+            },
+            (error) => {
+                console.error('Error cargando notificaciones:', error);
+                setNotifications([]);
+            }
+        );
+
+        return () => unsubscribe();
+    }, [user]);
 
     const handleLogout = async () => {
         try {
             await signOut(auth);
             navigate('/login');
             setIsMobileMenuOpen(false);
+            showNotification('Sesión cerrada exitosamente', 'success');
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
+            showNotification('Error al cerrar sesión', 'error');
         }
     };
 
@@ -100,7 +87,6 @@ const Header = ({
             const encodedQuery = encodeURIComponent(searchQuery.trim());
             navigate(`/productos?search=${encodedQuery}`);
             setSearchQuery('');
-            if (onSearch) onSearch(searchQuery.trim());
         }
     };
 
@@ -115,28 +101,65 @@ const Header = ({
         notificationsRef.current.toggle(event);
     };
 
-    const markNotificationAsRead = (notificationId) => {
-        setNotifications(prev => 
-            prev.map(notif => 
-                notif.id === notificationId 
-                    ? { ...notif, unread: false }
-                    : notif
-            )
-        );
+    const markNotificationAsRead = async (notificationId) => {
+        try {
+            const notifRef = doc(db, 'notifications', notificationId);
+            await updateDoc(notifRef, { read: true });
+            
+            setNotifications(prev => 
+                prev.map(notif => 
+                    notif.id === notificationId 
+                        ? { ...notif, read: true }
+                        : notif
+                )
+            );
+        } catch (error) {
+            console.error('Error marcando notificación:', error);
+        }
     };
 
-    const markAllAsRead = () => {
-        setNotifications(prev => 
-            prev.map(notif => ({ ...notif, unread: false }))
-        );
+    const markAllAsRead = async () => {
+        try {
+            const unreadNotifs = notifications.filter(n => !n.read);
+            
+            await Promise.all(
+                unreadNotifs.map(notif => {
+                    const notifRef = doc(db, 'notifications', notif.id);
+                    return updateDoc(notifRef, { read: true });
+                })
+            );
+            
+            setNotifications(prev => 
+                prev.map(notif => ({ ...notif, read: true }))
+            );
+            
+            showNotification('Todas las notificaciones marcadas como leídas', 'success');
+        } catch (error) {
+            console.error('Error marcando todas:', error);
+            showNotification('Error al marcar notificaciones', 'error');
+        }
     };
 
-    const handleNotificationAction = (notification) => {
-        markNotificationAsRead(notification.id);
+    const handleNotificationAction = async (notification) => {
+        await markNotificationAsRead(notification.id);
         if (notification.url) {
             navigateToPage(notification.url);
         }
         notificationsRef.current.hide();
+    };
+
+    const formatNotificationTime = (date) => {
+        const now = new Date();
+        const diff = now - date;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+
+        if (minutes < 1) return 'Ahora';
+        if (minutes < 60) return `Hace ${minutes} min`;
+        if (hours < 24) return `Hace ${hours} h`;
+        if (days < 7) return `Hace ${days} días`;
+        return date.toLocaleDateString();
     };
 
     const userMenuItems = user ? [
@@ -163,7 +186,7 @@ const Header = ({
         }
     ] : [];
 
-    const unreadCount = notifications.filter(n => n.unread).length;
+    const unreadCount = notifications.filter(n => !n.read).length;
     const isActiveRoute = (path) => location.pathname === path;
 
     const notificationsTemplate = () => (
@@ -184,15 +207,15 @@ const Header = ({
                     notifications.map((notification) => (
                         <div
                             key={notification.id}
-                            className={`notification-item ${notification.unread ? 'unread' : ''}`}
+                            className={`notification-item ${!notification.read ? 'unread' : ''}`}
                             onClick={() => handleNotificationAction(notification)}
                         >
                             <div className="notification-icon">
-                                <i className="pi pi-info-circle"></i>
+                                <i className={`pi ${notification.icon || 'pi-info-circle'}`}></i>
                             </div>
                             <div className="notification-content">
-                                <span>{notification.text}</span>
-                                <small>{notification.time}</small>
+                                <span>{notification.message}</span>
+                                <small>{formatNotificationTime(notification.createdAt)}</small>
                             </div>
                         </div>
                     ))
@@ -207,8 +230,7 @@ const Header = ({
     );
 
     return (
-        // ✅ NAMESPACE PRINCIPAL APLICADO
-        <div className={`app-header ${className}`} data-theme={darkMode ? 'dark' : 'light'}>
+        <div className={`app-header ${className}`}>
             <header className="header-container">
                 <div className="header-content">
                     {/* Logo y marca */}
@@ -226,11 +248,6 @@ const Header = ({
                             onClick={() => navigateToPage('/')}
                             role="button"
                             tabIndex={0}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                    navigateToPage('/');
-                                }
-                            }}
                         >
                             <div className="header-logo-container">
                                 <img 
@@ -247,7 +264,7 @@ const Header = ({
                         </div>
                     </div>
 
-                    {/* Navegación desktop */}
+                    {/* Navegación desktop - SIN /ofertas */}
                     <nav className="desktop-nav">
                         <Button
                             label="Productos"
@@ -261,13 +278,6 @@ const Header = ({
                             icon="pi pi-map-marker"
                             className={`nav-button ${isActiveRoute('/sucursales') ? 'active' : ''}`}
                             onClick={() => navigateToPage('/sucursales')}
-                            text
-                        />
-                        <Button
-                            label="Ofertas"
-                            icon="pi pi-tag"
-                            className={`nav-button ${isActiveRoute('/ofertas') ? 'active' : ''}`}
-                            onClick={() => navigateToPage('/ofertas')}
                             text
                         />
                     </nav>
@@ -291,22 +301,8 @@ const Header = ({
                         </form>
                     </div>
 
-                    {/* Acciones */}
+                    {/* Acciones - SIN modo oscuro */}
                     <div className="header-actions">
-                        {/* Tema */}
-                        {showThemeToggle && (
-                            <Button
-                                icon={darkMode ? "pi pi-sun" : "pi pi-moon"}
-                                className="theme-toggle"
-                                onClick={toggleTheme}
-                                tooltip={darkMode ? "Modo claro" : "Modo oscuro"}
-                                tooltipOptions={{ position: 'bottom' }}
-                                rounded
-                                text
-                                aria-label={darkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-                            />
-                        )}
-
                         {/* Notificaciones */}
                         {user && showNotifications && (
                             <>
@@ -318,7 +314,6 @@ const Header = ({
                                     tooltipOptions={{ position: 'bottom' }}
                                     rounded
                                     text
-                                    aria-label={`Notificaciones${unreadCount > 0 ? ` (${unreadCount} sin leer)` : ''}`}
                                 >
                                     {unreadCount > 0 && (
                                         <Badge value={unreadCount} severity="info" />
@@ -350,12 +345,11 @@ const Header = ({
                                     tooltip={`Hola, ${user.displayName || user.email}`}
                                     tooltipOptions={{ position: 'bottom' }}
                                     rounded
-                                    aria-label="Menú de usuario"
                                 >
                                     {user.photoURL ? (
                                         <img
                                             src={user.photoURL}
-                                            alt="Avatar del usuario"
+                                            alt="Avatar"
                                             className="avatar-image"
                                         />
                                     ) : (
@@ -376,15 +370,13 @@ const Header = ({
                     </div>
                 </div>
 
-                {/* Menú móvil */}
+                {/* Menú móvil - SIN /ofertas */}
                 <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
                     <div 
                         className="mobile-menu-overlay" 
                         onClick={toggleMobileMenu}
-                        aria-label="Cerrar menú"
                     ></div>
                     <div className="mobile-menu-content">
-                        {/* Header del menú móvil */}
                         <div className="mobile-menu-header">
                             <div className="mobile-user-profile">
                                 {user ? (
@@ -393,7 +385,7 @@ const Header = ({
                                             {user.photoURL ? (
                                                 <img 
                                                     src={user.photoURL} 
-                                                    alt="Avatar del usuario" 
+                                                    alt="Avatar" 
                                                     className="avatar-image"
                                                 />
                                             ) : (
@@ -419,11 +411,9 @@ const Header = ({
                                 onClick={toggleMobileMenu}
                                 rounded
                                 text
-                                aria-label="Cerrar menú"
                             />
                         </div>
 
-                        {/* Navegación móvil */}
                         <nav className="mobile-nav">
                             <Button
                                 label="Inicio"
@@ -446,15 +436,7 @@ const Header = ({
                                 onClick={() => navigateToPage('/sucursales')}
                                 text
                             />
-                            <Button
-                                label="Ofertas"
-                                icon="pi pi-tag"
-                                className={`mobile-nav-button ${isActiveRoute('/ofertas') ? 'active' : ''}`}
-                                onClick={() => navigateToPage('/ofertas')}
-                                text
-                            />
                             
-                            {/* Opciones para usuarios autenticados */}
                             {user && (
                                 <>
                                     <div style={{ 
@@ -487,7 +469,6 @@ const Header = ({
                             )}
                         </nav>
 
-                        {/* Footer del menú móvil */}
                         <div className="mobile-menu-footer">
                             {user ? (
                                 <Button

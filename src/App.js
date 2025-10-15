@@ -1,4 +1,4 @@
-// App.js - Versión corregida con NotificationProvider envolviendo todo
+// App.js - Versión corregida SIN /ofertas
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -17,7 +17,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import PageLayout from './components/PageLayout';
-import { NotificationProvider } from './components/Notification'; // Cambio aquí: destructuring
+import { NotificationProvider } from './components/Notification';
 
 // Estilos de PrimeReact
 import 'primeicons/primeicons.css';
@@ -30,19 +30,18 @@ import './styles/LayoutUtilities.css';
 
 function App() {
     return (
-        <NotificationProvider> {/* Envolver TODA la aplicación */}
-            <div className="global-utilities"> {/* Aplicar namespace de GlobalStyles */}
+        <NotificationProvider>
+            <div className="global-utilities">
                 <Router>
                     <div className="app-container">
-                        {/* Header con namespace aplicado correctamente */}
+                        {/* Header SIN showThemeToggle */}
                         <Header 
-                            showThemeToggle={true}
                             showNotifications={true}
                         />
 
-                        {/* Rutas con PageLayout para manejar espaciado */}
+                        {/* Rutas - SIN /ofertas */}
                         <Routes>
-                            {/* Rutas públicas con navegación completa */}
+                            {/* Rutas públicas */}
                             <Route 
                                 path="/" 
                                 element={
@@ -113,7 +112,7 @@ function App() {
                                 } 
                             />
                             
-                            {/* Rutas de autenticación sin navegación */}
+                            {/* Rutas de autenticación */}
                             <Route 
                                 path="/login" 
                                 element={
@@ -144,7 +143,7 @@ function App() {
                                 } 
                             />
                             
-                            {/* Rutas protegidas con navegación completa */}
+                            {/* Rutas protegidas */}
                             <Route 
                                 path="/perfil" 
                                 element={
@@ -160,7 +159,6 @@ function App() {
                             />
                         </Routes>
 
-                        {/* BottomNav fijo al final */}
                         <BottomNav />
                     </div>
                 </Router>
