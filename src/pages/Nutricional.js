@@ -445,17 +445,6 @@ const NutritionalScreen = () => {
                 <div className="nutri-btn-glow"></div>
               </button>
             )}
-
-            {/* Cambiar rol (demo) - REMOVER EN PRODUCCIÓN */}
-            {user && (
-              <button
-                onClick={() => setUserRole(userRole === 'admin' ? 'user' : 'admin')}
-                className="nutri-role-toggle-modern"
-              >
-                <span className="nutri-role-indicator"></span>
-                {userRole === 'admin' ? 'Admin' : 'Usuario'}
-              </button>
-            )}
           </div>
         </div>
       </div>
