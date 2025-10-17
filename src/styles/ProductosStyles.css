@@ -1,6 +1,124 @@
 /* ProductosStyles.css - Compare & Nourish v4.0 - MINIMALISTA */
 /* Paleta: Dorado #D4A574, Verde Menta #A8D5D1, Azul #2C3E50, Beige #F5F1E8 */
+/* Agregar al final de ProductosStyles.css */
 
+/* === INFINITE SCROLL LOADER === */
+.infinite-scroll-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl) 0;
+  gap: var(--spacing-sm);
+}
+
+.infinite-scroll-loader p {
+  color: var(--color-texto-secundario);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* === END OF RESULTS === */
+.end-of-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl) 0;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+  border-top: 2px dashed rgba(212, 165, 116, 0.3);
+}
+
+.end-of-results i {
+  font-size: 2rem;
+  color: var(--color-verde-menta);
+}
+
+.end-of-results p {
+  color: var(--color-texto-secundario);
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* === UPDATE BANNER === */
+.update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, var(--color-dorado) 0%, var(--color-verde-menta) 100%);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  box-shadow: var(--shadow-medium);
+  animation: slideDown 0.3s ease;
+}
+
+.update-banner span {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.update-banner .p-button {
+  background: white !important;
+  color: var(--color-dorado) !important;
+  border: none !important;
+  padding: 0.4rem 1rem !important;
+  font-weight: 700 !important;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* === LAZY IMAGE LOADING === */
+.product-image.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* === RESPONSIVE ADJUSTMENTS === */
+@media (max-width: 768px) {
+  .infinite-scroll-loader {
+    padding: var(--spacing-md) 0;
+  }
+
+  .end-of-results {
+    padding: var(--spacing-md) 0;
+    margin-top: var(--spacing-md);
+  }
+
+  .update-banner {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
+  }
+
+  .update-banner span {
+    font-size: 0.85rem;
+  }
+}
 /* === VARIABLES MINIMALISTAS === */
 :root {
   --color-dorado: #D4A574;

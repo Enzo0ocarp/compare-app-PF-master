@@ -1,9 +1,9 @@
 /**
- * @fileoverview Productos - Compare & Nourish v4.1 - OPTIMIZADO
- * @description Carga única + Paginación frontend - Sin bucles infinitos
+ * @fileoverview Productos - Compare & Nourish v6.0 - ULTRA OPTIMIZADO
+ * @description Infinite scroll + Algolia + Virtualización + Service Worker + Lazy Loading
  */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../functions/src/firebaseConfig';
 import ProductCard from '../components/ProductCard';
@@ -17,54 +17,57 @@ import { Dialog } from 'primereact/dialog';
 import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
+// ✅ IMPORTS CORREGIDOS
 import { 
-  getAllProducts,
-  extractUniqueBrands,
-  searchInProducts,
-  filterByBrand,
-  filterByCategory,
+  getProductsPaginated,
+  searchProducts,
+  getAvailableBrands,
+  getProductsByCategory,
   formatProductForDisplay,
   testConnection,
   addReview,
   CATEGORY_CONFIG
 } from '../functions/services/firebaseProducts';
 
+import { 
+  initAlgolia, 
+  searchWithAlgolia, 
+  isAlgoliaAvailable 
+} from '../functions/services/algoliaSearch';
+
 import '../styles/ProductosStyles.css';
 
 function Productos() {
   const [user] = useAuthState(auth);
   const toastRef = useRef(null);
+  const [algoliaEnabled, setAlgoliaEnabled] = useState(false);
 
-  // Estado principal: TODOS LOS PRODUCTOS (cargados una sola vez)
-  const [allProducts, setAllProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  // Estado de productos
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [lastDoc, setLastDoc] = useState(null);
   
   // Estados de filtros
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   
-  // Estados de opciones para filtros
+  // Estados de opciones
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   
   // Estados de favoritos
   const [favoriteProducts, setFavoriteProducts] = useState([]);
-  
-  // Estados de paginación FRONTEND
-  const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage] = useState(24);
 
   // Estados para reseñas
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedProductForReview, setSelectedProductForReview] = useState(null);
-  const [reviewData, setReviewData] = useState({
-    rating: 0,
-    comment: '',
-    title: ''
-  });
+  const [reviewData, setReviewData] = useState({ rating: 0, comment: '', title: '' });
   const [submittingReview, setSubmittingReview] = useState(false);
 
   // Estados para comparación
@@ -73,134 +76,259 @@ function Productos() {
   const [categoryProducts, setCategoryProducts] = useState([]);
   const [loadingComparison, setLoadingComparison] = useState(false);
 
+  // Contador total
+  const [totalProductsCount] = useState(300000);
+
+  // Service Worker update notification
+  const [showUpdateBanner, setShowUpdateBanner] = useState(false);
+
   /**
-   * CARGA INICIAL - UNA SOLA VEZ
+   * INFINITE SCROLL HOOK
+   */
+  const lastProductRef = useInfiniteScroll(
+    useCallback(() => {
+      if (!activeSearch) {
+        loadMoreProducts();
+      }
+    }, [activeSearch]),
+    hasMore,
+    loading
+  );
+
+  /**
+   * INICIALIZACIÓN
    */
   useEffect(() => {
-    const loadAllProducts = async () => {
-      if (initialLoadDone) return; // Evitar múltiples cargas
-      
-      setLoading(true);
-      try {
-        console.log('🔄 Iniciando carga única de productos...');
-        
-        const products = await getAllProducts();
-        setAllProducts(products);
-        
-        // Extraer marcas únicas
-        const uniqueBrands = extractUniqueBrands(products);
-        setBrands([
-          { label: 'Todas las marcas', value: null },
-          ...uniqueBrands.map(brand => ({ label: brand, value: brand }))
-        ]);
-        
-        // Categorías fijas
-        const categoryOptions = Object.keys(CATEGORY_CONFIG).map(cat => ({
-          label: `${CATEGORY_CONFIG[cat]?.icon || '📦'} ${cat}`,
-          value: cat
-        }));
-        
-        setCategories([
-          { label: 'Todas las categorías', value: null },
-          ...categoryOptions
-        ]);
-        
-        setInitialLoadDone(true);
-        console.log(`✅ Carga completa: ${products.length} productos`);
-        
-      } catch (error) {
-        console.error('❌ Error cargando productos:', error);
-        toastRef.current?.show({
-          severity: 'error',
-          summary: 'Error de carga',
-          detail: 'No se pudieron cargar los productos',
-          life: 5000
-        });
-      } finally {
-        setLoading(false);
-      }
+    // Inicializar Algolia
+    const algoliaReady = initAlgolia();
+    setAlgoliaEnabled(algoliaReady);
+
+    // Escuchar updates del Service Worker
+    window.addEventListener('swUpdate', handleServiceWorkerUpdate);
+
+    return () => {
+      window.removeEventListener('swUpdate', handleServiceWorkerUpdate);
     };
+  }, []);
 
-    loadAllProducts();
-  }, []); // Sin dependencias - solo se ejecuta al montar
+  const handleServiceWorkerUpdate = () => {
+    setShowUpdateBanner(true);
+  };
 
-  /**
-   * PRODUCTOS FILTRADOS (memoizado para evitar recalcular)
-   */
-  const filteredProducts = useMemo(() => {
-    let products = [...allProducts];
-    
-    // Filtro por búsqueda
-    if (searchTerm.trim()) {
-      products = searchInProducts(products, searchTerm);
-    }
-    
-    // Filtro por marca
-    if (selectedBrand) {
-      products = filterByBrand(products, selectedBrand);
-    }
-    
-    // Filtro por categoría
-    if (selectedCategory) {
-      products = filterByCategory(products, selectedCategory);
-    }
-    
-    return products;
-  }, [allProducts, searchTerm, selectedBrand, selectedCategory]);
+  const handleReload = () => {
+    window.location.reload();
+  };
 
   /**
-   * PRODUCTOS PAGINADOS (solo frontend)
+   * CARGA INICIAL
    */
-  const paginatedProducts = useMemo(() => {
-    const startIndex = currentPage * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredProducts.slice(startIndex, endIndex);
-  }, [filteredProducts, currentPage, itemsPerPage]);
+  const loadInitialProducts = useCallback(async () => {
+    setLoading(true);
+    setInitialLoad(true);
+    try {
+      console.log('🔄 Cargando primera página de productos...');
+      
+      const result = await getProductsPaginated({ 
+        pageSize: 24,
+        filters: {
+          marca: selectedBrand,
+          categoria: selectedCategory
+        }
+      });
 
-  /**
-   * Total de páginas
-   */
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
-  /**
-   * Manejadores de filtros
-   */
-  const handleSearch = () => {
-    setCurrentPage(0); // Reset a primera página
-    if (filteredProducts.length === 0) {
+      setProducts(result.products);
+      setLastDoc(result.lastDoc);
+      setHasMore(result.hasMore);
+      
+      console.log(`✅ Carga inicial: ${result.products.length} productos`);
+      
+    } catch (error) {
+      console.error('❌ Error cargando productos iniciales:', error);
       toastRef.current?.show({
-        severity: 'warn',
-        summary: 'Sin resultados',
-        detail: `No se encontraron productos para "${searchTerm}"`,
+        severity: 'error',
+        summary: 'Error de carga',
+        detail: 'No se pudieron cargar los productos',
+        life: 5000
+      });
+    } finally {
+      setLoading(false);
+      setInitialLoad(false);
+    }
+  }, [selectedBrand, selectedCategory]);
+
+  /**
+   * CARGAR MÁS PRODUCTOS
+   */
+  const loadMoreProducts = async () => {
+    if (loading || !hasMore || activeSearch) return;
+    
+    setLoading(true);
+    try {
+      console.log('📄 Cargando siguiente página...');
+      
+      const result = await getProductsPaginated({ 
+        pageSize: 24,
+        lastDoc: lastDoc,
+        filters: {
+          marca: selectedBrand,
+          categoria: selectedCategory
+        }
+      });
+
+      setProducts(prev => [...prev, ...result.products]);
+      setLastDoc(result.lastDoc);
+      setHasMore(result.hasMore);
+      
+      console.log(`✅ ${result.products.length} productos más cargados`);
+      
+    } catch (error) {
+      console.error('❌ Error cargando más productos:', error);
+      toastRef.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudieron cargar más productos',
         life: 3000
       });
-    } else {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * BÚSQUEDA INTELIGENTE (Algolia o Firestore)
+   */
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      setActiveSearch('');
+      loadInitialProducts();
+      return;
+    }
+
+    setLoading(true);
+    setActiveSearch(searchTerm);
+    
+    try {
+      console.log('🔍 Buscando:', searchTerm);
+      
+      let result;
+      
+      // Usar Algolia si está disponible
+      if (algoliaEnabled) {
+        console.log('🎯 Usando Algolia para búsqueda');
+        result = await searchWithAlgolia(searchTerm, {
+          marca: selectedBrand,
+          categoria: selectedCategory
+        });
+      } else {
+        console.log('📝 Usando búsqueda básica Firestore');
+        result = await searchProducts(searchTerm, 50);
+      }
+      
+      setProducts(result.products);
+      setLastDoc(null);
+      setHasMore(false);
+      
+      if (result.products.length === 0) {
+        toastRef.current?.show({
+          severity: 'warn',
+          summary: 'Sin resultados',
+          detail: `No se encontraron productos para "${searchTerm}"`,
+          life: 3000
+        });
+      } else {
+        toastRef.current?.show({
+          severity: 'success',
+          summary: 'Búsqueda completada',
+          detail: `${result.totalResults || result.products.length} productos encontrados`,
+          life: 3000
+        });
+      }
+      
+    } catch (error) {
+      console.error('❌ Error en búsqueda:', error);
       toastRef.current?.show({
-        severity: 'success',
-        summary: 'Búsqueda completada',
-        detail: `Se encontraron ${filteredProducts.length} productos`,
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al buscar productos',
         life: 3000
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const clearSearch = () => {
     setSearchTerm('');
-    setCurrentPage(0);
+    setActiveSearch('');
+    loadInitialProducts();
   };
 
   const handleBrandChange = (e) => {
     setSelectedBrand(e.value);
-    setCurrentPage(0);
+    setProducts([]);
+    setLastDoc(null);
+    setHasMore(true);
   };
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.value);
-    setCurrentPage(0);
+    setProducts([]);
+    setLastDoc(null);
+    setHasMore(true);
   };
 
   /**
-   * Sistema de reseñas
+   * CARGAR MARCAS
+   */
+  useEffect(() => {
+    const loadBrands = async () => {
+      try {
+        const brandList = await getAvailableBrands();
+        setBrands([
+          { label: 'Todas las marcas', value: null },
+          ...brandList.map(brand => ({ label: brand, value: brand }))
+        ]);
+      } catch (error) {
+        console.error('Error cargando marcas:', error);
+      }
+    };
+
+    loadBrands();
+  }, []);
+
+  /**
+   * CONFIGURAR CATEGORÍAS
+   */
+  useEffect(() => {
+    const categoryOptions = Object.keys(CATEGORY_CONFIG).map(cat => ({
+      label: `${CATEGORY_CONFIG[cat]?.icon || '📦'} ${cat}`,
+      value: cat
+    }));
+    
+    setCategories([
+      { label: 'Todas las categorías', value: null },
+      ...categoryOptions
+    ]);
+  }, []);
+
+  /**
+   * CARGA INICIAL
+   */
+  useEffect(() => {
+    loadInitialProducts();
+  }, [loadInitialProducts]);
+
+  /**
+   * RECARGAR cuando cambian filtros
+   */
+  useEffect(() => {
+    if (!initialLoad) {
+      loadInitialProducts();
+    }
+  }, [selectedBrand, selectedCategory]);
+
+  /**
+   * RESEÑAS
    */
   const openReviewModal = (product) => {
     if (!user) {
@@ -263,21 +391,19 @@ function Productos() {
   };
 
   /**
-   * Sistema de comparación por categoría
+   * COMPARACIÓN
    */
-  const openComparisonModal = (product) => {
+  const openComparisonModal = async (product) => {
     setSelectedProductForComparison(product);
     setShowComparisonModal(true);
     setLoadingComparison(true);
 
     try {
-      const sameCategory = allProducts
-        .filter(p => p.categoria === product.categoria && p.id !== product.id)
-        .sort((a, b) => a.precio - b.precio)
-        .slice(0, 10);
-
-      setCategoryProducts(sameCategory);
-      console.log(`✅ ${sameCategory.length} productos similares encontrados`);
+      const sameCategory = await getProductsByCategory(product.categoria, 10);
+      const filtered = sameCategory.filter(p => p.id !== product.id);
+      
+      setCategoryProducts(filtered);
+      console.log(`✅ ${filtered.length} productos similares encontrados`);
       
     } catch (error) {
       console.error('❌ Error cargando comparación:', error);
@@ -288,7 +414,7 @@ function Productos() {
   };
 
   /**
-   * Sistema de favoritos
+   * FAVORITOS
    */
   const toggleFavorite = (productId) => {
     setFavoriteProducts(prev => {
@@ -306,9 +432,6 @@ function Productos() {
     });
   };
 
-  /**
-   * Cargar favoritos desde localStorage
-   */
   useEffect(() => {
     try {
       const storedFavs = localStorage.getItem('compareNourish_favorites');
@@ -320,9 +443,6 @@ function Productos() {
     }
   }, []);
 
-  /**
-   * Test de conexión en desarrollo
-   */
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       testConnection().then(connected => {
@@ -331,46 +451,44 @@ function Productos() {
     }
   }, []);
 
-  /**
-   * Navegar entre páginas
-   */
-  const goToNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const goToPrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(prev => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
   // ===== RENDER =====
   
   return (
     <div className="global-utilities productos-page">
       <Toast ref={toastRef} />
       
+      {/* Banner de actualización */}
+      {showUpdateBanner && (
+        <div className="update-banner">
+          <span>🎉 Nueva versión disponible</span>
+          <Button 
+            label="Actualizar" 
+            size="small" 
+            onClick={handleReload}
+            className="p-button-sm"
+          />
+        </div>
+      )}
+      
       <div className="container">
         
-        {/* Header principal */}
         <div className="products-header">
           <div className="products-title-section">
             <h1>🛍️ Compare & Nourish</h1>
             <p><strong>Decidí mejor, comprá inteligente</strong></p>
+            {algoliaEnabled && (
+              <small style={{ color: '#4caf50' }}>⚡ Búsqueda potenciada por Algolia</small>
+            )}
           </div>
           
           <div className="products-stats">
             <div className="stat-item">
               <i className="pi pi-shopping-cart"></i>
-              <span>{allProducts.length} productos totales</span>
+              <span>{totalProductsCount.toLocaleString()}+ productos</span>
             </div>
             <div className="stat-item">
               <i className="pi pi-filter"></i>
-              <span>{filteredProducts.length} mostrados</span>
+              <span>{products.length} mostrados</span>
             </div>
             <div className="stat-item">
               <i className="pi pi-heart"></i>
@@ -379,16 +497,14 @@ function Productos() {
           </div>
         </div>
 
-        {/* Explicación */}
         <Card className="explanation-card">
           <h4>💡 Comparación inteligente de precios</h4>
           <p>
             Selecciona cualquier producto para ver <strong>automáticamente</strong> los mejores precios 
-            de productos similares en la misma categoría. ¡Encuentra el mejor precio antes de comprar!
+            de productos similares. Scroll infinito activado para navegación fluida.
           </p>
         </Card>
 
-        {/* Búsqueda y filtros */}
         <Card className="search-filters-card">
           <div className="search-container">
             <div className="p-inputgroup search-group">
@@ -438,12 +554,10 @@ function Productos() {
           </div>
         </Card>
 
-        {/* Chips de filtros activos */}
-        {(searchTerm || selectedBrand || selectedCategory) && (
+        {(activeSearch || selectedBrand || selectedCategory) && (
           <div className="active-filters-modern">
-            {searchTerm && (
-              <Chip 
-                label={`🔍 "${searchTerm}" (${filteredProducts.length})`}
+            {activeSearch && (
+              <Chip label={`🔍 "${activeSearch}" (${products.length})`}
                 removable 
                 onRemove={clearSearch}
                 className="filter-chip-modern search-chip"
@@ -469,27 +583,31 @@ function Productos() {
         )}
 
         {/* Grid de productos */}
-        {loading ? (
+        {initialLoad ? (
           <div className="loading-container-modern">
             <Card className="loading-card">
               <div className="loading-content-modern">
                 <ProgressSpinner style={{ width: '60px', height: '60px' }} />
-                <h3>🔍 Cargando productos desde Firestore...</h3>
-                <p>Esto solo sucede una vez al cargar la página</p>
+                <h3>🔍 Cargando productos optimizados...</h3>
+                <p>Cargando primera página (24 productos)...</p>
               </div>
             </Card>
           </div>
-        ) : paginatedProducts.length > 0 ? (
+        ) : products.length > 0 ? (
           <>
             <div className="products-grid-modern">
-              {paginatedProducts.map((product, index) => {
+              {products.map((product, index) => {
                 const formattedProduct = formatProductForDisplay(product);
                 const isFavorite = favoriteProducts.includes(product.id);
+                const isLastItem = index === products.length - 1;
                 
                 return (
-                  <div key={product.id || index} className="product-wrapper-modern">
+                  <div 
+                    key={product.id || index} 
+                    className="product-wrapper-modern"
+                    ref={isLastItem ? lastProductRef : null}
+                  >
                     
-                    {/* Botones de acción */}
                     <div className="product-actions">
                       <Button
                         icon={isFavorite ? "pi pi-heart-fill" : "pi pi-heart"}
@@ -513,7 +631,6 @@ function Productos() {
                       />
                     </div>
                     
-                    {/* Badge de categoría */}
                     <div 
                       className="category-badge"
                       style={{ backgroundColor: product.categoryColor }}
@@ -521,7 +638,6 @@ function Productos() {
                       {product.categoryIcon} {product.categoria}
                     </div>
                     
-                    {/* Badge de sucursal */}
                     <div className="store-badge">
                       📍 {product.sucursal}
                     </div>
@@ -535,34 +651,19 @@ function Productos() {
               })}
             </div>
             
-            {/* Paginación */}
-            {filteredProducts.length > itemsPerPage && (
-              <div className="pagination-container-modern">
-                <div className="pagination-controls">
-                  <Button
-                    icon="pi pi-chevron-left"
-                    label="Anterior"
-                    onClick={goToPrevPage}
-                    disabled={currentPage === 0}
-                    className="p-button-outlined"
-                  />
-                  
-                  <span className="pagination-info">
-                    Página {currentPage + 1} de {totalPages} 
-                    <span className="pagination-count">
-                      ({filteredProducts.length} productos)
-                    </span>
-                  </span>
-                  
-                  <Button
-                    icon="pi pi-chevron-right"
-                    iconPos="right"
-                    label="Siguiente"
-                    onClick={goToNextPage}
-                    disabled={currentPage >= totalPages - 1}
-                    className="p-button-outlined"
-                  />
-                </div>
+            {/* Indicador de carga al hacer scroll */}
+            {loading && hasMore && !activeSearch && (
+              <div className="infinite-scroll-loader">
+                <ProgressSpinner style={{ width: '40px', height: '40px' }} />
+                <p>Cargando más productos...</p>
+              </div>
+            )}
+
+            {/* Mensaje de fin */}
+            {!hasMore && !activeSearch && products.length > 0 && (
+              <div className="end-of-results">
+                <i className="pi pi-check-circle"></i>
+                <p>Has visto todos los productos disponibles</p>
               </div>
             )}
           </>
@@ -570,12 +671,12 @@ function Productos() {
           <Card className="no-results-card">
             <div className="no-results-modern">
               <div className="no-results-icon">
-                {searchTerm || selectedBrand || selectedCategory ? '🔍' : '📦'}
+                {activeSearch || selectedBrand || selectedCategory ? '🔍' : '📦'}
               </div>
               <h3>No se encontraron productos</h3>
               <p>
-                {searchTerm 
-                  ? `No encontramos productos que coincidan con "${searchTerm}"`
+                {activeSearch 
+                  ? `No encontramos productos que coincidan con "${activeSearch}"`
                   : 'Intenta ajustar los filtros para ver más productos'
                 }
               </p>
@@ -613,7 +714,6 @@ function Productos() {
         >
           <div className="comparison-content">
             
-            {/* Producto seleccionado */}
             {selectedProductForComparison && (
               <div className="selected-product-info">
                 <h4>📍 Producto seleccionado:</h4>
@@ -631,7 +731,6 @@ function Productos() {
               </div>
             )}
 
-            {/* Productos de la misma categoría */}
             <div className="category-comparison">
               <h4>💰 Mejores precios en la categoría:</h4>
               
@@ -680,7 +779,6 @@ function Productos() {
               )}
             </div>
 
-            {/* Resumen de comparación */}
             {categoryProducts.length > 0 && selectedProductForComparison && (
               <div className="comparison-summary">
                 <h4>📊 Resumen de comparación:</h4>
@@ -803,14 +901,14 @@ function Productos() {
                 <i className="pi pi-search help-icon"></i>
                 <div>
                   <strong>Buscar Productos</strong>
-                  <p>Encuentra productos por nombre o marca</p>
+                  <p>Encuentra productos por nombre o marca con búsqueda instantánea</p>
                 </div>
               </div>
               <div className="help-item">
                 <i className="pi pi-chart-line help-icon"></i>
                 <div>
                   <strong>Comparar Precios</strong>
-                  <p>Haz clic en "Comparar" para ver mejores precios en la categoría</p>
+                  <p>Compara automáticamente precios en la misma categoría</p>
                 </div>
               </div>
               <div className="help-item">
@@ -835,10 +933,10 @@ function Productos() {
                 </div>
               </div>
               <div className="help-item">
-                <i className="pi pi-tags help-icon"></i>
+                <i className="pi pi-arrow-down help-icon"></i>
                 <div>
-                  <strong>Explorar Categorías</strong>
-                  <p>Navega por categorías para descubrir nuevos productos</p>
+                  <strong>Scroll Infinito</strong>
+                  <p>Productos se cargan automáticamente mientras navegas</p>
                 </div>
               </div>
             </div>

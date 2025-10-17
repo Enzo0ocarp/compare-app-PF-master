@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "algoliasearch": "^5.40.1",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "express": "^4.21.2",
@@ -21,6 +22,8 @@
     "react-router-dom": "^6.27.0",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
+    "react-virtualized-auto-sizer": "^1.0.26",
+    "react-window": "^2.2.1",
     "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4"
   },
@@ -49,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "workbox-webpack-plugin": "^7.3.0"
   }
 }
