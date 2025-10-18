@@ -1,4 +1,4 @@
-// src/functions/services/firebaseProducts.js - COMPLETO Y CORREGIDO
+// src/functions/services/firebaseProducts.js - VERSIÓN CORREGIDA
 import { 
   collection, 
   query, 
@@ -16,54 +16,67 @@ export const CATEGORY_CONFIG = {
   'Bebidas': { 
     icon: '🥤', 
     color: '#2196f3',
-    keywords: ['coca', 'pepsi', 'agua', 'jugo', 'gaseosa', 'bebida']
+    keywords: ['coca', 'pepsi', 'agua', 'jugo', 'gaseosa', 'bebida'],
+    firebaseKey: 'bebidas' // ⭐ AÑADIDO
   },
   'Lácteos': { 
     icon: '🥛', 
     color: '#4caf50',
-    keywords: ['leche', 'yogur', 'queso', 'manteca', 'crema']
+    keywords: ['leche', 'yogur', 'queso', 'manteca', 'crema'],
+    firebaseKey: 'lácteos' // ⭐ AÑADIDO
   },
   'Aceites y Condimentos': { 
     icon: '🫒', 
     color: '#ff9800',
-    keywords: ['aceite', 'vinagre', 'sal', 'condimento']
+    keywords: ['aceite', 'vinagre', 'sal', 'condimento'],
+    firebaseKey: 'aceites y condimentos' // ⭐ AÑADIDO
   },
   'Cereales y Legumbres': { 
     icon: '🌾', 
     color: '#8bc34a',
-    keywords: ['arroz', 'fideos', 'pasta', 'avena', 'cereal']
+    keywords: ['arroz', 'fideos', 'pasta', 'avena', 'cereal'],
+    firebaseKey: 'cereales y legumbres' // ⭐ AÑADIDO
   },
   'Snacks y Dulces': { 
     icon: '🍪', 
     color: '#e91e63',
-    keywords: ['galletas', 'chocolate', 'alfajor', 'dulce']
+    keywords: ['galletas', 'chocolate', 'alfajor', 'dulce'],
+    firebaseKey: 'snacks y dulces' // ⭐ AÑADIDO
   },
   'Carnes': {
     icon: '🥩',
     color: '#795548',
-    keywords: ['carne', 'pollo', 'pescado', 'jamón', 'chorizo']
+    keywords: ['carne', 'pollo', 'pescado', 'jamón', 'chorizo'],
+    firebaseKey: 'carnes' // ⭐ AÑADIDO
   },
   'Frutas y Verduras': {
     icon: '🍎',
     color: '#4caf50',
-    keywords: ['banana', 'manzana', 'tomate', 'lechuga', 'papa']
+    keywords: ['banana', 'manzana', 'tomate', 'lechuga', 'papa'],
+    firebaseKey: 'frutas y verduras' // ⭐ AÑADIDO
   },
   'Limpieza': {
     icon: '🧽',
     color: '#00bcd4',
-    keywords: ['detergente', 'lavandina', 'jabón', 'papel']
+    keywords: ['detergente', 'lavandina', 'jabón', 'papel'],
+    firebaseKey: 'limpieza' // ⭐ AÑADIDO
   },
   'Otros': { 
     icon: '📦', 
     color: '#9e9e9e',
-    keywords: []
+    keywords: [],
+    firebaseKey: 'otros' // ⭐ AÑADIDO
   }
 };
 
 const determineCategory = (nombre, marca, categoria_principal) => {
   if (categoria_principal) {
-    const categoryName = categoria_principal.charAt(0).toUpperCase() + categoria_principal.slice(1);
-    if (CATEGORY_CONFIG[categoryName]) return categoryName;
+    // Buscar la categoría que coincida con el firebaseKey
+    for (const [categoryName, config] of Object.entries(CATEGORY_CONFIG)) {
+      if (config.firebaseKey === categoria_principal.toLowerCase()) {
+        return categoryName;
+      }
+    }
   }
   
   const nombreLower = (nombre || '').toLowerCase();
@@ -112,7 +125,7 @@ const formatProduct = (doc) => {
   };
 };
 
-// ===== FUNCIÓN: getProductsPaginated =====
+// ⭐ FUNCIÓN CORREGIDA
 export const getProductsPaginated = async ({ 
   pageSize = 24, 
   lastDoc = null,
@@ -126,19 +139,20 @@ export const getProductsPaginated = async ({
       where('activo', '==', true)
     );
 
+    // ⭐ CORRECCIÓN: Convertir categoría a firebaseKey
     if (filters.categoria) {
-      q = query(q, where('categoria_principal', '==', filters.categoria.toLowerCase()));
+      const categoryConfig = CATEGORY_CONFIG[filters.categoria];
+      if (categoryConfig && categoryConfig.firebaseKey) {
+        console.log(`📂 Filtrando por categoría: ${filters.categoria} -> ${categoryConfig.firebaseKey}`);
+        q = query(q, where('categoria_principal', '==', categoryConfig.firebaseKey));
+      }
     }
     
     if (filters.marca) {
       q = query(q, where('marca', '==', filters.marca));
     }
     
-    if (filters.searchTerm) {
-      q = query(q, orderBy('nombre'));
-    } else {
-      q = query(q, orderBy('nombre'));
-    }
+    q = query(q, orderBy('nombre'));
 
     if (lastDoc) {
       q = query(q, startAfter(lastDoc));
@@ -166,7 +180,39 @@ export const getProductsPaginated = async ({
   }
 };
 
-// ===== FUNCIÓN: searchProducts =====
+// ⭐ FUNCIÓN CORREGIDA
+export const getProductsByCategory = async (categoria, limit_count = 10) => {
+  try {
+    console.log(`📂 Cargando productos de categoría: ${categoria}`);
+    
+    // ⭐ CORRECCIÓN: Convertir categoría a firebaseKey
+    const categoryConfig = CATEGORY_CONFIG[categoria];
+    const firebaseKey = categoryConfig?.firebaseKey || categoria.toLowerCase();
+    
+    console.log(`🔍 Buscando en Firebase con key: ${firebaseKey}`);
+    
+    const q = query(
+      collection(db, 'products'),
+      where('activo', '==', true),
+      where('categoria_principal', '==', firebaseKey),
+      orderBy('precio'),
+      limit(limit_count)
+    );
+
+    const snapshot = await getDocs(q);
+    const products = snapshot.docs.map(formatProduct);
+
+    console.log(`✅ ${products.length} productos de ${categoria} cargados`);
+
+    return products;
+
+  } catch (error) {
+    console.error(`❌ Error obteniendo productos de ${categoria}:`, error);
+    return [];
+  }
+};
+
+// ===== RESTO DE FUNCIONES SIN CAMBIOS =====
 export const searchProducts = async (searchTerm, pageSize = 24) => {
   try {
     if (!searchTerm || searchTerm.trim().length < 2) {
@@ -211,7 +257,6 @@ export const searchProducts = async (searchTerm, pageSize = 24) => {
   }
 };
 
-// ===== FUNCIÓN: getAvailableBrands =====
 export const getAvailableBrands = async () => {
   try {
     console.log('🏷️ Cargando marcas disponibles...');
@@ -242,73 +287,6 @@ export const getAvailableBrands = async () => {
     console.error('❌ Error obteniendo marcas:', error);
     return [];
   }
-};
-
-// ===== FUNCIÓN: getProductsByCategory =====
-export const getProductsByCategory = async (categoria, limit_count = 10) => {
-  try {
-    console.log(`📂 Cargando productos de categoría: ${categoria}`);
-    
-    const q = query(
-      collection(db, 'products'),
-      where('activo', '==', true),
-      where('categoria_principal', '==', categoria.toLowerCase()),
-      orderBy('precio'),
-      limit(limit_count)
-    );
-
-    const snapshot = await getDocs(q);
-    const products = snapshot.docs.map(formatProduct);
-
-    console.log(`✅ ${products.length} productos de ${categoria} cargados`);
-
-    return products;
-
-  } catch (error) {
-    console.error(`❌ Error obteniendo productos de ${categoria}:`, error);
-    return [];
-  }
-};
-
-// ===== FUNCIONES LEGACY (mantener compatibilidad) =====
-export const getAllProducts = async () => {
-  console.warn('⚠️ getAllProducts está deprecated. Usa getProductsPaginated');
-  const result = await getProductsPaginated({ pageSize: 100 });
-  return result.products;
-};
-
-export const extractUniqueBrands = (products) => {
-  const brands = [...new Set(
-    products
-      .map(product => product.marca)
-      .filter(marca => marca && marca.trim() !== '')
-  )].sort();
-  
-  return brands;
-};
-
-export const searchInProducts = (products, searchTerm) => {
-  if (!searchTerm || searchTerm.trim().length < 2) {
-    return products;
-  }
-  
-  const searchLower = searchTerm.toLowerCase().trim();
-  
-  return products.filter(product => {
-    const nombre = product.nombre.toLowerCase();
-    const marca = product.marca.toLowerCase();
-    return nombre.includes(searchLower) || marca.includes(searchLower);
-  });
-};
-
-export const filterByBrand = (products, brand) => {
-  if (!brand) return products;
-  return products.filter(p => p.marca === brand);
-};
-
-export const filterByCategory = (products, category) => {
-  if (!category) return products;
-  return products.filter(p => p.categoria === category);
 };
 
 export const formatProductForDisplay = (product) => {
@@ -399,6 +377,47 @@ export const getProductReviews = async (productId) => {
     console.error('❌ Error obteniendo reseñas:', error);
     return [];
   }
+};
+
+// Legacy functions
+export const getAllProducts = async () => {
+  console.warn('⚠️ getAllProducts está deprecated. Usa getProductsPaginated');
+  const result = await getProductsPaginated({ pageSize: 100 });
+  return result.products;
+};
+
+export const extractUniqueBrands = (products) => {
+  const brands = [...new Set(
+    products
+      .map(product => product.marca)
+      .filter(marca => marca && marca.trim() !== '')
+  )].sort();
+  
+  return brands;
+};
+
+export const searchInProducts = (products, searchTerm) => {
+  if (!searchTerm || searchTerm.trim().length < 2) {
+    return products;
+  }
+  
+  const searchLower = searchTerm.toLowerCase().trim();
+  
+  return products.filter(product => {
+    const nombre = product.nombre.toLowerCase();
+    const marca = product.marca.toLowerCase();
+    return nombre.includes(searchLower) || marca.includes(searchLower);
+  });
+};
+
+export const filterByBrand = (products, brand) => {
+  if (!brand) return products;
+  return products.filter(p => p.marca === brand);
+};
+
+export const filterByCategory = (products, category) => {
+  if (!category) return products;
+  return products.filter(p => p.categoria === category);
 };
 
 export default {
