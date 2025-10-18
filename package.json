@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@algolia/client-search": "^5.40.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -11,7 +12,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "firebase": "^11.0.1",
-    "firebase-admin": "^13.0.2",
+    "firebase-admin": "^13.5.0",
     "lucide-react": "^0.537.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.8.4",
@@ -33,7 +34,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "docs": "jsdoc -c jsdoc.conf.json",
-    "docs:watch": "jsdoc -c jsdoc.conf.json --watch"
+    "docs:watch": "jsdoc -c jsdoc.conf.json --watch",
+     "algolia:sync": "node scripts/syncFirebaseToAlgolia.js sync",
+    "algolia:stats": "node scripts/syncFirebaseToAlgolia.js stats",
+    "algolia:cleanup": "node scripts/syncFirebaseToAlgolia.js cleanup"
   },
   "eslintConfig": {
     "extends": [

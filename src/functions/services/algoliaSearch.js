@@ -1,21 +1,23 @@
-// src/functions/services/algoliaSearch.js - CORREGIDO
-import { liteClient as algoliasearch } from 'algoliasearch/lite';
+// src/functions/services/algoliaSearch.js - VERSIÓN v5 CORREGIDA
+import { searchClient } from '@algolia/client-search';
 
 const ALGOLIA_APP_ID = process.env.REACT_APP_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_KEY = process.env.REACT_APP_ALGOLIA_SEARCH_KEY;
 
-let searchClient = null;
-let productsIndex = null;
+let client = null;
+let isInitialized = false;
 
 export const initAlgolia = () => {
   if (ALGOLIA_APP_ID && ALGOLIA_SEARCH_KEY) {
     try {
-      searchClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY);
-      productsIndex = searchClient.initIndex('products');
+      client = searchClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY);
+      isInitialized = true;
       console.log('✅ Algolia inicializado correctamente');
+      console.log('📊 App ID:', ALGOLIA_APP_ID);
       return true;
     } catch (error) {
       console.warn('⚠️ Error inicializando Algolia:', error);
+      isInitialized = false;
       return false;
     }
   }
@@ -24,25 +26,44 @@ export const initAlgolia = () => {
 };
 
 export const searchWithAlgolia = async (query, filters = {}) => {
-  if (!productsIndex) {
+  if (!client || !isInitialized) {
     throw new Error('Algolia no está inicializado');
   }
 
   try {
     const searchParams = {
-      query,
-      hitsPerPage: 50,
-      filters: buildAlgoliaFilters(filters)
+      requests: [
+        {
+          indexName: 'products',
+          query: query,
+          hitsPerPage: 50,
+          filters: buildAlgoliaFilters(filters),
+          attributesToRetrieve: ['*'],
+          attributesToHighlight: ['nombre', 'marca']
+        }
+      ]
     };
 
-    const { hits, nbHits } = await productsIndex.search(query, searchParams);
+    const { results } = await client.search(searchParams);
+    const firstResult = results[0];
+
+    console.log('🎯 Algolia búsqueda exitosa:', firstResult.nbHits, 'resultados');
     
     return {
-      products: hits.map(hit => ({
+      products: firstResult.hits.map(hit => ({
         id: hit.objectID,
+        nombre: hit.nombre || '',
+        marca: hit.marca || '',
+        precio: hit.precio || 0,
+        categoria: hit.categoria_principal || 'Otros',
+        categoria_principal: hit.categoria_principal || '',
+        presentacion: hit.presentacion || '',
+        sucursal: hit.sucursal || 'Varias',
+        activo: hit.activo !== false,
+        // Agregar todos los campos que necesites
         ...hit
       })),
-      totalResults: nbHits
+      totalResults: firstResult.nbHits
     };
   } catch (error) {
     console.error('❌ Error en búsqueda Algolia:', error);
@@ -61,11 +82,11 @@ const buildAlgoliaFilters = (filters) => {
     filterParts.push(`marca:"${filters.marca}"`);
   }
   
-  if (filters.precioMin) {
+  if (filters.precioMin && filters.precioMax) {
+    filterParts.push(`precio:${filters.precioMin} TO ${filters.precioMax}`);
+  } else if (filters.precioMin) {
     filterParts.push(`precio >= ${filters.precioMin}`);
-  }
-  
-  if (filters.precioMax) {
+  } else if (filters.precioMax) {
     filterParts.push(`precio <= ${filters.precioMax}`);
   }
   
@@ -73,23 +94,39 @@ const buildAlgoliaFilters = (filters) => {
 };
 
 export const isAlgoliaAvailable = () => {
-  return productsIndex !== null;
+  return isInitialized && client !== null;
 };
 
 export const indexProductInAlgolia = async (product) => {
-  if (!productsIndex) return;
+  if (!client || !isInitialized) {
+    console.warn('Algolia no está inicializado, no se puede indexar');
+    return;
+  }
   
   try {
-    await productsIndex.saveObject({
-      objectID: product.id,
-      nombre: product.nombre,
-      marca: product.marca,
-      precio: product.precio,
-      categoria_principal: product.categoria_principal,
-      activo: product.activo,
-      timestamp: Date.now()
+    await client.saveObject({
+      indexName: 'products',
+      body: {
+        objectID: product.id,
+        nombre: product.nombre,
+        marca: product.marca,
+        precio: product.precio,
+        categoria_principal: product.categoria_principal,
+        presentacion: product.presentacion,
+        sucursal: product.sucursal,
+        activo: product.activo,
+        timestamp: Date.now()
+      }
     });
+    console.log('✅ Producto indexado en Algolia:', product.id);
   } catch (error) {
-    console.error('Error indexando en Algolia:', error);
+    console.error('❌ Error indexando en Algolia:', error);
   }
+};
+
+export default {
+  initAlgolia,
+  searchWithAlgolia,
+  isAlgoliaAvailable,
+  indexProductInAlgolia
 };
