@@ -18,13 +18,15 @@ import { Rating } from 'primereact/rating';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import { debugCategories } from '../functions/services/firebaseProducts';
 
-// ✅ IMPORTS CORREGIDOS
+// ✅ IMPORTS CORREGIDOS - Agregar getProductPricesAcrossStores
 import { 
   getProductsPaginated,
   searchProducts,
   getAvailableBrands,
   getProductsByCategory,
+  getProductPricesAcrossStores,  // ⭐ AGREGAR ESTA LÍNEA
   formatProductForDisplay,
   testConnection,
   addReview,
@@ -155,6 +157,11 @@ function Productos() {
       setInitialLoad(false);
     }
   }, [selectedBrand, selectedCategory]);
+
+   // ⭐ DEBUG - EJECUTAR UNA VEZ AL INICIO
+  useEffect(() => {
+    debugCategories();
+  }, []);
 
   /**
    * CARGAR MÁS PRODUCTOS
@@ -393,25 +400,73 @@ function Productos() {
   /**
    * COMPARACIÓN
    */
-  const openComparisonModal = async (product) => {
-    setSelectedProductForComparison(product);
-    setShowComparisonModal(true);
-    setLoadingComparison(true);
+/**
+ * COMPARACIÓN - CORREGIDO
+ */
+const openComparisonModal = async (product) => {
+  setSelectedProductForComparison(product);
+  setShowComparisonModal(true);
+  setLoadingComparison(true);
 
-    try {
-      const sameCategory = await getProductsByCategory(product.categoria, 10);
+  try {
+    console.log('🔍 Producto seleccionado para comparación:', product);
+    
+    const productoId = product.producto_id || product.id;
+    
+    if (!productoId) {
+      console.error('❌ No hay producto_id disponible');
+      setCategoryProducts([]);
+      setLoadingComparison(false);
+      return;
+    }
+    
+    const prices = await getProductPricesAcrossStores(productoId);
+    
+    if (prices.length > 0) {
+      setCategoryProducts(prices);
+      console.log(`✅ ${prices.length} precios en diferentes supermercados encontrados`);
+    } else {
+      console.log('⚠️ No hay precios disponibles, buscando productos similares');
+      const categoria = product.category || product.categoria || 'Otros';
+      const sameCategory = await getProductsByCategory(categoria, 10);
       const filtered = sameCategory.filter(p => p.id !== product.id);
-      
       setCategoryProducts(filtered);
       console.log(`✅ ${filtered.length} productos similares encontrados`);
-      
-    } catch (error) {
-      console.error('❌ Error cargando comparación:', error);
-      setCategoryProducts([]);
-    } finally {
-      setLoadingComparison(false);
     }
-  };
+    
+  } catch (error) {
+    console.error('❌ Error cargando comparación:', error);
+    toastRef.current?.show({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'No se pudo cargar la comparación de precios',
+      life: 3000
+    });
+    setCategoryProducts([]);
+  } finally {
+    setLoadingComparison(false);
+  }
+};
+/**
+ * Función auxiliar para buscar productos similares
+ */
+const buscarProductosSimilares = async (product) => {
+  try {
+    // ⭐ OBTENER CATEGORÍA DE FORMA SEGURA
+    const categoria = product.category || product.categoria || 'Otros';
+    
+    console.log(`📂 Buscando productos similares en categoría: ${categoria}`);
+    
+    const sameCategory = await getProductsByCategory(categoria, 10);
+    const filtered = sameCategory.filter(p => p.id !== product.id);
+    
+    setCategoryProducts(filtered);
+    console.log(`✅ ${filtered.length} productos similares encontrados`);
+  } catch (error) {
+    console.error('❌ Error buscando productos similares:', error);
+    setCategoryProducts([]);
+  }
+};
 
   /**
    * FAVORITOS
@@ -697,118 +752,138 @@ function Productos() {
           </Card>
         )}
 
-        {/* Modal de comparación */}
-        <Dialog 
-          header={
-            <div className="flex items-center gap-sm">
-              <span style={{ fontSize: '1.5rem' }}>
-                {selectedProductForComparison?.categoryIcon}
-              </span>
-              <span>Mejores precios en {selectedProductForComparison?.categoria}</span>
-            </div>
-          }
-          visible={showComparisonModal} 
-          style={{ width: '95vw', maxWidth: '800px' }} 
-          onHide={() => setShowComparisonModal(false)}
-          className="comparison-modal"
-        >
-          <div className="comparison-content">
-            
-            {selectedProductForComparison && (
-              <div className="selected-product-info">
-                <h4>📍 Producto seleccionado:</h4>
-                <div className="product-info-card">
-                  <div className="product-details">
-                    <h5>{selectedProductForComparison.nombre}</h5>
-                    <p><strong>Marca:</strong> {selectedProductForComparison.marca}</p>
-                    <p><strong>Precio:</strong> ${selectedProductForComparison.precio.toLocaleString()}</p>
-                    <p><strong>Sucursal:</strong> {selectedProductForComparison.sucursal}</p>
-                    {selectedProductForComparison.presentacion && (
-                      <p><strong>Presentación:</strong> {selectedProductForComparison.presentacion}</p>
+        {/* Modal de comparación - CORREGIDO */}
+<Dialog 
+  header={
+    <div className="flex items-center gap-sm">
+      <span style={{ fontSize: '1.5rem' }}>
+        {selectedProductForComparison?.categoryIcon}
+      </span>
+      <span>Comparar precios: {selectedProductForComparison?.title}</span>
+    </div>
+  }
+  visible={showComparisonModal} 
+  style={{ width: '95vw', maxWidth: '900px' }} 
+  onHide={() => setShowComparisonModal(false)}
+  className="comparison-modal"
+>
+  <div className="comparison-content">
+    
+    {selectedProductForComparison && (
+      <div className="selected-product-info">
+        <h4>📍 Producto seleccionado:</h4>
+        <div className="product-info-card">
+          <div className="product-details">
+            <h5>{selectedProductForComparison.title}</h5>
+            <p><strong>Marca:</strong> {selectedProductForComparison.brand}</p>
+            <p><strong>Precio actual:</strong> ${selectedProductForComparison.price?.toLocaleString()}</p>
+            <p><strong>Supermercado:</strong> {selectedProductForComparison.sucursalNombre || selectedProductForComparison.sucursal}</p>
+            {selectedProductForComparison.presentation && (
+              <p><strong>Presentación:</strong> {selectedProductForComparison.presentation}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ⭐ COMPARACIÓN POR SUPERMERCADO */}
+    <div className="category-comparison">
+      <h4>🏪 Este producto en otros supermercados:</h4>
+      
+      {loadingComparison ? (
+        <div className="loading-comparison">
+          <ProgressSpinner size="small" />
+          <span>Buscando mejores precios...</span>
+        </div>
+      ) : categoryProducts.length > 0 ? (
+        <>
+          <div className="comparison-products-list">
+            {categoryProducts.map((priceData, index) => {
+              const isBestPrice = index === 0;
+              const savings = selectedProductForComparison && priceData.precio < selectedProductForComparison.price 
+                ? (selectedProductForComparison.price - priceData.precio) 
+                : 0;
+              
+              return (
+                <div key={priceData.id || index} className="comparison-product-item">
+                  <div className="rank-badge">
+                    #{index + 1}
+                  </div>
+                  <div className="product-comparison-info">
+                    <div className="product-name">
+                      <strong>{priceData.sucursal}</strong>
+                      {priceData.url_producto && (
+                        <a 
+                          href={priceData.url_producto} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="store-link"
+                        >
+                          Ver en tienda <i className="pi pi-external-link"></i>
+                        </a>
+                      )}
+                    </div>
+                    <div className="price-comparison">
+                      <span className="price">${priceData.precio?.toLocaleString()}</span>
+                      <span className="store-date">
+                        Actualizado: {new Date(priceData.fechaRelevamiento).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {isBestPrice && (
+                      <div className="best-price-badge">
+                        🏆 MEJOR PRECIO
+                      </div>
+                    )}
+                    {savings > 0 && (
+                      <div className="savings-info">
+                        💰 Ahorrás ${savings.toLocaleString()}
+                      </div>
                     )}
                   </div>
                 </div>
-              </div>
-            )}
-
-            <div className="category-comparison">
-              <h4>💰 Mejores precios en la categoría:</h4>
-              
-              {loadingComparison ? (
-                <div className="loading-comparison">
-                  <ProgressSpinner size="small" />
-                  <span>Buscando mejores precios...</span>
-                </div>
-              ) : categoryProducts.length > 0 ? (
-                <div className="comparison-products-list">
-                  {categoryProducts.map((product, index) => (
-                    <div key={product.id} className="comparison-product-item">
-                      <div className="rank-badge">
-                        #{index + 1}
-                      </div>
-                      <div className="product-comparison-info">
-                        <div className="product-name">
-                          <strong>{product.nombre}</strong>
-                          <span className="brand-name">{product.marca}</span>
-                          {product.presentacion && (
-                            <span className="brand-name">{product.presentacion}</span>
-                          )}
-                        </div>
-                        <div className="price-comparison">
-                          <span className="price">${product.precio.toLocaleString()}</span>
-                          <span className="store">en {product.sucursal}</span>
-                        </div>
-                        {index === 0 && (
-                          <div className="best-price-badge">
-                            🏆 MEJOR PRECIO
-                          </div>
-                        )}
-                        {selectedProductForComparison && product.precio < selectedProductForComparison.precio && (
-                          <div className="savings-info">
-                            💰 Ahorrás ${(selectedProductForComparison.precio - product.precio).toLocaleString()}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="no-comparison-products">
-                  <p>No se encontraron otros productos en esta categoría para comparar.</p>
-                </div>
-              )}
-            </div>
-
-            {categoryProducts.length > 0 && selectedProductForComparison && (
-              <div className="comparison-summary">
-                <h4>📊 Resumen de comparación:</h4>
-                <div className="summary-stats">
-                  <div className="stat">
-                    <span className="label">Productos comparados:</span>
-                    <span className="value">{categoryProducts.length + 1}</span>
-                  </div>
-                  <div className="stat">
-                    <span className="label">Mejor precio:</span>
-                    <span className="value">${Math.min(...categoryProducts.map(p => p.precio), selectedProductForComparison.precio).toLocaleString()}</span>
-                  </div>
-                  <div className="stat">
-                    <span className="label">Precio más alto:</span>
-                    <span className="value">${Math.max(...categoryProducts.map(p => p.precio), selectedProductForComparison.precio).toLocaleString()}</span>
-                  </div>
-                  {categoryProducts.length > 0 && (
-                    <div className="stat">
-                      <span className="label">Ahorro máximo posible:</span>
-                      <span className="value savings">
-                        ${(Math.max(...categoryProducts.map(p => p.precio), selectedProductForComparison.precio) - 
-                           Math.min(...categoryProducts.map(p => p.precio), selectedProductForComparison.precio)).toLocaleString()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+              );
+            })}
           </div>
-        </Dialog>
+
+          {/* ⭐ RESUMEN DE COMPARACIÓN */}
+          <div className="comparison-summary">
+            <h4>📊 Resumen de comparación:</h4>
+            <div className="summary-stats">
+              <div className="stat">
+                <span className="label">Supermercados comparados:</span>
+                <span className="value">{categoryProducts.length}</span>
+              </div>
+              <div className="stat">
+                <span className="label">Mejor precio:</span>
+                <span className="value">
+                  ${Math.min(...categoryProducts.map(p => p.precio)).toLocaleString()}
+                </span>
+              </div>
+              <div className="stat">
+                <span className="label">Precio más alto:</span>
+                <span className="value">
+                  ${Math.max(...categoryProducts.map(p => p.precio)).toLocaleString()}
+                </span>
+              </div>
+              <div className="stat">
+                <span className="label">Ahorro máximo:</span>
+                <span className="value savings">
+                  ${(Math.max(...categoryProducts.map(p => p.precio)) - 
+                     Math.min(...categoryProducts.map(p => p.precio))).toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="no-comparison-products">
+          <p>No se encontraron otros precios para este producto en diferentes supermercados.</p>
+          <p className="text-muted">Intenta con otro producto o ayúdanos agregando precios de otros supermercados.</p>
+        </div>
+      )}
+    </div>
+  </div>
+</Dialog>
 
         {/* Modal de reseña */}
         <Dialog 

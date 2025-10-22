@@ -17,7 +17,39 @@
   font-size: 0.9rem;
   margin: 0;
 }
+/* === ESTILOS ADICIONALES PARA COMPARACIÓN === */
+.store-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--color-verde-menta);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  transition: all 0.2s ease;
+}
 
+.store-link:hover {
+  color: var(--color-dorado);
+  text-decoration: underline;
+}
+
+.store-date {
+  font-size: 0.75rem;
+  color: var(--color-texto-secundario);
+  font-style: italic;
+}
+
+.no-comparison-products {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--color-texto-secundario);
+}
+
+.no-comparison-products .text-muted {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
 /* === END OF RESULTS === */
 .end-of-results {
   display: flex;

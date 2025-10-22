@@ -1,9 +1,6 @@
 /**
- * @fileoverview ProductCard Corregido - Compare & Nourish v3.2
- * @description Card de producto sin referencias a stock, enfocado en comparación de precios
- * @author Compare & Nourish Team
- * @version 3.2.0
- * @since 2025
+ * @fileoverview ProductCard Corregido - Compare & Nourish v3.3
+ * @description Card de producto CON PRECIOS VISIBLES
  */
 
 import React, { useState } from 'react';
@@ -25,15 +22,19 @@ function ProductCard({ product, onCompare, onAddImage }) {
         setDialogVisible(false);
     };
 
+    // ⭐ CALCULAR PRECIO REAL
+    const precioReal = product.price || product.precio || product.precioMax || 0;
+    const precioOriginal = product.originalPrice || product.precioMax || 0;
+
     const calculateDiscount = () => {
-        if (product.originalPrice && product.price) {
-            return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+        if (precioOriginal && precioReal && precioOriginal > precioReal) {
+            return Math.round(((precioOriginal - precioReal) / precioOriginal) * 100);
         }
         return product.discount || 0;
     };
 
     const discount = calculateDiscount();
-    const savings = product.originalPrice ? product.originalPrice - product.price : 0;
+    const savings = precioOriginal && precioReal ? precioOriginal - precioReal : 0;
 
     /**
      * Header del card con imagen o placeholder
@@ -44,7 +45,7 @@ function ProductCard({ product, onCompare, onAddImage }) {
                 {product.image && product.hasImage ? (
                     <img 
                         src={product.image} 
-                        alt={product.title}
+                        alt={product.title || product.nombre}
                         className="product-image"
                         onError={(e) => {
                             e.target.style.display = 'none';
@@ -53,7 +54,6 @@ function ProductCard({ product, onCompare, onAddImage }) {
                     />
                 ) : null}
                 
-                {/* Placeholder cuando no hay imagen */}
                 <div 
                     className="product-placeholder" 
                     style={{ 
@@ -66,7 +66,7 @@ function ProductCard({ product, onCompare, onAddImage }) {
                             {product.categoryIcon || '📦'}
                         </span>
                         <span className="placeholder-text">
-                            {product.category || 'Producto'}
+                            {product.category || product.categoria || 'Producto'}
                         </span>
                         {onAddImage && (
                             <Button
@@ -85,7 +85,6 @@ function ProductCard({ product, onCompare, onAddImage }) {
                 </div>
             </div>
             
-            {/* Badges de información */}
             <div className="product-badges">
                 {discount > 0 && (
                     <Badge 
@@ -101,9 +100,9 @@ function ProductCard({ product, onCompare, onAddImage }) {
                         className="trending-badge"
                     />
                 )}
-                {product.sucursal && (
+                {(product.sucursal || product.sucursalNombre) && (
                     <Badge 
-                        value={product.sucursal} 
+                        value={product.sucursalNombre || product.sucursal} 
                         severity="info" 
                         className="store-badge"
                     />
@@ -151,21 +150,21 @@ function ProductCard({ product, onCompare, onAddImage }) {
             >
                 <div className="product-card-content">
                     
-                    {/* Información del producto */}
                     <div className="product-title-section">
-                        <h3 className="product-title">{product.title}</h3>
-                        {product.brand && (
+                        <h3 className="product-title">{product.title || product.nombre}</h3>
+                        {(product.brand || product.marca) && (
                             <div className="product-brand">
                                 <i className="pi pi-bookmark"></i>
-                                <span>{product.brand}</span>
+                                <span>{product.brand || product.marca}</span>
                             </div>
                         )}
-                        {product.presentation && (
-                            <p className="product-presentation">{product.presentation}</p>
+                        {(product.presentation || product.presentacion) && (
+                            <p className="product-presentation">
+                                {product.presentation || product.presentacion}
+                            </p>
                         )}
                     </div>
                     
-                    {/* Rating del producto */}
                     {product.rating && (
                         <div className="product-rating">
                             <div className="stars-container">
@@ -183,34 +182,46 @@ function ProductCard({ product, onCompare, onAddImage }) {
                         </div>
                     )}
                     
-                    {/* Precio del producto */}
+                    {/* ⭐ SECCIÓN DE PRECIOS CORREGIDA */}
                     <div className="product-pricing">
-                        {product.originalPrice && product.originalPrice > product.price ? (
-                            <div className="price-with-discount">
-                                <span className="original-price">
-                                    ${product.originalPrice?.toLocaleString()}
-                                </span>
-                                <span className="discounted-price">
-                                    ${product.price?.toLocaleString()}
-                                </span>
-                                {savings > 0 && (
-                                    <span className="savings">
-                                        Ahorrás ${savings.toLocaleString()}
+                        {precioReal > 0 ? (
+                            <>
+                                {precioOriginal && precioOriginal > precioReal ? (
+                                    <div className="price-with-discount">
+                                        <span className="original-price">
+                                            ${precioOriginal.toLocaleString()}
+                                        </span>
+                                        <span className="discounted-price">
+                                            ${precioReal.toLocaleString()}
+                                        </span>
+                                        {savings > 0 && (
+                                            <span className="savings">
+                                                Ahorrás ${savings.toLocaleString()}
+                                            </span>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <span className="current-price">
+                                        ${precioReal.toLocaleString()}
                                     </span>
                                 )}
-                            </div>
+                            </>
                         ) : (
-                            <span className="current-price">
-                                ${product.price?.toLocaleString()}
+                            <span className="current-price text-muted">
+                                Precio no disponible
                             </span>
                         )}
                     </div>
                     
-                    {/* Información de sucursal */}
-                    {product.sucursal && (
+                    {(product.sucursal || product.sucursalNombre) && (
                         <div className="store-info">
                             <i className="pi pi-map-marker"></i>
-                            <span>Disponible en {product.sucursal}</span>
+                            <span>
+                                {product.sucursalNombre === 'Ver precios por sucursal' 
+                                    ? 'Disponible en múltiples sucursales'
+                                    : `Disponible en ${product.sucursalNombre || product.sucursal}`
+                                }
+                            </span>
                         </div>
                     )}
                 </div>
@@ -234,12 +245,11 @@ function ProductCard({ product, onCompare, onAddImage }) {
             >
                 <div className="dialog-content">
                     
-                    {/* Imagen o placeholder en el modal */}
                     <div className="dialog-image-section">
                         {product.image && product.hasImage ? (
                             <img 
                                 src={product.image} 
-                                alt={product.title}
+                                alt={product.title || product.nombre}
                                 className="dialog-product-image"
                             />
                         ) : (
@@ -263,7 +273,6 @@ function ProductCard({ product, onCompare, onAddImage }) {
                             </div>
                         )}
                         
-                        {/* Badges en el modal */}
                         {discount > 0 && (
                             <div className="dialog-discount-badge">
                                 -{discount}% OFF
@@ -271,17 +280,15 @@ function ProductCard({ product, onCompare, onAddImage }) {
                         )}
                     </div>
                     
-                    {/* Información detallada */}
                     <div className="dialog-info">
                         <div className="dialog-header-info">
-                            <h3>{product.title}</h3>
+                            <h3>{product.title || product.nombre}</h3>
                             <div className="dialog-category">
                                 <i className="pi pi-tag"></i>
-                                <span>{product.category}</span>
+                                <span>{product.category || product.categoria}</span>
                             </div>
                         </div>
                         
-                        {/* Rating en el modal */}
                         {product.rating && (
                             <div className="dialog-rating">
                                 <Rating 
@@ -294,60 +301,66 @@ function ProductCard({ product, onCompare, onAddImage }) {
                             </div>
                         )}
                         
-                        {/* Precios en el modal */}
+                        {/* ⭐ PRECIOS EN MODAL CORREGIDOS */}
                         <div className="dialog-pricing">
-                            {product.originalPrice && product.originalPrice > product.price ? (
+                            {precioReal > 0 ? (
                                 <>
-                                    <span className="dialog-original-price">
-                                        Antes: ${product.originalPrice?.toLocaleString()}
-                                    </span>
-                                    <span className="dialog-current-price">
-                                        Ahora: ${product.price?.toLocaleString()}
-                                    </span>
-                                    {savings > 0 && (
-                                        <div className="dialog-savings">
-                                            <i className="pi pi-dollar"></i>
-                                            <span>Te ahorrás ${savings.toLocaleString()}</span>
-                                        </div>
+                                    {precioOriginal && precioOriginal > precioReal ? (
+                                        <>
+                                            <span className="dialog-original-price">
+                                                Antes: ${precioOriginal.toLocaleString()}
+                                            </span>
+                                            <span className="dialog-current-price">
+                                                Ahora: ${precioReal.toLocaleString()}
+                                            </span>
+                                            {savings > 0 && (
+                                                <div className="dialog-savings">
+                                                    <i className="pi pi-dollar"></i>
+                                                    <span>Te ahorrás ${savings.toLocaleString()}</span>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <span className="dialog-current-price">
+                                            Precio: ${precioReal.toLocaleString()}
+                                        </span>
                                     )}
                                 </>
                             ) : (
-                                <span className="dialog-current-price">
-                                    Precio: ${product.price?.toLocaleString()}
+                                <span className="dialog-current-price text-muted">
+                                    Precio no disponible - Ver comparación para más opciones
                                 </span>
                             )}
                         </div>
                         
-                        {/* Descripción del producto */}
                         <div className="dialog-description">
                             <h4>📋 Información del producto</h4>
                             <p>{product.description || 'Descripción no disponible'}</p>
                             
                             <div className="product-details-grid">
-                                {product.brand && (
+                                {(product.brand || product.marca) && (
                                     <div className="detail-item">
-                                        <strong>Marca:</strong> {product.brand}
+                                        <strong>Marca:</strong> {product.brand || product.marca}
                                     </div>
                                 )}
-                                {product.presentation && (
+                                {(product.presentation || product.presentacion) && (
                                     <div className="detail-item">
-                                        <strong>Presentación:</strong> {product.presentation}
+                                        <strong>Presentación:</strong> {product.presentation || product.presentacion}
                                     </div>
                                 )}
-                                {product.category && (
+                                {(product.category || product.categoria) && (
                                     <div className="detail-item">
-                                        <strong>Categoría:</strong> {product.category}
+                                        <strong>Categoría:</strong> {product.category || product.categoria}
                                     </div>
                                 )}
-                                {product.sucursal && (
+                                {(product.sucursal || product.sucursalNombre) && (
                                     <div className="detail-item">
-                                        <strong>Sucursal:</strong> {product.sucursal}
+                                        <strong>Disponibilidad:</strong> {product.sucursalNombre || product.sucursal}
                                     </div>
                                 )}
                             </div>
                         </div>
                         
-                        {/* Sección de comparación */}
                         {onCompare && (
                             <div className="dialog-comparison-section">
                                 <h4>💰 Comparación de precios</h4>
@@ -369,7 +382,6 @@ function ProductCard({ product, onCompare, onAddImage }) {
                     </div>
                 </div>
                 
-                {/* Footer del modal */}
                 <div className="dialog-footer">
                     <div className="dialog-actions">
                         {onCompare && (
