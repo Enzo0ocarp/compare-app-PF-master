@@ -28,103 +28,619 @@ const normalizeText = (text) => {
 // ⭐ CATEGORY_CONFIG ACTUALIZADO con firebaseKey normalizado
 // ⭐ CATEGORY_CONFIG COMPLETO CON TODAS LAS CATEGORÍAS DE FIREBASE
 export const CATEGORY_CONFIG = {
-  'Aceites y Grasas': { 
-    icon: '🫒', 
-    color: '#ff9800',
-    keywords: ['aceite', 'grasa', 'manteca', 'margarina', 'oliva'],
-    firebaseKey: 'aceites_grasas'
+  // ACEITES Y GRASAS
+  'Aceites y Grasas': {
+    name: 'Aceites y Grasas',
+    icon: '🫒',
+    color: '#f59e0b',
+    firebaseKey: 'aceites_grasas',
+    subcategories: []
   },
-  'Bebidas': { 
-    icon: '🥤', 
-    color: '#2196f3',
-    keywords: ['coca', 'pepsi', 'agua', 'jugo', 'gaseosa', 'bebida', 'refresco'],
-    firebaseKey: 'bebidas'
+
+  // LÁCTEOS - Subdivisiones
+  'Leches': {
+    name: 'Leches',
+    icon: '🥛',
+    color: '#ffffff',
+    firebaseKey: 'leches',
+    subcategories: []
   },
-  'Carnes y Pescados': {
+  'Yogures': {
+    name: 'Yogures',
+    icon: '🥄',
+    color: '#fef3c7',
+    firebaseKey: 'yogures',
+    subcategories: []
+  },
+  'Quesos': {
+    name: 'Quesos',
+    icon: '🧀',
+    color: '#fde68a',
+    firebaseKey: 'quesos',
+    subcategories: []
+  },
+  'Mantecas y Cremas': {
+    name: 'Mantecas y Cremas',
+    icon: '🧈',
+    color: '#fef3c7',
+    firebaseKey: 'mantecas_cremas',
+    subcategories: []
+  },
+  'Postres Lácteos': {
+    name: 'Postres Lácteos',
+    icon: '🍮',
+    color: '#fde68a',
+    firebaseKey: 'postres_lacteos',
+    subcategories: []
+  },
+  'Leches Vegetales': {
+    name: 'Leches Vegetales',
+    icon: '🌱',
+    color: '#d1fae5',
+    firebaseKey: 'leches_vegetales',
+    subcategories: []
+  },
+
+  // CARNES Y PROTEÍNAS
+  'Carne Vacuna': {
+    name: 'Carne Vacuna',
     icon: '🥩',
-    color: '#795548',
-    keywords: ['carne', 'pollo', 'pescado', 'jamon', 'chorizo', 'vacuna', 'cerdo'],
-    firebaseKey: 'carnes_pescados'
+    color: '#dc2626',
+    firebaseKey: 'carne_vacuna',
+    subcategories: []
   },
-  'Cereales y Granos': { 
-    icon: '🌾', 
-    color: '#8bc34a',
-    keywords: ['arroz', 'fideos', 'pasta', 'avena', 'cereal', 'trigo', 'harina'],
-    firebaseKey: 'cereales_granos'
+  'Carne de Pollo': {
+    name: 'Carne de Pollo',
+    icon: '🍗',
+    color: '#fbbf24',
+    firebaseKey: 'carne_pollo',
+    subcategories: []
   },
-  'Condimentos': {
-    icon: '🧂',
-    color: '#ff6f00',
-    keywords: ['sal', 'pimienta', 'condimento', 'especias', 'vinagre', 'salsa'],
-    firebaseKey: 'condimentos'
+  'Carne de Cerdo': {
+    name: 'Carne de Cerdo',
+    icon: '🥓',
+    color: '#f97316',
+    firebaseKey: 'carne_cerdo',
+    subcategories: []
   },
-  'Conservas': {
-    icon: '🥫',
-    color: '#ff5722',
-    keywords: ['conserva', 'lata', 'enlatado', 'atun', 'tomate'],
-    firebaseKey: 'conservas'
+  'Pescados y Mariscos': {
+    name: 'Pescados y Mariscos',
+    icon: '🐟',
+    color: '#0ea5e9',
+    firebaseKey: 'pescados_mariscos',
+    subcategories: []
   },
-  'Frutas y Verduras': {
+  'Fiambres y Embutidos': {
+    name: 'Fiambres y Embutidos',
+    icon: '🥓',
+    color: '#dc2626',
+    firebaseKey: 'fiambres_embutidos',
+    subcategories: []
+  },
+  'Salchichas y Hamburguesas': {
+    name: 'Salchichas y Hamburguesas',
+    icon: '🌭',
+    color: '#dc2626',
+    firebaseKey: 'salchichas_hamburguesas',
+    subcategories: []
+  },
+
+  // CEREALES, GRANOS Y HARINAS
+  'Arroz': {
+    name: 'Arroz',
+    icon: '🍚',
+    color: '#fef3c7',
+    firebaseKey: 'arroz',
+    subcategories: []
+  },
+  'Pastas': {
+    name: 'Pastas',
+    icon: '🍝',
+    color: '#fbbf24',
+    firebaseKey: 'pastas',
+    subcategories: []
+  },
+  'Harinas': {
+    name: 'Harinas',
+    icon: '🌾',
+    color: '#fef3c7',
+    firebaseKey: 'harinas',
+    subcategories: []
+  },
+  'Cereales de Desayuno': {
+    name: 'Cereales de Desayuno',
+    icon: '🥣',
+    color: '#fbbf24',
+    firebaseKey: 'cereales_desayuno',
+    subcategories: []
+  },
+  'Avena y Quinoa': {
+    name: 'Avena y Quinoa',
+    icon: '🌾',
+    color: '#d1fae5',
+    firebaseKey: 'avena_quinoa',
+    subcategories: []
+  },
+  'Polenta y Sémola': {
+    name: 'Polenta y Sémola',
+    icon: '🌽',
+    color: '#fde68a',
+    firebaseKey: 'polenta_semola',
+    subcategories: []
+  },
+
+  // BEBIDAS - Subdivisiones detalladas
+  'Aguas': {
+    name: 'Aguas',
+    icon: '💧',
+    color: '#93c5fd',
+    firebaseKey: 'aguas',
+    subcategories: []
+  },
+  'Gaseosas': {
+    name: 'Gaseosas',
+    icon: '🥤',
+    color: '#f87171',
+    firebaseKey: 'gaseosas',
+    subcategories: []
+  },
+  'Jugos y Néctares': {
+    name: 'Jugos y Néctares',
+    icon: '🧃',
+    color: '#fb923c',
+    firebaseKey: 'jugos_nectares',
+    subcategories: []
+  },
+  'Bebidas Energéticas': {
+    name: 'Bebidas Energéticas',
+    icon: '⚡',
+    color: '#fbbf24',
+    firebaseKey: 'bebidas_energeticas',
+    subcategories: []
+  },
+  'Té, Café e Infusiones': {
+    name: 'Té, Café e Infusiones',
+    icon: '☕',
+    color: '#92400e',
+    firebaseKey: 'te_cafe_infusiones',
+    subcategories: []
+  },
+  'Bebidas Alcohólicas': {
+    name: 'Bebidas Alcohólicas',
+    icon: '🍷',
+    color: '#7c2d12',
+    firebaseKey: 'bebidas_alcoholicas',
+    subcategories: []
+  },
+
+  // SNACKS Y DULCES - Muy detallado
+  'Galletas Dulces': {
+    name: 'Galletas Dulces',
+    icon: '🍪',
+    color: '#fde68a',
+    firebaseKey: 'galletas_dulces',
+    subcategories: []
+  },
+  'Galletas Saladas': {
+    name: 'Galletas Saladas',
+    icon: '🧈',
+    color: '#fef3c7',
+    firebaseKey: 'galletas_saladas',
+    subcategories: []
+  },
+  'Chocolates': {
+    name: 'Chocolates',
+    icon: '🍫',
+    color: '#78350f',
+    firebaseKey: 'chocolates',
+    subcategories: []
+  },
+  'Alfajores': {
+    name: 'Alfajores',
+    icon: '🥐',
+    color: '#92400e',
+    firebaseKey: 'alfajores',
+    subcategories: []
+  },
+  'Golosinas': {
+    name: 'Golosinas',
+    icon: '🍬',
+    color: '#f9a8d4',
+    firebaseKey: 'golosinas',
+    subcategories: []
+  },
+  'Snacks Salados': {
+    name: 'Snacks Salados',
+    icon: '🥨',
+    color: '#fbbf24',
+    firebaseKey: 'snacks_salados',
+    subcategories: []
+  },
+  'Barras de Cereales': {
+    name: 'Barras de Cereales',
+    icon: '🍫',
+    color: '#d97706',
+    firebaseKey: 'barras_cereales',
+    subcategories: []
+  },
+  'Turrones y Mazapanes': {
+    name: 'Turrones y Mazapanes',
+    icon: '🍬',
+    color: '#fde68a',
+    firebaseKey: 'turrones_mazapanes',
+    subcategories: []
+  },
+
+  // FRUTAS Y VERDURAS
+  'Frutas Frescas': {
+    name: 'Frutas Frescas',
     icon: '🍎',
-    color: '#4caf50',
-    keywords: ['banana', 'manzana', 'tomate', 'lechuga', 'papa', 'fruta', 'verdura'],
-    firebaseKey: 'frutas_verduras'
+    color: '#dc2626',
+    firebaseKey: 'frutas_frescas',
+    subcategories: []
   },
-  'Lácteos': { 
-    icon: '🥛', 
-    color: '#4fc3f7',
-    keywords: ['leche', 'yogur', 'queso', 'crema', 'dulce de leche'],
-    firebaseKey: 'lacteos'
+  'Verduras Frescas': {
+    name: 'Verduras Frescas',
+    icon: '🥬',
+    color: '#16a34a',
+    firebaseKey: 'verduras_frescas',
+    subcategories: []
   },
-  'Panadería': {
+  'Frutas y Verduras Congeladas': {
+    name: 'Frutas y Verduras Congeladas',
+    icon: '❄️',
+    color: '#93c5fd',
+    firebaseKey: 'frutas_verduras_congeladas',
+    subcategories: []
+  },
+  'Frutas Secas y Deshidratadas': {
+    name: 'Frutas Secas y Deshidratadas',
+    icon: '🥜',
+    color: '#d97706',
+    firebaseKey: 'frutas_secas',
+    subcategories: []
+  },
+  'Frutos Secos': {
+    name: 'Frutos Secos',
+    icon: '🌰',
+    color: '#92400e',
+    firebaseKey: 'frutos_secos',
+    subcategories: []
+  },
+
+  // PANIFICADOS Y REPOSTERÍA
+  'Pan Fresco': {
+    name: 'Pan Fresco',
     icon: '🍞',
-    color: '#ffb74d',
-    keywords: ['pan', 'factura', 'medialunas', 'galleta', 'tostadas'],
-    firebaseKey: 'panaderia'
+    color: '#d97706',
+    firebaseKey: 'pan_fresco',
+    subcategories: []
   },
-  'Snacks y Dulces': { 
-    icon: '🍪', 
-    color: '#e91e63',
-    keywords: ['galletas', 'chocolate', 'alfajor', 'dulce', 'snack', 'caramelo', 'golosina'],
-    firebaseKey: 'snacks_dulces'
+  'Pan Tostado y Grisines': {
+    name: 'Pan Tostado y Grisines',
+    icon: '🥖',
+    color: '#fbbf24',
+    firebaseKey: 'pan_tostado',
+    subcategories: []
   },
-  'Limpieza': {
-    icon: '🧽',
-    color: '#00bcd4',
-    keywords: ['detergente', 'lavandina', 'jabon', 'papel', 'limpieza', 'desinfectante'],
-    firebaseKey: 'limpieza'
+  'Pan Rallado y Rebozadores': {
+    name: 'Pan Rallado y Rebozadores',
+    icon: '🍞',
+    color: '#fde68a',
+    firebaseKey: 'pan_rallado',
+    subcategories: []
   },
-  'Higiene Personal': {
-    icon: '🧴',
-    color: '#9c27b0',
-    keywords: ['shampoo', 'jabon', 'crema', 'pasta dental', 'higiene', 'desodorante'],
-    firebaseKey: 'higiene_personal'
+  'Repostería': {
+    name: 'Repostería',
+    icon: '🧁',
+    color: '#fbbf24',
+    firebaseKey: 'reposteria',
+    subcategories: []
   },
-  'Congelados': {
-    icon: '🧊',
-    color: '#81d4fa',
-    keywords: ['congelado', 'helado', 'hielo', 'frozen'],
-    firebaseKey: 'congelados'
+  'Tortas y Tartas': {
+    name: 'Tortas y Tartas',
+    icon: '🎂',
+    color: '#f9a8d4',
+    firebaseKey: 'tortas_tartas',
+    subcategories: []
   },
-  'Bebés': {
+
+  // CONDIMENTOS Y ADEREZOS
+  'Salsas': {
+    name: 'Salsas',
+    icon: '🥫',
+    color: '#dc2626',
+    firebaseKey: 'salsas',
+    subcategories: []
+  },
+  'Aderezos': {
+    name: 'Aderezos',
+    icon: '🥗',
+    color: '#16a34a',
+    firebaseKey: 'aderezos',
+    subcategories: []
+  },
+  'Condimentos y Especias': {
+    name: 'Condimentos y Especias',
+    icon: '🌶️',
+    color: '#dc2626',
+    firebaseKey: 'condimentos_especias',
+    subcategories: []
+  },
+  'Caldos y Sopas': {
+    name: 'Caldos y Sopas',
+    icon: '🍲',
+    color: '#f59e0b',
+    firebaseKey: 'caldos_sopas',
+    subcategories: []
+  },
+  'Vinagres': {
+    name: 'Vinagres',
+    icon: '🍾',
+    color: '#92400e',
+    firebaseKey: 'vinagres',
+    subcategories: []
+  },
+
+  // CONSERVAS Y ENLATADOS
+  'Conservas de Verduras': {
+    name: 'Conservas de Verduras',
+    icon: '🥫',
+    color: '#16a34a',
+    firebaseKey: 'conservas_verduras',
+    subcategories: []
+  },
+  'Conservas de Pescado': {
+    name: 'Conservas de Pescado',
+    icon: '🐟',
+    color: '#0ea5e9',
+    firebaseKey: 'conservas_pescado',
+    subcategories: []
+  },
+  'Frutas en Conserva': {
+    name: 'Frutas en Conserva',
+    icon: '🍑',
+    color: '#fb923c',
+    firebaseKey: 'frutas_conserva',
+    subcategories: []
+  },
+  'Pickles y Encurtidos': {
+    name: 'Pickles y Encurtidos',
+    icon: '🥒',
+    color: '#16a34a',
+    firebaseKey: 'pickles_encurtidos',
+    subcategories: []
+  },
+
+  // DULCES Y POSTRES
+  'Mermeladas y Dulces': {
+    name: 'Mermeladas y Dulces',
+    icon: '🍯',
+    color: '#f59e0b',
+    firebaseKey: 'mermeladas_dulces',
+    subcategories: []
+  },
+  'Helados': {
+    name: 'Helados',
+    icon: '🍦',
+    color: '#93c5fd',
+    firebaseKey: 'helados',
+    subcategories: []
+  },
+  'Postres Preparados': {
+    name: 'Postres Preparados',
+    icon: '🍰',
+    color: '#fbbf24',
+    firebaseKey: 'postres_preparados',
+    subcategories: []
+  },
+
+  // LEGUMBRES Y SEMILLAS
+  'Legumbres': {
+    name: 'Legumbres',
+    icon: '🫘',
+    color: '#92400e',
+    firebaseKey: 'legumbres',
+    subcategories: []
+  },
+  'Semillas': {
+    name: 'Semillas',
+    icon: '🌻',
+    color: '#fbbf24',
+    firebaseKey: 'semillas',
+    subcategories: []
+  },
+
+  // COMIDAS PREPARADAS Y CONGELADAS
+  'Pizzas Congeladas': {
+    name: 'Pizzas Congeladas',
+    icon: '🍕',
+    color: '#dc2626',
+    firebaseKey: 'pizzas_congeladas',
+    subcategories: []
+  },
+  'Empanadas y Tartas Congeladas': {
+    name: 'Empanadas y Tartas Congeladas',
+    icon: '🥟',
+    color: '#fbbf24',
+    firebaseKey: 'empanadas_congeladas',
+    subcategories: []
+  },
+  'Comidas Preparadas': {
+    name: 'Comidas Preparadas',
+    icon: '🍱',
+    color: '#f59e0b',
+    firebaseKey: 'comidas_preparadas',
+    subcategories: []
+  },
+  'Milanesas y Rebozados': {
+    name: 'Milanesas y Rebozados',
+    icon: '🍖',
+    color: '#d97706',
+    firebaseKey: 'milanesas_rebozados',
+    subcategories: []
+  },
+  'Papas Congeladas': {
+    name: 'Papas Congeladas',
+    icon: '🍟',
+    color: '#fbbf24',
+    firebaseKey: 'papas_congeladas',
+    subcategories: []
+  },
+
+  // PRODUCTOS PARA BEBÉS
+  'Pañales': {
+    name: 'Pañales',
+    icon: '🍼',
+    color: '#93c5fd',
+    firebaseKey: 'panales',
+    subcategories: []
+  },
+  'Leche de Fórmula': {
+    name: 'Leche de Fórmula',
+    icon: '🍼',
+    color: '#fef3c7',
+    firebaseKey: 'leche_formula',
+    subcategories: []
+  },
+  'Alimentos para Bebés': {
+    name: 'Alimentos para Bebés',
     icon: '👶',
-    color: '#ffb3ba',
-    keywords: ['bebe', 'pañal', 'leche materna', 'papilla'],
-    firebaseKey: 'bebes'
+    color: '#fde68a',
+    firebaseKey: 'alimentos_bebes',
+    subcategories: []
   },
-  'Mascotas': {
+  'Toallitas y Cuidado': {
+    name: 'Toallitas y Cuidado',
+    icon: '🧴',
+    color: '#bfdbfe',
+    firebaseKey: 'toallitas_cuidado',
+    subcategories: []
+  },
+
+  // HIGIENE Y LIMPIEZA
+  'Jabones y Shampoos': {
+    name: 'Jabones y Shampoos',
+    icon: '🧴',
+    color: '#93c5fd',
+    firebaseKey: 'jabones_shampoos',
+    subcategories: []
+  },
+  'Productos de Limpieza': {
+    name: 'Productos de Limpieza',
+    icon: '🧽',
+    color: '#bfdbfe',
+    firebaseKey: 'productos_limpieza',
+    subcategories: []
+  },
+  'Papel Higiénico y Toallas': {
+    name: 'Papel Higiénico y Toallas',
+    icon: '🧻',
+    color: '#fef3c7',
+    firebaseKey: 'papel_higienico',
+    subcategories: []
+  },
+  'Detergentes': {
+    name: 'Detergentes',
+    icon: '🧼',
+    color: '#93c5fd',
+    firebaseKey: 'detergentes',
+    subcategories: []
+  },
+  'Productos de Higiene Personal': {
+    name: 'Productos de Higiene Personal',
+    icon: '💆',
+    color: '#f9a8d4',
+    firebaseKey: 'higiene_personal',
+    subcategories: []
+  },
+
+  // MASCOTAS
+  'Alimento para Perros': {
+    name: 'Alimento para Perros',
     icon: '🐕',
-    color: '#795548',
-    keywords: ['perro', 'gato', 'mascota', 'alimento', 'pet'],
-    firebaseKey: 'mascotas'
+    color: '#f59e0b',
+    firebaseKey: 'alimento_perros',
+    subcategories: []
   },
-  'Otros': { 
-    icon: '📦', 
-    color: '#9e9e9e',
-    keywords: [],
-    firebaseKey: 'otros'
+  'Alimento para Gatos': {
+    name: 'Alimento para Gatos',
+    icon: '🐈',
+    color: '#fbbf24',
+    firebaseKey: 'alimento_gatos',
+    subcategories: []
+  },
+  'Accesorios para Mascotas': {
+    name: 'Accesorios para Mascotas',
+    icon: '🦴',
+    color: '#d97706',
+    firebaseKey: 'accesorios_mascotas',
+    subcategories: []
+  },
+
+  // PRODUCTOS ESPECIALES
+  'Productos Sin TACC': {
+    name: 'Productos Sin TACC',
+    icon: '🌾',
+    color: '#d1fae5',
+    firebaseKey: 'sin_tacc',
+    subcategories: []
+  },
+  'Productos Diet y Light': {
+    name: 'Productos Diet y Light',
+    icon: '💚',
+    color: '#86efac',
+    firebaseKey: 'diet_light',
+    subcategories: []
+  },
+  'Productos Orgánicos': {
+    name: 'Productos Orgánicos',
+    icon: '🌱',
+    color: '#16a34a',
+    firebaseKey: 'organicos',
+    subcategories: []
+  },
+  'Productos Veganos': {
+    name: 'Productos Veganos',
+    icon: '🥗',
+    color: '#22c55e',
+    firebaseKey: 'veganos',
+    subcategories: []
+  },
+
+  // VARIOS
+  'Edulcorantes': {
+    name: 'Edulcorantes',
+    icon: '🍯',
+    color: '#fef3c7',
+    firebaseKey: 'edulcorantes',
+    subcategories: []
+  },
+  'Levaduras y Polvos': {
+    name: 'Levaduras y Polvos',
+    icon: '🧂',
+    color: '#fde68a',
+    firebaseKey: 'levaduras_polvos',
+    subcategories: []
+  },
+  'Gelatinas y Flanes': {
+    name: 'Gelatinas y Flanes',
+    icon: '🍮',
+    color: '#fbbf24',
+    firebaseKey: 'gelatinas_flanes',
+    subcategories: []
+  },
+
+  // CATEGORÍA DEFAULT
+  'Otros': {
+    name: 'Otros',
+    icon: '📦',
+    color: '#9ca3af',
+    firebaseKey: 'otros',
+    subcategories: []
   }
 };
+
 
 // ⭐ FUNCIÓN DE DEBUG - Ver todas las categorías en Firebase
 export const debugCategories = async () => {
