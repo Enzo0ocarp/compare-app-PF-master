@@ -1,4 +1,4 @@
-// src/functions/services/firebaseProducts.js - VERSIÓN CON NORMALIZACIÓN Y DEBUG
+// src/functions/services/firebaseProducts.js - VERSIÓN CORREGIDA ✅
 
 import { 
   collection, 
@@ -330,101 +330,101 @@ export const CATEGORY_CONFIG = {
     firebaseKey: 'pan_rallado',
     subcategories: []
   },
-  'Repostería': {
-    name: 'Repostería',
-    icon: '🧁',
+  'Masas y Tapas': {
+    name: 'Masas y Tapas',
+    icon: '🥟',
     color: '#fbbf24',
-    firebaseKey: 'reposteria',
+    firebaseKey: 'masas_tapas',
     subcategories: []
   },
-  'Tortas y Tartas': {
-    name: 'Tortas y Tartas',
-    icon: '🎂',
-    color: '#f9a8d4',
-    firebaseKey: 'tortas_tartas',
+  'Tortas y Budines': {
+    name: 'Tortas y Budines',
+    icon: '🍰',
+    color: '#f97316',
+    firebaseKey: 'tortas_budines',
     subcategories: []
   },
 
   // CONDIMENTOS Y ADEREZOS
+  'Sal y Pimienta': {
+    name: 'Sal y Pimienta',
+    icon: '🧂',
+    color: '#d1d5db',
+    firebaseKey: 'sal_pimienta',
+    subcategories: []
+  },
+  'Especias y Condimentos': {
+    name: 'Especias y Condimentos',
+    icon: '🌶️',
+    color: '#dc2626',
+    firebaseKey: 'especias_condimentos',
+    subcategories: []
+  },
   'Salsas': {
     name: 'Salsas',
-    icon: '🥫',
+    icon: '🍅',
     color: '#dc2626',
     firebaseKey: 'salsas',
     subcategories: []
   },
-  'Aderezos': {
-    name: 'Aderezos',
+  'Mayonesas y Aderezos': {
+    name: 'Mayonesas y Aderezos',
     icon: '🥗',
-    color: '#16a34a',
-    firebaseKey: 'aderezos',
+    color: '#fef3c7',
+    firebaseKey: 'mayonesas_aderezos',
     subcategories: []
   },
-  'Condimentos y Especias': {
-    name: 'Condimentos y Especias',
-    icon: '🌶️',
-    color: '#dc2626',
-    firebaseKey: 'condimentos_especias',
-    subcategories: []
-  },
-  'Caldos y Sopas': {
-    name: 'Caldos y Sopas',
-    icon: '🍲',
-    color: '#f59e0b',
-    firebaseKey: 'caldos_sopas',
+  'Mostazas y Ketchup': {
+    name: 'Mostazas y Ketchup',
+    icon: '🌭',
+    color: '#fbbf24',
+    firebaseKey: 'mostazas_ketchup',
     subcategories: []
   },
   'Vinagres': {
     name: 'Vinagres',
-    icon: '🍾',
+    icon: '🍶',
     color: '#92400e',
     firebaseKey: 'vinagres',
     subcategories: []
   },
 
-  // CONSERVAS Y ENLATADOS
-  'Conservas de Verduras': {
-    name: 'Conservas de Verduras',
-    icon: '🥫',
-    color: '#16a34a',
-    firebaseKey: 'conservas_verduras',
+  // DULCES Y UNTABLES
+  'Dulce de Leche': {
+    name: 'Dulce de Leche',
+    icon: '🍯',
+    color: '#d97706',
+    firebaseKey: 'dulce_leche',
     subcategories: []
   },
-  'Conservas de Pescado': {
-    name: 'Conservas de Pescado',
-    icon: '🐟',
-    color: '#0ea5e9',
-    firebaseKey: 'conservas_pescado',
+  'Mermeladas y Jaleas': {
+    name: 'Mermeladas y Jaleas',
+    icon: '🍓',
+    color: '#dc2626',
+    firebaseKey: 'mermeladas_jaleas',
     subcategories: []
   },
-  'Frutas en Conserva': {
-    name: 'Frutas en Conserva',
-    icon: '🍑',
-    color: '#fb923c',
-    firebaseKey: 'frutas_conserva',
+  'Miel': {
+    name: 'Miel',
+    icon: '🍯',
+    color: '#fbbf24',
+    firebaseKey: 'miel',
     subcategories: []
   },
-  'Pickles y Encurtidos': {
-    name: 'Pickles y Encurtidos',
-    icon: '🥒',
-    color: '#16a34a',
-    firebaseKey: 'pickles_encurtidos',
+  'Cremas de Avellanas': {
+    name: 'Cremas de Avellanas',
+    icon: '🌰',
+    color: '#92400e',
+    firebaseKey: 'cremas_avellanas',
     subcategories: []
   },
 
-  // DULCES Y POSTRES
-  'Mermeladas y Dulces': {
-    name: 'Mermeladas y Dulces',
-    icon: '🍯',
-    color: '#f59e0b',
-    firebaseKey: 'mermeladas_dulces',
-    subcategories: []
-  },
-  'Helados': {
-    name: 'Helados',
-    icon: '🍦',
-    color: '#93c5fd',
-    firebaseKey: 'helados',
+  // AZÚCAR Y ENDULZANTES
+  'Azúcar': {
+    name: 'Azúcar',
+    icon: '🧂',
+    color: '#fef3c7',
+    firebaseKey: 'azucar',
     subcategories: []
   },
   'Postres Preparados': {
@@ -713,8 +713,9 @@ export const debugCategories = async () => {
   }
 };
 
-// ⭐ FUNCIÓN CORREGIDA - determineCategory con normalización
+// ✅ FUNCIÓN CORREGIDA - determineCategory con normalización Y VALIDACIÓN
 const determineCategory = (nombre, marca, categoria_principal) => {
+  // ✅ VALIDACIÓN: Si categoria_principal existe, usarla
   if (categoria_principal) {
     const categoriaNormalizada = normalizeText(categoria_principal);
     
@@ -741,19 +742,25 @@ const determineCategory = (nombre, marca, categoria_principal) => {
     console.warn(`⚠️ Categoría no mapeada: "${categoria_principal}"`);
   }
   
-  // Fallback: buscar por keywords en nombre y marca
+  // ✅ CORRECCIÓN: Fallback simplificado sin usar keywords (que no existen)
+  // Si no se encontró categoría, intentar buscar por palabras clave en el nombre del producto
   const nombreLower = normalizeText(nombre || '');
   const marcaLower = normalizeText(marca || '');
   
-  for (const [category, config] of Object.entries(CATEGORY_CONFIG)) {
-    if (config.keywords.some(keyword => {
-      const keywordNormalizado = normalizeText(keyword);
-      return nombreLower.includes(keywordNormalizado) || marcaLower.includes(keywordNormalizado);
-    })) {
-      return category;
+  // Búsqueda simple por coincidencia de palabras
+  for (const [categoryName, config] of Object.entries(CATEGORY_CONFIG)) {
+    const firebaseKeyWords = config.firebaseKey.split('_');
+    
+    // Verificar si alguna palabra del firebaseKey está en el nombre o marca
+    for (const word of firebaseKeyWords) {
+      if (nombreLower.includes(word) || marcaLower.includes(word)) {
+        console.log(`✨ Categoría inferida por keyword: ${categoryName}`);
+        return categoryName;
+      }
     }
   }
   
+  // Si no se encontró nada, retornar 'Otros'
   return 'Otros';
 };
 

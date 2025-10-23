@@ -1,4 +1,4 @@
-// src/components/Register.js - VERSIÓN CORREGIDA
+// src/components/Register.js - VERSIÓN CON TÉRMINOS Y CONDICIONES
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -10,6 +10,7 @@ import FormInput from './FormInput';
 import AuthButton from './AuthButton';
 import SocialAuthButtons from './SocialAuthButtons';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import TermsModal from './TermsModal';
 import '../styles/AuthStyles.css';
 
 const Register = () => {
@@ -23,6 +24,8 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [modalContent, setModalContent] = useState('terms'); // 'terms' o 'privacy'
   const navigate = useNavigate();
   const { showNotification } = useNotification();
 
@@ -48,17 +51,16 @@ const Register = () => {
     return errorMessages[errorCode] || 'Error al crear la cuenta. Intenta nuevamente.';
   };
 
-  // FUNCIÓN CORREGIDA: usar let en lugar de const
   const validateAge = (birthDate) => {
     if (!birthDate) return 'La fecha de nacimiento es obligatoria';
     
     const birth = new Date(birthDate);
     const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear(); // CAMBIO: let en lugar de const
+    let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
     
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--; // ESTO YA NO CAUSARÁ ERROR
+      age--;
     }
     
     if (age < 13) return 'Debes tener al menos 13 años para registrarte';
@@ -78,6 +80,7 @@ const Register = () => {
       role: 'user',
       createdAt: new Date(),
       lastLogin: new Date(),
+      acceptedTermsAt: new Date(), // Fecha de aceptación de términos
       preferences: {
         notifications: true,
         newsletter: additionalData.newsletter || false,
@@ -97,6 +100,11 @@ const Register = () => {
   };
 
   const onSubmit = async (data) => {
+    if (!acceptTerms) {
+      showNotification('Debes aceptar los términos y condiciones para continuar', 'error');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -139,6 +147,11 @@ const Register = () => {
   };
 
   const handleGoogleRegister = async () => {
+    if (!acceptTerms) {
+      showNotification('Debes aceptar los términos y condiciones para continuar', 'error');
+      return;
+    }
+
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
@@ -174,6 +187,11 @@ const Register = () => {
     }
   };
 
+  const openTermsModal = (type) => {
+    setModalContent(type);
+    setShowTermsModal(true);
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-card register-card">
@@ -186,212 +204,203 @@ const Register = () => {
           <p>Únete a Compare & Nourish y descubre los mejores precios</p>
         </div>
 
-        {/* Botones de redes sociales */}
+        {/* Social Auth */}
         <SocialAuthButtons
-          onGoogleLogin={handleGoogleRegister}
+          onGoogleClick={handleGoogleRegister}
+          onFacebookClick={() => showNotification('Próximamente disponible', 'info')}
+          onAppleClick={() => showNotification('Próximamente disponible', 'info')}
           loading={loading}
-          isRegister={true}
+          mode="register"
         />
 
-        {/* Divisor */}
         <div className="auth-divider">
-          <span>o completa el formulario</span>
+          <span>o regístrate con email</span>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit(onSubmit)} className="auth-form" noValidate>
-          {/* Información personal */}
-          <div className="form-section">
-            <h3>Información Personal</h3>
-            
-            <div className="form-row">
-              <FormInput
-                label="Nombre"
-                type="text"
-                placeholder="Tu nombre"
-                icon="fas fa-user"
-                register={register('firstName', {
-                  required: 'El nombre es obligatorio',
-                  minLength: { value: 2, message: 'Mínimo 2 caracteres' },
-                  pattern: { 
-                    value: /^[a-zA-ZÀ-ÿ\s]+$/, 
-                    message: 'Solo letras y espacios' 
-                  }
-                })}
-                error={errors.firstName}
-                disabled={loading}
-                autoComplete="given-name"
-              />
-
-              <FormInput
-                label="Apellido"
-                type="text"
-                placeholder="Tu apellido"
-                icon="fas fa-user"
-                register={register('lastName', {
-                  required: 'El apellido es obligatorio',
-                  minLength: { value: 2, message: 'Mínimo 2 caracteres' },
-                  pattern: { 
-                    value: /^[a-zA-ZÀ-ÿ\s]+$/, 
-                    message: 'Solo letras y espacios' 
-                  }
-                })}
-                error={errors.lastName}
-                disabled={loading}
-                autoComplete="family-name"
-              />
-            </div>
-
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
+          <div className="form-row">
             <FormInput
-              label="Fecha de Nacimiento"
-              type="date"
-              icon="fas fa-calendar"
-              register={register('birthDate', { validate: validateAge })}
-              error={errors.birthDate}
-              disabled={loading}
-              max={new Date().toISOString().split('T')[0]}
-              autoComplete="bdate"
-            />
-          </div>
-
-          {/* Información de cuenta */}
-          <div className="form-section">
-            <h3>Información de Cuenta</h3>
-            
-            <FormInput
-              label="Correo electrónico"
-              type="email"
-              placeholder="tu@email.com"
-              icon="fas fa-envelope"
-              register={register('email', {
-                required: 'El correo electrónico es obligatorio',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i,
-                  message: 'Por favor ingresa un correo electrónico válido'
-                }
-              })}
-              error={errors.email}
-              disabled={loading}
-              autoComplete="email"
-            />
-
-            <FormInput
-              label="Contraseña"
-              type="password"
-              placeholder="Mínimo 6 caracteres"
-              icon="fas fa-lock"
-              register={register('password', {
-                required: 'La contraseña es obligatoria',
+              label="Nombre"
+              name="firstName"
+              register={register}
+              errors={errors}
+              validation={{
+                required: 'El nombre es obligatorio',
                 minLength: {
-                  value: 6,
-                  message: 'La contraseña debe tener al menos 6 caracteres'
+                  value: 2,
+                  message: 'El nombre debe tener al menos 2 caracteres'
                 },
                 pattern: {
-                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                  message: 'Debe incluir mayúscula, minúscula y número'
+                  value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+                  message: 'El nombre solo puede contener letras'
                 }
-              })}
-              error={errors.password}
-              disabled={loading}
-              autoComplete="new-password"
-              showPasswordToggle
+              }}
+              placeholder="Tu nombre"
+              icon="fas fa-user"
             />
 
-            {password && <PasswordStrengthIndicator password={password} />}
-
             <FormInput
-              label="Confirmar Contraseña"
-              type="password"
-              placeholder="Repite tu contraseña"
-              icon="fas fa-lock"
-              register={register('confirmPassword', {
-                required: 'Confirma tu contraseña',
-                validate: value => 
-                  value === password || 'Las contraseñas no coinciden'
-              })}
-              error={errors.confirmPassword}
-              disabled={loading}
-              autoComplete="new-password"
-              showPasswordToggle
+              label="Apellido"
+              name="lastName"
+              register={register}
+              errors={errors}
+              validation={{
+                required: 'El apellido es obligatorio',
+                minLength: {
+                  value: 2,
+                  message: 'El apellido debe tener al menos 2 caracteres'
+                },
+                pattern: {
+                  value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+                  message: 'El apellido solo puede contener letras'
+                }
+              }}
+              placeholder="Tu apellido"
+              icon="fas fa-user"
             />
           </div>
 
-          {/* Información opcional */}
-          <div className="form-section optional">
-            <h3>Información Adicional (Opcional)</h3>
-            
-            <FormInput
-              label="Biografía"
-              type="textarea"
-              placeholder="Cuéntanos algo sobre ti (máx. 160 caracteres)"
-              icon="fas fa-pencil-alt"
-              register={register('bio', {
-                maxLength: { value: 160, message: 'Máximo 160 caracteres' }
-              })}
-              error={errors.bio}
-              disabled={loading}
-              maxLength={160}
-            />
+          <FormInput
+            label="Correo Electrónico"
+            name="email"
+            type="email"
+            register={register}
+            errors={errors}
+            validation={{
+              required: 'El correo es obligatorio',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Ingresa un correo válido'
+              }
+            }}
+            placeholder="tucorreo@ejemplo.com"
+            icon="fas fa-envelope"
+          />
 
-            {watchedFields.bio && (
-              <div className="char-counter">
-                {watchedFields.bio.length}/160 caracteres
-              </div>
+          <FormInput
+            label="Fecha de Nacimiento"
+            name="birthDate"
+            type="date"
+            register={register}
+            errors={errors}
+            validation={{
+              required: 'La fecha de nacimiento es obligatoria',
+              validate: validateAge
+            }}
+            icon="fas fa-calendar"
+          />
+
+          <FormInput
+            label="Contraseña"
+            name="password"
+            type="password"
+            register={register}
+            errors={errors}
+            validation={{
+              required: 'La contraseña es obligatoria',
+              minLength: {
+                value: 8,
+                message: 'La contraseña debe tener al menos 8 caracteres'
+              },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                message: 'Debe contener mayúsculas, minúsculas y números'
+              }
+            }}
+            placeholder="Mínimo 8 caracteres"
+            icon="fas fa-lock"
+          />
+
+          {password && (
+            <PasswordStrengthIndicator password={password} />
+          )}
+
+          <FormInput
+            label="Confirmar Contraseña"
+            name="confirmPassword"
+            type="password"
+            register={register}
+            errors={errors}
+            validation={{
+              required: 'Confirma tu contraseña',
+              validate: value =>
+                value === password || 'Las contraseñas no coinciden'
+            }}
+            placeholder="Repite tu contraseña"
+            icon="fas fa-lock"
+          />
+
+          <FormInput
+            label="Bio (Opcional)"
+            name="bio"
+            type="textarea"
+            register={register}
+            errors={errors}
+            validation={{
+              maxLength: {
+                value: 200,
+                message: 'La bio no puede superar los 200 caracteres'
+              }
+            }}
+            placeholder="Cuéntanos un poco sobre ti..."
+            icon="fas fa-pencil-alt"
+          />
+
+          {/* Términos y Condiciones */}
+          <div className="terms-section">
+            <div className="checkbox-container">
+              <input
+                type="checkbox"
+                id="acceptTerms"
+                checked={acceptTerms}
+                onChange={(e) => setAcceptTerms(e.target.checked)}
+                className="terms-checkbox"
+              />
+              <label htmlFor="acceptTerms" className="terms-label">
+                Acepto los{' '}
+                <button
+                  type="button"
+                  onClick={() => openTermsModal('terms')}
+                  className="terms-link"
+                >
+                  Términos y Condiciones
+                </button>
+                {' '}y la{' '}
+                <button
+                  type="button"
+                  onClick={() => openTermsModal('privacy')}
+                  className="terms-link"
+                >
+                  Política de Privacidad
+                </button>
+              </label>
+            </div>
+            {!acceptTerms && watchedFields.email && (
+              <p className="terms-warning">
+                <i className="fas fa-info-circle"></i>
+                Debes aceptar los términos para crear tu cuenta
+              </p>
             )}
+          </div>
 
-            <FormInput
-              label="Foto de Perfil (URL)"
-              type="url"
-              placeholder="https://ejemplo.com/mi-foto.jpg"
-              icon="fas fa-image"
-              register={register('photoURL', {
-                pattern: {
-                  value: /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i,
-                  message: 'URL de imagen no válida'
-                }
-              })}
-              error={errors.photoURL}
-              disabled={loading}
-            />
-
-            <label className="checkbox-container">
+          <div className="checkbox-group">
+            <label className="checkbox-label">
               <input
                 type="checkbox"
                 {...register('newsletter')}
-                disabled={loading}
               />
-              <span className="checkmark"></span>
-              Quiero recibir newsletters con ofertas especiales
+              <span>
+                Quiero recibir novedades y ofertas por email
+              </span>
             </label>
           </div>
 
-          {/* Términos y condiciones */}
-          <label className="checkbox-container required">
-            <input
-              type="checkbox"
-              checked={acceptTerms}
-              onChange={(e) => setAcceptTerms(e.target.checked)}
-              disabled={loading}
-              required
-            />
-            <span className="checkmark"></span>
-            Acepto los{' '}
-            <Link to="/terms" target="_blank" className="auth-link">
-              Términos de Servicio
-            </Link>{' '}
-            y la{' '}
-            <Link to="/privacy" target="_blank" className="auth-link">
-              Política de Privacidad
-            </Link>
-          </label>
-
-          {/* Botón de envío */}
           <AuthButton
             type="submit"
             loading={loading}
             disabled={!isFormValid}
             icon="fas fa-user-plus"
-            loadingText="Creando cuenta..."
           >
             Crear Cuenta
           </AuthButton>
@@ -402,11 +411,24 @@ const Register = () => {
           <p>
             ¿Ya tienes una cuenta?{' '}
             <Link to="/login" className="auth-link">
-              Inicia sesión aquí
+              Inicia Sesión
             </Link>
           </p>
         </div>
       </div>
+
+      {/* Modal de Términos y Condiciones */}
+      {showTermsModal && (
+        <TermsModal
+          isOpen={showTermsModal}
+          onClose={() => setShowTermsModal(false)}
+          contentType={modalContent}
+          onAccept={() => {
+            setAcceptTerms(true);
+            setShowTermsModal(false);
+          }}
+        />
+      )}
     </div>
   );
 };
