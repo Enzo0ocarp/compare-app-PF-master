@@ -100,13 +100,7 @@ function ProductCard({ product, onCompare, onAddImage }) {
                         className="trending-badge"
                     />
                 )}
-                {(product.sucursal || product.sucursalNombre) && (
-                    <Badge 
-                        value={product.sucursalNombre || product.sucursal} 
-                        severity="info" 
-                        className="store-badge"
-                    />
-                )}
+
             </div>
         </div>
     );
@@ -213,17 +207,6 @@ function ProductCard({ product, onCompare, onAddImage }) {
                         )}
                     </div>
                     
-                    {(product.sucursal || product.sucursalNombre) && (
-                        <div className="store-info">
-                            <i className="pi pi-map-marker"></i>
-                            <span>
-                                {product.sucursalNombre === 'Ver precios por sucursal' 
-                                    ? 'Disponible en múltiples sucursales'
-                                    : `Disponible en ${product.sucursalNombre || product.sucursal}`
-                                }
-                            </span>
-                        </div>
-                    )}
                 </div>
             </Card>
 
