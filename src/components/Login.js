@@ -255,9 +255,13 @@ const Login = () => {
               Regístrate aquí
             </Link>
           </p>
+          
         </div>
+        
       </div>
+
     </div>
+
   );
 };
 

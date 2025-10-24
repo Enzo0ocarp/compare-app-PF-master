@@ -36,6 +36,7 @@
   background: linear-gradient(135deg, var(--auth-primary) 0%, var(--auth-secondary) 100%);
   position: relative;
   overflow: hidden;
+  padding-bottom: 120px !important; 
 }
 
 .auth-container::before {
@@ -66,6 +67,7 @@
 
 /* === TARJETA DE AUTENTICACIÓN === */
 .auth-card {
+  margin-bottom: 3rem; /* Separación adicional */
   background: var(--auth-bg-card);
   border-radius: var(--auth-radius-lg);
   box-shadow: var(--auth-shadow-lg);
@@ -1090,4 +1092,22 @@
     transform: translateY(0);
   }
 }
+}
+
+@media (max-width: 640px) {
+  .auth-container {
+    padding-bottom: 150px;
+  }
+  .auth-card {
+    margin-bottom: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding-bottom: 180px;
+  }
+  .auth-card {
+    margin-bottom: 5rem;
+  }
 }
