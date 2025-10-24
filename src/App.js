@@ -35,9 +35,7 @@ function App() {
                 <Router>
                     <div className="app-container">
                         {/* Header SIN showThemeToggle */}
-                        <Header 
-                            showNotifications={true}
-                        />
+                        
 
                         {/* Rutas - SIN /ofertas */}
                         <Routes>

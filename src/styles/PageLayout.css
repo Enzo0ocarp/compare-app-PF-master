@@ -11,6 +11,7 @@
 /* Contenedor principal de layout */
 .page-layout {
     display: flex;
+    position: relative;
     flex-direction: column;
     min-height: 100vh;
     width: 100%;
@@ -21,6 +22,7 @@
     flex: 1;
     width: 100%;
     position: relative;
+    overflow-y: auto;
 }
 
 /* Layout con header */
@@ -31,7 +33,7 @@
 /* Layout con bottom navigation */
 .page-layout.has-bottom-nav .page-main {
     padding-bottom: var(--total-bottom-space);
-    margin-bottom: 0;
+
 }
 
 /* Layout de altura completa */

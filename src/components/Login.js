@@ -148,7 +148,12 @@ const Login = () => {
   };
 
   return (
+    
     <div className="auth-container">
+    <div className='auth-title'>
+      <h1>Compare & Nourish</h1>
+      <h3>Ahorra inteligente</h3>
+      </div>  
       <div className="auth-card">
         {/* Header */}
         <div className="auth-header">

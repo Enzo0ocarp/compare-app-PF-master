@@ -1,6 +1,8 @@
 // src/components/PageLayout.js
 import React from 'react';
 import '../styles/PageLayout.css';
+import Header from './Header';
+import BottomNav from './BottomNav';
 
 /**
  * Componente de layout que maneja el espaciado para BottomNav
@@ -30,9 +32,11 @@ const PageLayout = ({
 
     return (
         <div className={getLayoutClasses()}>
+            {hasHeader && <Header/>}
             <main className="page-main">
                 {children}
             </main>
+            {hasBottomNav && <BottomNav/>}
         </div>
     );
 };

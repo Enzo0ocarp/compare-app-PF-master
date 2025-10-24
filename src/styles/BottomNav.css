@@ -27,12 +27,12 @@
 
 /* === CONTENEDOR PRINCIPAL === */
 .bottom-nav {
-  position: fixed;
+  position: fixed !important;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100vw;
-  z-index: 10;
+  z-index: 9999;
   
   /* Layout */
   display: flex;

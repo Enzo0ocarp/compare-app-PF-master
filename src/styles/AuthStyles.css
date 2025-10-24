@@ -49,6 +49,21 @@
   opacity: 0.3;
 }
 
+.auth-container .auth-title{
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  height: 400px;
+  margin: 0 100px auto;
+  padding: 150px 0;
+
+}
+
+.auth-container .auth-title h1{
+  font-size: 70px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
+}
+
 /* === TARJETA DE AUTENTICACIÓN === */
 .auth-card {
   background: var(--auth-bg-card);
@@ -151,7 +166,7 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.5rem;
 }
 
 .form-section {
@@ -641,36 +656,7 @@
   text-decoration: underline;
 }
 
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
-  .auth-container {
-    padding: 0.5rem;
-  }
-  
-  .auth-card {
-    padding: 1.5rem;
-    margin: 0.5rem;
-  }
-  
-  .auth-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-  
-  .auth-options {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-  
-  .strength-requirements {
-    grid-template-columns: 1fr;
-  }
-}
+
 
 @media (max-width: 480px) {
   .auth-card {
@@ -778,4 +764,330 @@
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+@media (max-width: 768px) {
+  /* ===========================
+   AUTH LAYOUT GENERAL
+=========================== */
+.auth-container {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  max-height: 200px;
+  width: 100%;
+}
+
+/* ===========================
+   TITULOS PRINCIPALES
+=========================== */
+.auth-title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-title h1 {
+  display: none;
+}
+
+.auth-title h3 {
+  display: none;
+}
+
+/* ===========================
+   CARD DE LOGIN
+=========================== */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100%;
+  border-radius: 5px;
+  position: absolute;
+  flex-direction: column;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.auth-header .auth-logo {
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin-bottom: 0rem;
+}
+
+.auth-header h1 {
+  font-size: 1rem;
+  margin-bottom: 0rem;
+}
+
+.auth-header p {
+  font-size: 0.9rem;
+}
+
+/* ===========================
+   FORMULARIO
+=========================== */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+/* Checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  gap: 0.2rem;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4169e1;
+}
+
+/* Enlace "¿Olvidaste tu contraseña?" */
+.forgot-password-link {
+  background: none;
+  border: none;
+  color: #4169e1;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ===========================
+   DIVISOR
+=========================== */
+.auth-divider {
+  position: relative;
+  text-align: center;
+  font-size: 0.85rem;
+
+  margin: 0rem 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+}
+
+.auth-divider::before {
+  left: 0;
+}
+
+.auth-divider::after {
+  right: 0;
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+.auth-footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.auth-footer .auth-link {
+  color: #4169e1;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-footer .auth-link:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   RESPONSIVE (móvil pequeño)
+=========================== */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 1rem;
+  }
+
+  .auth-title h1 {
+    font-size: 1.6rem;
+  }
+
+  .auth-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .auth-header .auth-logo {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ===========================
+   CARD DE REGISTRO
+=========================== */
+.register-card {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
+  max-width: 420px; /* mismo que login */
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+.register-card .auth-header {
+  text-align: center;
+}
+
+.register-card .auth-header .auth-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin-bottom: 0rem;
+}
+
+/* ===========================
+   FORMULARIO
+=========================== */
+.register-card .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+}
+
+.register-card .form-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  flex-wrap: wrap; /* se ajusta en móviles */
+}
+
+/* Campos de formulario ocupan todo el ancho en móviles */
+.register-card .form-row > * {
+  flex: 1 1 100%;
+}
+
+/* Checkbox y términos */
+.register-card .terms-section,
+.register-card .checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.register-card .terms-label {
+  font-size: 0.85rem;
+}
+
+.register-card .terms-link {
+  background: none;
+  border: none;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.register-card .terms-warning {
+  font-size: 0.8rem;
+  color: #d9534f; /* rojo para warning */
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+.register-card .auth-footer {
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.register-card .auth-footer .auth-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ===========================
+   RESPONSIVE MÓVIL
+=========================== */
+@media (max-width: 480px) {
+  .register-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .register-card .auth-header .auth-logo {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+
+  /* Ajuste de filas de nombre/apellido en móvil */
+  .register-card .form-row {
+    flex-direction: column;
+  }
+
+  .register-card .form-row > * {
+    flex: 1 1 100%;
+  }
+
+  /* Footer y botones más compactos */
+  .register-card .auth-footer {
+    font-size: 0.85rem;
+  }
+}
+
+/* ===========================
+   ANIMACIÓN SUAVE
+=========================== */
+.auth-card,
+.auth-header,
+.auth-form {
+  animation: fadeInUp 0.4s ease both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 }
